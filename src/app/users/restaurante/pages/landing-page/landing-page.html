@@ -1,2 +1,107 @@
 <app-header></app-header>
+<div class="dashboard-container">
+  <nav class="navbar">
+    <div class="container">
+      <h1 class="logo">Quickish - Restaurante</h1>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>Dashboard</h2>
+
+    <div class="pedidos-section">
+      <div class="pedidos-main">
+        <h3>Pedidos Recientes</h3>
+
+        @if (loading) {
+          <div class="loading"><div class="spinner"></div></div>
+        }
+
+        @if (!loading && pedidos.length === 0) {
+          <p class="empty">No hay pedidos recientes</p>
+        }
+
+        @if (!loading && pedidos.length > 0) {
+          <div class="pedidos-list">
+            @for (pedido of pedidos; track pedido.id) {
+              <div 
+                class="pedido-item" 
+                [class.selected]="selectedPedido?.id === pedido.id"
+                (click)="selectPedido(pedido)">
+                <div class="pedido-header">
+                  <span class="pedido-number">Pedido #{{pedido.id}}</span>
+                  <span class="pedido-status" [class]="'status-' + pedido.estado">
+                    {{getEstadoLabel(pedido.estado)}}
+                  </span>
+                </div>
+                <div class="pedido-info">
+                  <p><strong>Cliente:</strong> {{pedido.cliente}}</p>
+                  <p><strong>Total:</strong> ${{pedido.total}}</p>
+                  <p><strong>Fecha:</strong> {{pedido.fecha}}</p>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      @if (selectedPedido) {
+        <div class="pedido-details-panel">
+          <div class="panel-header">
+            <h4>Pedido #{{selectedPedido.id}}</h4>
+            <button class="close-btn" (click)="closePedido()">×</button>
+          </div>
+          
+          <div class="panel-content">
+            <div class="detail-section">
+              <h5>Información del Cliente</h5>
+              <p><strong>Nombre:</strong> {{selectedPedido.cliente}}</p>
+              <p><strong>Dirección:</strong> {{selectedPedido.direccion}}</p>
+            </div>
+
+            <div class="detail-section">
+              <h5>Detalles del Pedido</h5>
+              <ul class="items-list">
+                @for (item of selectedPedido.items; track item.id) {
+                  <li>{{item.cantidad}}x {{item.nombre}} - ${{item.precio}}</li>
+                }
+              </ul>
+              <p class="total"><strong>Total:</strong> ${{selectedPedido.total}}</p>
+            </div>
+
+            <div class="detail-section">
+              <h5>Cambiar Estado</h5>
+              <div class="status-controls">
+                <button 
+                  class="status-btn status-pendiente"
+                  [class.active]="selectedPedido.estado === 'pendiente'"
+                  (click)="cambiarEstado('pendiente')">
+                  Pendiente
+                </button>
+                <button 
+                  class="status-btn status-preparando"
+                  [class.active]="selectedPedido.estado === 'preparando'"
+                  (click)="cambiarEstado('preparando')">
+                  Preparando
+                </button>
+                <button 
+                  class="status-btn status-listo"
+                  [class.active]="selectedPedido.estado === 'listo'"
+                  (click)="cambiarEstado('listo')">
+                  Listo
+                </button>
+                <button 
+                  class="status-btn status-entregado"
+                  [class.active]="selectedPedido.estado === 'entregado'"
+                  (click)="cambiarEstado('entregado')">
+                  Entregado
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
 <app-footer></app-footer>
