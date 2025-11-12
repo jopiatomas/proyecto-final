@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth-service';
 
 @Component({
   selector: 'app-registro-form',
@@ -17,7 +18,8 @@ export class RegistroForm {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.registroForm = this.fb.group({
       nombre: ['', [
@@ -33,8 +35,8 @@ export class RegistroForm {
       ]],
       contrasenia: ['', [
         Validators.required, 
-        Validators.minLength(3), 
-        Validators.maxLength(15),
+        Validators.minLength(6), 
+        Validators.maxLength(100),
         Validators.pattern(/^[a-zA-Z0-9._]+$/)
       ]],
       rol: ['CLIENTE', Validators.required]
@@ -68,6 +70,37 @@ export class RegistroForm {
       console.log('Rol seleccionado:', rol);
       console.log('JSON que se enviará:', JSON.stringify(registerData));
       console.log('==========================');
+
+      // Llamar al servicio de autenticación
+      this.authService.register(registerData).subscribe({
+        next: (response) => {
+          this.loading.set(false);
+          this.successMessage.set('¡Registro exitoso! Redirigiendo al login...');
+          console.log('Registro exitoso:', response);
+          
+          // Redirigir al login después de 1.5 segundos
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 1500);
+        },
+        error: (error) => {
+          this.loading.set(false);
+          console.error('Error en registro:', error);
+          
+          // Manejar diferentes tipos de errores
+          if (error.status === 0) {
+            this.errorMessage.set('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
+          } else if (error.status === 400) {
+            // Mostrar mensaje específico del backend si está disponible
+            const mensajeBackend = error.error?.error || error.error;
+            this.errorMessage.set(mensajeBackend || 'Datos inválidos. Verifica los campos.');
+          } else if (error.status === 409) {
+            this.errorMessage.set('El usuario ya existe.');
+          } else {
+            this.errorMessage.set('Error al registrarse. Intenta nuevamente.');
+          }
+        }
+      });
     }
   }
 }
