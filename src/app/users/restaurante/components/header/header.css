@@ -1,0 +1,8 @@
+header {
+  background-color: var(--col-1);
+}
+header img {
+  width: 18%;
+  height: auto;
+  margin: 10px 0 10px 25px;
+}
