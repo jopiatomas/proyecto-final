@@ -1,3 +1,30 @@
 <header>
   <img src="/img-quickish-header.png" alt="App Logo" class="logo" />
+  <nav class="navbar">
+    <div class="navbar-actions">
+      <button class="btn-nav">
+        <!--[routerLink]="['/cliente/pedidos']"-->
+        <span>📦 Mis Pedidos</span>
+      </button>
+
+      <button class="btn-nav">
+        <!--[routerLink]="['/cliente/perfil']" -->
+        <span
+          >👤
+          <!--{{ currentUser()?.nombre }}-->
+        </span>
+      </button>
+      <!--@if (cartService.itemCount() > 0) {
+    <button
+      [routerLink]="['/cliente/ver-restaurante', cartService.restauranteActual()?.id]"
+      class="btn-cart"
+    >
+      <span>🛒 {{ cartService.itemCount() }}</span>
+    </button>
+    }
+    -->
+
+      <!--<button (click)="logout()" class="btn-outline-secondary">Salir</button>
+    --></div>
+  </nav>
 </header>

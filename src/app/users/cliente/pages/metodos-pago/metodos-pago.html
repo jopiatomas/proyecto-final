@@ -1,1 +1,112 @@
-<app-header></app-header> <app-footer></app-footer>
+<app-header></app-header>
+<div class="metodos-pago-container">
+  <div class="container">
+    <div class="header">
+      <h2>Métodos de Pago</h2>
+      <!--<button (click)="toggleForm()" class="btn-primary">
+        {{ showForm() ? 'Cancelar' : '+ Nueva Tarjeta' }}
+      </button>
+      -->
+      <button class="btn-primary">Nueva Tarjeta</button>
+    </div>
+    <!--
+    @if (successMessage()) {
+    <div class="success-message">{{ successMessage() }}</div>
+    } @if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+    } @if (showForm()) {
+    <div class="form-card">
+      <h3>Nueva Tarjeta</h3>
+      <form [formGroup]="tarjetaForm" (ngSubmit)="agregarTarjeta()">
+        <div class="form-group">
+          <label>Número de Tarjeta *</label>
+          <input
+            type="text"
+            formControlName="numeroTarjeta"
+            class="form-input"
+            placeholder="1234567890123456"
+            maxlength="16"
+          />
+          @if (tarjetaForm.get('numeroTarjeta')?.invalid &&
+          tarjetaForm.get('numeroTarjeta')?.touched) {
+          <span class="error-text">Debe tener 16 dígitos</span>
+          }
+        </div>
+        <div class="form-group">
+          <label>Nombre del Titular *</label>
+          <input
+            type="text"
+            formControlName="nombreTitular"
+            class="form-input"
+            placeholder="JUAN PEREZ"
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Vencimiento (MM/AA) *</label>
+            <input
+              type="text"
+              formControlName="fechaVencimiento"
+              class="form-input"
+              placeholder="12/25"
+              maxlength="5"
+            />
+            @if (tarjetaForm.get('fechaVencimiento')?.invalid &&
+            tarjetaForm.get('fechaVencimiento')?.touched) {
+            <span class="error-text">Formato: MM/AA</span>
+            }
+          </div>
+          <div class="form-group">
+            <label>CVV *</label>
+            <input
+              type="text"
+              formControlName="cvv"
+              class="form-input"
+              placeholder="123"
+              maxlength="4"
+            />
+            @if (tarjetaForm.get('cvv')?.invalid && tarjetaForm.get('cvv')?.touched) {
+            <span class="error-text">3 o 4 dígitos</span>
+            }
+          </div>
+        </div>
+        <button type="submit" [disabled]="tarjetaForm.invalid || loading()" class="btn-primary">
+          {{ loading() ? 'Guardando...' : 'Guardar Tarjeta' }}
+        </button>
+      </form>
+    </div>
+    } @if (loading() && !showForm()) {
+    <div class="loading"><div class="spinner"></div></div>
+    } @if (!loading() && tarjetas().length === 0 && !showForm()) {
+    <div class="empty-state">
+      <p>No tienes tarjetas guardadas</p>
+    </div>
+    }
+    -->
+
+    <!--
+    <div class="tarjetas-grid">
+      @for (tarjeta of tarjetas(); track tarjeta.id) {
+      <div class="tarjeta-card">
+        <div class="card-visual">
+          <div class="card-chip">💳</div>
+          <div class="card-number">**** **** **** {{ tarjeta.numeroTarjeta.slice(-4) }}</div>
+          <div class="card-footer">
+            <div>
+              <div class="card-label">Titular</div>
+              <div class="card-name">{{ tarjeta.nombreTitular }}</div>
+            </div>
+            <div>
+              <div class="card-label">Vence</div>
+              <div class="card-expiry">{{ tarjeta.fechaVencimiento }}</div>
+            </div>
+          </div>
+        </div>
+        <button (click)="eliminarTarjeta(tarjeta.id)" class="btn-delete">🗑️ Eliminar</button>
+      </div>
+      }
+    </div>
+    -->
+  </div>
+</div>
+<app-footer></app-footer>

@@ -1,0 +1,129 @@
+:root {
+  --primary-violet: #5b2c91;
+  --border-color: #e5e7eb;
+}
+
+.perfil-container {
+  min-height: 100vh;
+  background: var(--background-light);
+}
+
+.container {
+  padding: 0 24px;
+}
+
+.container h2 {
+  margin: 2rem 0 1.5rem 0;
+  color: var(--text-primary);
+}
+
+.perfil-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.perfil-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.error-text {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.quick-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.quick-links h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.link-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: left;
+}
+
+.link-card:hover {
+  border-color: #5b2c91;
+  box-shadow: 0 4px 12px rgba(91, 44, 145, 0.15);
+  transform: translateY(-2px);
+}
+
+.link-card .icon {
+  font-size: 2rem;
+}
+
+.link-card h4 {
+  margin: 0 0 0.25rem 0;
+  color: var(--text-primary);
+}
+
+.link-card p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #f5c6cb;
+}
+@media (max-width: 1024px) {
+  .perfil-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .navbar-actions {
+    justify-content: center;
+  }
+}
