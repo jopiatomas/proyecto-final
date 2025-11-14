@@ -72,3 +72,29 @@ form button:hover {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+.alert-error {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #fcc;
+  font-size: 14px;
+}
+
+.alert-success {
+  background-color: #efe;
+  color: #3c3;
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #cfc;
+  font-size: 14px;
+}
+
+.form-error {
+  color: #c33;
+  font-size: 12px;
+  margin-top: 4px;
+}

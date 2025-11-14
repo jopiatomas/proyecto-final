@@ -14,7 +14,21 @@ h2 {
   font-size: 24px;
 }
 
+.alert-error {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #fcc;
+  font-size: 14px;
+}
 
+.form-error {
+  color: #c33;
+  font-size: 12px;
+  margin-top: 4px;
+}
 
 .signup-link {
   text-align: center;
@@ -69,4 +83,8 @@ form button:hover {
     background-color: rgb(74, 20, 140, 0.85);
 }
 
-
+@media (max-width: 480px) {
+  .login-box {
+    padding: 30px 20px;
+  }
+}
