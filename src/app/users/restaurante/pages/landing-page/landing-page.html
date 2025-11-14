@@ -1,17 +1,12 @@
 <app-header></app-header>
-<div class="dashboard-container">
-  <nav class="navbar">
-    <div class="container">
-      <h1 class="logo">Quickish - Restaurante</h1>
-    </div>
-  </nav>
 
+<div class="dashboard-container">
   <div class="container">
-    <h2>Dashboard</h2>
+    <h2>Dashboard de Pedidos</h2>
 
     <div class="pedidos-section">
       <div class="pedidos-main">
-        <h3>Pedidos Recientes</h3>
+        <h3>Pedidos en curso</h3>
 
         @if (loading) {
           <div class="loading"><div class="spinner"></div></div>
@@ -24,8 +19,8 @@
         @if (!loading && pedidos.length > 0) {
           <div class="pedidos-list">
             @for (pedido of pedidos; track pedido.id) {
-              <div 
-                class="pedido-item" 
+              <div
+                class="pedido-item"
                 [class.selected]="selectedPedido?.id === pedido.id"
                 (click)="selectPedido(pedido)">
                 <div class="pedido-header">
@@ -51,7 +46,7 @@
             <h4>Pedido #{{selectedPedido.id}}</h4>
             <button class="close-btn" (click)="closePedido()">×</button>
           </div>
-          
+
           <div class="panel-content">
             <div class="detail-section">
               <h5>Información del Cliente</h5>
@@ -72,28 +67,36 @@
             <div class="detail-section">
               <h5>Cambiar Estado</h5>
               <div class="status-controls">
-                <button 
+                <button
                   class="status-btn status-pendiente"
                   [class.active]="selectedPedido.estado === 'pendiente'"
-                  (click)="cambiarEstado('pendiente')">
+                  [disabled]="true"
+                  title="Estado inicial (no editable)">
                   Pendiente
                 </button>
-                <button 
+                <button
                   class="status-btn status-preparando"
                   [class.active]="selectedPedido.estado === 'preparando'"
                   (click)="cambiarEstado('preparando')">
                   Preparando
                 </button>
-                <button 
+                <button
                   class="status-btn status-listo"
                   [class.active]="selectedPedido.estado === 'listo'"
                   (click)="cambiarEstado('listo')">
                   Listo
                 </button>
-                <button 
+                <button
+                  class="status-btn status-enviado"
+                  [class.active]="selectedPedido.estado === 'enviado'"
+                  (click)="cambiarEstado('enviado')">
+                  Enviado
+                </button>
+                <button
                   class="status-btn status-entregado"
                   [class.active]="selectedPedido.estado === 'entregado'"
-                  (click)="cambiarEstado('entregado')">
+                  [disabled]="true"
+                  title="Se marca automáticamente al entregar">
                   Entregado
                 </button>
               </div>
@@ -104,4 +107,5 @@
     </div>
   </div>
 </div>
+
 <app-footer></app-footer>

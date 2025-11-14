@@ -16,7 +16,7 @@ interface Pedido {
   direccion: string;
   total: number;
   fecha: string;
-  estado: 'pendiente' | 'preparando' | 'listo' | 'entregado';
+  estado: 'pendiente' | 'preparando' | 'listo' | 'enviado' | 'entregado';
   items: PedidoItem[];
 }
 
@@ -77,7 +77,7 @@ export class LandingPage implements OnInit {
           direccion: 'Ruta 9 Km 5',
           total: 2800,
           fecha: '12/11/2025 15:15',
-          estado: 'pendiente',
+          estado: 'enviado',
           items: [
             { id: 7, nombre: 'Empanadas (docena)', cantidad: 1, precio: 2800 }
           ]
@@ -95,8 +95,9 @@ export class LandingPage implements OnInit {
     this.selectedPedido = null;
   }
 
-  cambiarEstado(nuevoEstado: 'pendiente' | 'preparando' | 'listo' | 'entregado') {
+  cambiarEstado(nuevoEstado: 'preparando' | 'listo' | 'enviado') {
     if (this.selectedPedido) {
+      // El restaurante no puede asignar 'pendiente' ni 'entregado'
       this.selectedPedido.estado = nuevoEstado;
       // Actualizar el pedido en la lista
       const index = this.pedidos.findIndex(p => p.id === this.selectedPedido!.id);
@@ -111,6 +112,7 @@ export class LandingPage implements OnInit {
       'pendiente': 'Pendiente',
       'preparando': 'Preparando',
       'listo': 'Listo',
+      'enviado': 'Enviado',
       'entregado': 'Entregado'
     };
     return labels[estado] || estado;
