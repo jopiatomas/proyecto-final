@@ -1,1 +1,54 @@
-<app-header></app-header> <app-footer></app-footer>
+<app-header></app-header>
+<div class="pedidos-container">
+  <div class="container">
+    <h2>Mis Pedidos</h2>
+    <!--
+    @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Cargando pedidos...</p>
+    </div>
+    } @if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+    } @if (!loading() && !errorMessage()) { @if (pedidos().length === 0) {
+    <div class="empty-state">
+      <p>No tienes pedidos aún</p>
+      <button [routerLink]="['/cliente']" class="btn-primary">Explorar Restaurantes</button>
+    </div>
+    } @else {
+    <div class="pedidos-list">
+      @for (pedido of pedidos(); track pedido.id) {
+      <div class="pedido-card">
+        <div class="pedido-header">
+          <div>
+            <h3>Pedido #{{ pedido.id }}</h3>
+            <p class="fecha">{{ pedido.fechaHora | date : 'dd/MM/yyyy HH:mm' }}</p>
+            @if (pedido.restauranteNombre) {
+            <p class="restaurante">🍽️ {{ pedido.restauranteNombre }}</p>
+            }
+          </div>
+          <div class="pedido-info">
+            <span class="estado-badge" [style.background-color]="getEstadoColor(pedido.estado)">
+              {{ pedido.estado.replace('_', ' ') }}
+            </span>
+            <p class="total">${{ pedido.total }}</p>
+          </div>
+        </div>
+
+        @if (pedido.estado === 'ENTREGADO') {
+        <button
+          [routerLink]="['/cliente/realizar-resenia', pedido.id]"
+          class="btn-outline-primary btn-sm"
+        >
+          ⭐ Dejar Reseña
+        </button>
+        }
+      </div>
+      }
+    </div>
+    } }
+    -->
+  </div>
+</div>
+
+<app-footer></app-footer>

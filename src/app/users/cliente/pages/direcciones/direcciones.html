@@ -1,1 +1,83 @@
-<app-header></app-header> <app-footer></app-footer>
+<app-header></app-header>
+<div class="direcciones-container">
+  <div class="container">
+    <div class="header">
+      <h2>Mis Direcciones</h2>
+      <!--
+      <button (click)="toggleForm()" class="btn-primary">
+        {{ showForm() ? 'Cancelar' : '+ Nueva Dirección' }}
+      </button>
+      -->
+    </div>
+
+    <!--
+    @if (successMessage()) {
+    <div class="success-message">{{ successMessage() }}</div>
+    } @if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+    } @if (showForm()) {
+    <div class="form-card">
+      <h3>Nueva Dirección</h3>
+      <form [formGroup]="direccionForm" (ngSubmit)="agregarDireccion()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Calle *</label>
+            <input type="text" formControlName="calle" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label>Número *</label>
+            <input type="text" formControlName="numero" class="form-input" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ciudad *</label>
+            <input type="text" formControlName="ciudad" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label>Código Postal *</label>
+            <input type="text" formControlName="codigoPostal" class="form-input" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Referencia (opcional)</label>
+          <input
+            type="text"
+            formControlName="referencia"
+            class="form-input"
+            placeholder="Ej: Casa azul, portón negro"
+          />
+        </div>
+        <button type="submit" [disabled]="direccionForm.invalid || loading()" class="btn-primary">
+          {{ loading() ? 'Guardando...' : 'Guardar Dirección' }}
+        </button>
+      </form>
+    </div>
+    } @if (loading() && !showForm()) {
+    <div class="loading"><div class="spinner"></div></div>
+    } @if (!loading() && direcciones().length === 0 && !showForm()) {
+    <div class="empty-state">
+      <p>No tienes direcciones guardadas</p>
+    </div>
+    }
+    -->
+
+    <div class="direcciones-grid">
+      <!--
+        @for (direccion of direcciones(); track direccion.id) {
+      <div class="direccion-card">
+        <div class="direccion-info">
+          <h4>{{ direccion.calle }} {{ direccion.numero }}</h4>
+          <p>{{ direccion.ciudad }} - CP: {{ direccion.codigoPostal }}</p>
+          @if (direccion.referencia) {
+          <p class="referencia">📍 {{ direccion.referencia }}</p>
+          }
+        </div>
+        <button (click)="eliminarDireccion(direccion.id)" class="btn-delete">🗑️</button>
+      </div>
+      }
+    --></div>
+  </div>
+</div>
+
+<app-footer></app-footer>
