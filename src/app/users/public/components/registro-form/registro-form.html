@@ -1,6 +1,14 @@
 <div class="registro-box">
 
     <h2>Crear cuenta</h2>
+
+    @if (errorMessage()) {
+      <div class="alert-error">{{ errorMessage() }}</div>
+    }
+
+    @if (successMessage()) {
+      <div class="alert-success">{{ successMessage() }}</div>
+    }
     
     <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
@@ -63,8 +71,8 @@
           id="contrasenia" 
           class="form-input"
           formControlName="contrasenia"
-          placeholder="3-15 caracteres"
-          maxlength="15"
+          placeholder="6-100 caracteres"
+          maxlength="100"
         >
         @if (registroForm.get('contrasenia')?.invalid && registroForm.get('contrasenia')?.touched) {
           <div class="form-error">
@@ -72,10 +80,10 @@
               La contraseña es requerida
             }
             @if (registroForm.get('contrasenia')?.errors?.['minlength']) {
-              Mínimo 3 caracteres
+              Mínimo 6 caracteres
             }
             @if (registroForm.get('contrasenia')?.errors?.['maxlength']) {
-              Máximo 15 caracteres
+              Máximo 100 caracteres
             }
             @if (registroForm.get('contrasenia')?.errors?.['pattern']) {
               Solo letras, números, _ o .
