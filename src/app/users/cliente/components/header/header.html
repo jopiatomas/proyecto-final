@@ -1,30 +1,15 @@
 <header>
-  <img src="/img-quickish-header.png" alt="App Logo" class="logo" />
-  <nav class="navbar">
-    <div class="navbar-actions">
-      <button class="btn-nav">
-        <!--[routerLink]="['/cliente/pedidos']"-->
-        <span>📦 Mis Pedidos</span>
-      </button>
+  <div class="barra">
+    <img src="img-quickish-header.png" alt="Quickish" />
+    <nav class="tabs">
+      <a routerLink="/restaurante/menu" routerLinkActive="active">Perfil</a>
+      <a routerLink="/restaurante/resenas" routerLinkActive="active">Pedidos</a>
+      <a routerLink="/restaurante/historial" routerLinkActive="active">Pagos</a>
+      <a routerLink="/restaurante/historial" routerLinkActive="active">Direcciones</a>
+    </nav>
 
-      <button class="btn-nav">
-        <!--[routerLink]="['/cliente/perfil']" -->
-        <span
-          >👤
-          <!--{{ currentUser()?.nombre }}-->
-        </span>
-      </button>
-      <!--@if (cartService.itemCount() > 0) {
-    <button
-      [routerLink]="['/cliente/ver-restaurante', cartService.restauranteActual()?.id]"
-      class="btn-cart"
-    >
-      <span>🛒 {{ cartService.itemCount() }}</span>
+    <button class="perfil" aria-label="Perfil">
+      <img src="/image.png" alt="Perfil del usuario" />
     </button>
-    }
-    -->
-
-      <!--<button (click)="logout()" class="btn-outline-secondary">Salir</button>
-    --></div>
-  </nav>
+  </div>
 </header>
