@@ -1,15 +1,26 @@
 <header>
   <div class="barra">
-    <img src="img-quickish-header.png" alt="Quickish" />
+    <a class="logo" routerLink="/cliente">
+      <img src="/img-quickish-header.png" alt="Quickish" class="logo-img" />
+    </a>
+
     <nav class="tabs">
-      <a routerLink="/restaurante/menu" routerLinkActive="active">Perfil</a>
-      <a routerLink="/restaurante/resenas" routerLinkActive="active">Pedidos</a>
-      <a routerLink="/restaurante/historial" routerLinkActive="active">Pagos</a>
-      <a routerLink="/restaurante/historial" routerLinkActive="active">Direcciones</a>
+      <a routerLink="/cliente/pedidos" routerLinkActive="active">Pedidos</a>
+      <a routerLink="/cliente/historial" routerLinkActive="active">Historial</a>
     </nav>
 
-    <button class="perfil" aria-label="Perfil">
-      <img src="/image.png" alt="Perfil del usuario" />
-    </button>
+    <div class="derecha">
+      <button 
+        class="btn-accion" 
+        (click)="isLandingPage ? logout() : goBack()"
+        [attr.aria-label]="isLandingPage ? 'Cerrar sesión' : 'Volver atrás'"
+      >
+        {{ isLandingPage ? 'Cerrar Sesión' : 'Volver' }}
+      </button>
+      
+      <a class="perfil" routerLink="/cliente/perfil" aria-label="Perfil">
+        <img src="/image.png" alt="Perfil del usuario" />
+      </a>
+    </div>
   </div>
 </header>

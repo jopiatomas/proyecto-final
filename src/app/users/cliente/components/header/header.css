@@ -6,33 +6,39 @@
 
 header {
   background: var(--col-1);
-  height: 100px;
+  height: 70px;
 }
 
 .barra {
   width: 100%;
   height: 100%;
-  padding: 0 24px;
-  display: flex;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: 200px 1fr 250px;
   align-items: center;
-  justify-content: space-between;
-  position: relative;
+  gap: 24px;
 }
 
-.logo img {
-  height: 40px;
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo img,
+.logo-img {
+  height: 32px;
+  width: auto;
   display: block;
 }
 
 .tabs {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
-  gap: 70px;
-  font-weight: 700;
-  font-family: 'Inter', 'Poppins', 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
 }
 
 .tabs a {
@@ -45,15 +51,44 @@ header {
 }
 
 .tabs a:hover {
-  transform: scale(1.07);
   color: white;
-  opacity: 1;
-  font-size: 1.2rem;
+  border-bottom: 2px solid white;
+}
+
+.tabs a.active {
+  color: white;
+  border-bottom: 2px solid white;
+}
+
+.derecha {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.btn-accion {
+  background: transparent;
+  border: 2px solid var(--col-2);
+  color: var(--col-2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-accion:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+  color: white;
 }
 
 .perfil {
-  height: 44px;
-  width: 44px;
+  height: 40px;
+  width: 40px;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--col-2);
@@ -63,10 +98,11 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 
 .perfil:hover {
-  transform: scale(1.07);
   border-color: white;
   background: rgba(255, 255, 255, 0.2);
 }
@@ -76,4 +112,54 @@ header {
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .barra {
+    grid-template-columns: auto 1fr auto;
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  .tabs {
+    gap: 24px;
+  }
+
+  .tabs a {
+    font-size: 14px;
+  }
+
+  .logo img {
+    height: 24px;
+  }
+
+  .derecha {
+    gap: 12px;
+  }
+
+  .btn-accion {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .perfil {
+    height: 36px;
+    width: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs {
+    gap: 16px;
+  }
+
+  .tabs a {
+    font-size: 13px;
+  }
+
+  .btn-accion {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
 }

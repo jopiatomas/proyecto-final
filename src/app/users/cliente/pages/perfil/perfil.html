@@ -1,82 +1,196 @@
 <app-header></app-header>
 <div class="perfil-container">
   <div class="container">
-    <h2>Mi Perfil</h2>
-
-    <!--
-  @if (successMessage()) {
-  <div class="success-message">{{ successMessage() }}</div>
-  } @if (errorMessage()) {
-  <div class="error-message">{{ errorMessage() }}</div>
-  }
-  -->
-
-    <div class="perfil-content">
-      <form class="perfil-form">
-        <!--[formGroup]="perfilForm" (ngSubmit)="onSubmit()" -->
-        <div class="form-group">
-          <label>Nombre completo *</label>
-          <input type="text" formControlName="nombre" class="form-input" />
-          <!--@if (perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched) {
-        <span class="error-text">El nombre es requerido</span>
-        }
-        --></div>
-
-        <div class="form-group">
-          <label>Usuario *</label>
-          <input type="text" formControlName="usuario" class="form-input" />
-          <!--@if (perfilForm.get('usuario')?.invalid && perfilForm.get('usuario')?.touched) {
-        <span class="error-text">El usuario es requerido</span>
-        }-->
-        </div>
-
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" formControlName="email" class="form-input" />
-          <!--@if (perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched) {
-        <span class="error-text">Email inválido</span>
-        }-->
-        </div>
-
-        <div class="form-group">
-          <label>Teléfono</label>
-          <input type="tel" formControlName="telefono" class="form-input" />
-        </div>
-
-        <!--<button type="submit" [disabled]="perfilForm.invalid || loading()" class="btn-primary">
-        {{ loading() ? 'Guardando...' : 'Guardar Cambios' }}
-      </button>-->
-        <button type="submit" class="btn-primary">Guardando Cambios</button>
-      </form>
-
-      <div class="quick-links">
-        <h3>Accesos Rápidos</h3>
-        <button class="link-card">
-          <!--[routerLink]="['/cliente/direcciones']" -->
-          <span class="icon">📍</span>
-          <div>
-            <h4>Mis Direcciones</h4>
-            <p>Gestiona tus direcciones de entrega</p>
-          </div>
-        </button>
-        <button class="link-card">
-          <!--[routerLink]="['/cliente/metodos-pago']"-->
-          <span class="icon">💳</span>
-          <div>
-            <h4>Métodos de Pago</h4>
-            <p>Administra tus tarjetas</p>
-          </div>
-        </button>
-        <button class="link-card">
-          <!--[routerLink]="['/cliente/pedidos']" -->
-          <span class="icon">📦</span>
-          <div>
-            <h4>Mis Pedidos</h4>
-            <p>Ver historial de pedidos</p>
-          </div>
-        </button>
-      </div>
+    <div class="header-section">
+      <h2>Mi Perfil</h2>
+      @if (usuario()) {
+        <p class="welcome-text">Bienvenido, <strong>{{ usuario()!.nombre }}</strong></p>
+      }
     </div>
+
+    @if (successMessage()) {
+      <div class="success-message">{{ successMessage() }}</div>
+    }
+    @if (errorMessage()) {
+      <div class="error-message">{{ errorMessage() }}</div>
+    }
+
+    @if (loading()) {
+      <div class="loading-section">
+        <div class="loading-spinner"></div>
+        <p>Cargando datos del perfil...</p>
+      </div>
+    } @else {
+      <div class="perfil-content">
+        <form class="perfil-form" [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
+          <h3>Información Personal</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre completo *</label>
+              <input 
+                type="text" 
+                formControlName="nombre" 
+                class="form-input"
+                [class.error]="isFieldInvalid('nombre')"
+                placeholder="Ingresa tu nombre completo"
+                maxlength="50"
+              />
+              @if (perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched) {
+                <div class="form-error">
+                  @if (perfilForm.get('nombre')?.errors?.['required']) {
+                    El nombre es requerido
+                  }
+                  @if (perfilForm.get('nombre')?.errors?.['minlength']) {
+                    Mínimo 3 caracteres
+                  }
+                  @if (perfilForm.get('nombre')?.errors?.['maxlength']) {
+                    Máximo 50 caracteres
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Usuario *</label>
+              <input 
+                type="text" 
+                formControlName="usuario" 
+                class="form-input"
+                [class.error]="isFieldInvalid('usuario')"
+                placeholder="Nombre de usuario"
+                maxlength="18"
+              />
+              @if (perfilForm.get('usuario')?.invalid && perfilForm.get('usuario')?.touched) {
+                <div class="form-error">
+                  @if (perfilForm.get('usuario')?.errors?.['required']) {
+                    El usuario es requerido
+                  }
+                  @if (perfilForm.get('usuario')?.errors?.['minlength']) {
+                    Mínimo 3 caracteres
+                  }
+                  @if (perfilForm.get('usuario')?.errors?.['maxlength']) {
+                    Máximo 18 caracteres
+                  }
+                  @if (perfilForm.get('usuario')?.errors?.['pattern']) {
+                    Solo letras y números
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input 
+              type="email" 
+              formControlName="email" 
+              class="form-input"
+              [class.error]="isFieldInvalid('email')"
+              placeholder="tu@email.com"
+              maxlength="100"
+            />
+            @if (perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched) {
+              <div class="form-error">
+                @if (perfilForm.get('email')?.errors?.['required']) {
+                  El email es requerido
+                }
+                @if (perfilForm.get('email')?.errors?.['email']) {
+                  Email inválido
+                }
+                @if (perfilForm.get('email')?.errors?.['maxlength']) {
+                  Máximo 100 caracteres
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input 
+                type="tel" 
+                formControlName="telefono" 
+                class="form-input"
+                [class.error]="isFieldInvalid('telefono')"
+                placeholder="+54 11 1234-5678"
+                maxlength="20"
+              />
+              @if (perfilForm.get('telefono')?.invalid && perfilForm.get('telefono')?.touched) {
+                <div class="form-error">
+                  @if (perfilForm.get('telefono')?.errors?.['pattern']) {
+                    Formato de teléfono inválido
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Dirección</label>
+              <input 
+                type="text" 
+                formControlName="direccion" 
+                class="form-input"
+                [class.error]="isFieldInvalid('direccion')"
+                placeholder="Tu dirección principal"
+                maxlength="200"
+              />
+              @if (perfilForm.get('direccion')?.invalid && perfilForm.get('direccion')?.touched) {
+                <div class="form-error">
+                  @if (perfilForm.get('direccion')?.errors?.['maxlength']) {
+                    Máximo 200 caracteres
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              class="btn-primary"
+              [disabled]="loading()"
+            >
+              @if (loading()) {
+                <span class="btn-loading"></span>
+                Guardando...
+              } @else {
+                <span class="btn-icon"></span>
+                Guardar Cambios
+              }
+            </button>
+          </div>
+        </form>
+
+        <div class="quick-links">
+          <h3>Accesos Rápidos</h3>
+          <button class="link-card" (click)="navegarA('/cliente/direcciones')">
+            <span class="icon">📍</span>
+            <div>
+              <h4>Mis Direcciones</h4>
+              <p>Gestiona tus direcciones de entrega</p>
+            </div>
+            <span class="arrow">→</span>
+          </button>
+          <button class="link-card" (click)="navegarA('/cliente/metodos-pago')">
+            <span class="icon">💳</span>
+            <div>
+              <h4>Métodos de Pago</h4>
+              <p>Administra tus tarjetas</p>
+            </div>
+            <span class="arrow">→</span>
+          </button>
+          <button class="link-card" (click)="navegarA('/cliente/pedidos')">
+            <span class="icon">📦</span>
+            <div>
+              <h4>Mis Pedidos</h4>
+              <p>Ver historial de pedidos</p>
+            </div>
+            <span class="arrow">→</span>
+          </button>
+        </div>
+      </div>
+    }
   </div>
 </div>
 

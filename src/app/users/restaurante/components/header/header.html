@@ -1,3 +1,17 @@
 <header>
-  <img src="/img-quickish-header.png" alt="App Logo" class="logo" />
+  <div class="barra">
+    <a class="logo" routerLink="/restaurante">
+      <img src="/img-quickish-header.png" alt="Quickish" />
+    </a>
+
+    <nav class="tabs">
+      <a routerLink="/restaurante/menu" routerLinkActive="active">Menú</a>
+      <a routerLink="/restaurante/historial" routerLinkActive="active">Historial</a>
+      <a routerLink="/restaurante/resenias" routerLinkActive="active">Reseñas</a>
+    </nav>
+
+    <a class="perfil" routerLink="/restaurante/perfil" aria-label="Perfil">
+      <img src="/image.png" alt="Perfil del usuario" />
+    </a>
+  </div>
 </header>

@@ -50,6 +50,11 @@ export const routes: Routes = [
             (m) => m.RealizarResenia
           ),
       },
+      {
+        path: 'historial',
+        loadComponent: () =>
+          import('./users/cliente/pages/ver-pedidos/ver-pedidos').then((m) => m.VerPedidos),
+      },
     ],
   },
   {

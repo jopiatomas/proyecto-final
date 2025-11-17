@@ -1,2 +1,38 @@
 <app-header></app-header>
+<div class="content">
+  <div class="welcome-section">
+    <div class="welcome-container">
+      <h1>¡Bienvenido a Quickish!</h1>
+      <p>Encuentra los mejores restaurantes y haz tus pedidos de forma rápida y sencilla.</p>
+      
+      <div class="search-section">
+        <input type="text" placeholder="Buscar restaurantes..." class="search-input">
+        <button class="search-btn">Buscar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="restaurants-section">
+    <h2>Restaurantes Disponibles</h2>
+    
+    @if (loading) {
+      <div class="loading">
+        <p>Cargando restaurantes...</p>
+      </div>
+    } @else {
+      <div class="restaurants-grid">
+        @for (restaurante of restaurantes; track restaurante.id) {
+          <div class="restaurant-card" (click)="verRestaurante(restaurante)">
+            <h3>{{ restaurante.nombre }}</h3>
+            <p class="categoria">{{ restaurante.categoria }}</p>
+          </div>
+        } @empty {
+          <div class="no-restaurants">
+            <p>No hay restaurantes disponibles</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
 <app-footer></app-footer>
