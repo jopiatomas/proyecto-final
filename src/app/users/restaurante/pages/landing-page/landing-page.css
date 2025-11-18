@@ -422,7 +422,7 @@ h3 {
   .pedidos-section:not(:has(.pedido-details-panel)) .pedidos-list {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .pedidos-section {
     flex-direction: column;
   }
@@ -430,7 +430,7 @@ h3 {
   .pedido-details-panel {
     width: 100%;
   }
-  
+
   .pedidos-section:has(.pedido-details-panel) .pedidos-main {
     flex: 1;
     max-width: 100%;
@@ -449,7 +449,7 @@ h3 {
   h3 {
     font-size: 1rem;
   }
-  
+
   .pedidos-section:not(:has(.pedido-details-panel)) .pedidos-list,
   .pedidos-section:has(.pedido-details-panel) .pedidos-list {
     grid-template-columns: 1fr;
