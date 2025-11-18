@@ -1,0 +1,468 @@
+:root {
+  --col-1: rgb(74, 20, 140);
+  --col-2: rgb(235, 231, 231);
+  --col-3: rgb(15, 15, 15);
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 160px);
+  overflow: hidden;
+}
+
+.dashboard-container {
+  flex: 1;
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 100%;
+  margin: 0;
+  padding: 0 1.5rem;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+h2 {
+  color: var(--col-1);
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+h3 {
+  color: var(--col-3);
+  margin: 0 0 1.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.pedidos-section {
+  flex: 1;
+  display: flex;
+  gap: 1.5rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.pedidos-main {
+  flex: 1;
+  min-width: 0;
+  transition: all 0.3s ease;
+}
+
+.pedidos-section:has(.pedido-details-panel) .pedidos-main {
+  flex: 0 0 calc(100% - 470px);
+  max-width: calc(100% - 470px);
+}
+
+.pedidos-list {
+  display: grid;
+  gap: 1.2rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.pedidos-section:not(:has(.pedido-details-panel)) .pedidos-list {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.pedidos-section:has(.pedido-details-panel) .pedidos-list {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.pedidos-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.pedidos-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.pedidos-list::-webkit-scrollbar-thumb {
+  background: var(--col-1);
+  border-radius: 4px;
+}
+
+.pedidos-list::-webkit-scrollbar-thumb:hover {
+  background: rgb(94, 40, 160);
+}
+
+.pedido-item {
+  background: white;
+  border-radius: 8px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 8px rgba(74, 20, 140, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.pedido-item:hover {
+  box-shadow: 0 4px 16px rgba(74, 20, 140, 0.2);
+  transform: translateY(-2px);
+  border-color: rgba(74, 20, 140, 0.2);
+}
+
+.pedido-item.selected {
+  border-color: var(--col-1);
+  background-color: rgba(74, 20, 140, 0.05);
+}
+
+.pedido-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(74, 20, 140, 0.1);
+}
+
+.pedido-number {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--col-3);
+}
+
+.pedido-status {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-preparando {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.status-listo {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-enviado {
+  background-color: #ffe0b2;
+  color: #e65100;
+}
+
+.pedido-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pedido-info p {
+  margin: 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.pedido-info p strong {
+  color: var(--col-3);
+  font-weight: 600;
+}
+
+.pedido-details-panel {
+  width: 450px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(74, 20, 140, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--col-1), rgb(94, 40, 160));
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.panel-header h4 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.panel-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.panel-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background: var(--col-1);
+  border-radius: 4px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+  background: rgb(94, 40, 160);
+}
+
+.detail-section {
+  margin-bottom: 1.5rem;
+}
+
+.detail-section h5 {
+  color: var(--col-1);
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(74, 20, 140, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.detail-section p {
+  margin: 0.4rem 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.detail-section p strong {
+  color: var(--col-3);
+  font-weight: 600;
+}
+
+.items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.items-list li {
+  padding: 0.75rem;
+  background: linear-gradient(135deg, rgba(74, 20, 140, 0.05), rgba(74, 20, 140, 0.02));
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  color: #333;
+  font-size: 0.9rem;
+  border-left: 3px solid var(--col-1);
+}
+
+.total {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--col-1);
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 2px solid rgba(74, 20, 140, 0.2);
+}
+
+.status-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.status-btn {
+  padding: 0.85rem 1.2rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+}
+
+.status-btn:hover:not([disabled]) {
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.status-btn.status-preparando {
+  border-color: #2196f3;
+  color: #004085;
+}
+
+.status-btn.status-preparando.active {
+  background-color: #2196f3;
+  color: white;
+}
+
+.status-btn.status-preparando:hover:not([disabled]) {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.status-btn.status-listo {
+  border-color: #4caf50;
+  color: #155724;
+}
+
+.status-btn.status-listo.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-btn.status-listo:hover:not([disabled]) {
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.status-btn.status-enviado {
+  border-color: #ff9800;
+  color: #e65100;
+}
+
+.status-btn.status-enviado.active {
+  background-color: #ff9800;
+  color: white;
+}
+
+.status-btn.status-enviado:hover:not([disabled]) {
+  background-color: rgba(255, 152, 0, 0.1);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(74, 20, 140, 0.1);
+  border-top: 5px solid var(--col-1);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem;
+  color: #999;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 1400px) {
+  .pedidos-section:not(:has(.pedido-details-panel)) .pedidos-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .pedidos-section:not(:has(.pedido-details-panel)) .pedidos-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .pedidos-section {
+    flex-direction: column;
+  }
+
+  .pedido-details-panel {
+    width: 100%;
+  }
+  
+  .pedidos-section:has(.pedido-details-panel) .pedidos-main {
+    flex: 1;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+  
+  .pedidos-section:not(:has(.pedido-details-panel)) .pedidos-list,
+  .pedidos-section:has(.pedido-details-panel) .pedidos-list {
+    grid-template-columns: 1fr;
+  }
+
+  .pedido-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .pedidos-list {
+    gap: 0.75rem;
+  }
+}
+
