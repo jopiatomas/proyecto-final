@@ -24,6 +24,27 @@ export interface ProductoDetailDTO {
   stock: number;
 }
 
+// Pedidos
+export interface PedidoItemDTO {
+  id: number;
+  nombre: string;
+  cantidad: number;
+  precio: number;
+}
+
+export interface PedidoEnCursoDTO {
+  id: number;
+  fecha: string;
+  estado: string;
+  total: number;
+  cliente?: string;
+  direccion?: string;
+}
+
+export interface PedidoDetalleDTO extends PedidoEnCursoDTO {
+  items?: PedidoItemDTO[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -54,4 +75,27 @@ eliminarProducto(idProducto: number): Observable<string> {
 getProductoPorNombre(nombre: string): Observable<ProductoDetailDTO> {
   return this.http.get<ProductoDetailDTO>(`${this.apiUrl}/producto/${encodeURIComponent(nombre)}`);
 }
+
+// Pedidos - En curso
+getPedidosEnCurso(): Observable<PedidoEnCursoDTO[]> {
+  return this.http.get<PedidoEnCursoDTO[]>(`${this.apiUrl}/pedidosEnCurso`);
+}
+
+// Actualizar estado del pedido
+updateEstadoPedido(id: number, estado: string): Observable<PedidoDetalleDTO> {
+  // Backend espera los datos en la URL sin body y retorna detalle
+  return this.http.put<PedidoDetalleDTO>(`${this.apiUrl}/pedidos/${id}/${estado}`, {});
+}
+
+// Obtener historial de pedidos del restaurante
+getHistorialPedidos(): Observable<PedidoHistorialDTO[]> {
+  return this.http.get<PedidoHistorialDTO[]>(`${this.apiUrl}/historialPedidos`);
+}
+}
+
+export interface PedidoHistorialDTO {
+  id: number;
+  fecha: string; // LocalDateTime del backend
+  estado: string;
+  total: number;
 }

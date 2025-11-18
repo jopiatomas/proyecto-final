@@ -2,23 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
+import { ProductoService, PedidoEnCursoDTO, PedidoItemDTO } from '../../../../core/services/producto.service';
 
-interface PedidoItem {
-  id: number;
-  nombre: string;
-  cantidad: number;
-  precio: number;
-}
-
-interface Pedido {
-  id: number;
-  cliente: string;
-  direccion: string;
-  total: number;
-  fecha: string;
-  estado: 'pendiente' | 'preparando' | 'listo' | 'enviado' | 'entregado';
-  items: PedidoItem[];
-}
+type PedidoEstado = 'pendiente' | 'preparando' | 'listo' | 'enviado' | 'entregado';
 
 @Component({
   selector: 'app-landing-page',
@@ -28,67 +14,37 @@ interface Pedido {
 })
 export class LandingPage implements OnInit {
   loading = true;
-  pedidos: Pedido[] = [];
-  selectedPedido: Pedido | null = null;
+  errorMessage = '';
+  pedidos: (PedidoEnCursoDTO & { estado: PedidoEstado })[] = [];
+  selectedPedido: (PedidoEnCursoDTO & { estado: PedidoEstado; items?: PedidoItemDTO[] }) | null = null;
+  constructor(private productoService: ProductoService) {}
 
   ngOnInit() {
-    // Simular carga de datos
-    setTimeout(() => {
-      this.pedidos = [
-        {
-          id: 1001,
-          cliente: 'Juan Pérez',
-          direccion: 'Av. Principal 123, Depto 5A',
-          total: 4500,
-          fecha: '12/11/2025 14:30',
-          estado: 'pendiente',
-          items: [
-            { id: 1, nombre: 'Pizza Napolitana', cantidad: 1, precio: 2500 },
-            { id: 2, nombre: 'Coca Cola 1.5L', cantidad: 2, precio: 1000 }
-          ]
-        },
-        {
-          id: 1002,
-          cliente: 'María González',
-          direccion: 'Calle 45 #678',
-          total: 3200,
-          fecha: '12/11/2025 14:45',
-          estado: 'preparando',
-          items: [
-            { id: 3, nombre: 'Hamburguesa Completa', cantidad: 2, precio: 1600 }
-          ]
-        },
-        {
-          id: 1003,
-          cliente: 'Carlos Rodríguez',
-          direccion: 'Paseo del Sol 234',
-          total: 5800,
-          fecha: '12/11/2025 15:00',
-          estado: 'listo',
-          items: [
-            { id: 4, nombre: 'Milanesa con Papas', cantidad: 1, precio: 3500 },
-            { id: 5, nombre: 'Ensalada Caesar', cantidad: 1, precio: 1800 },
-            { id: 6, nombre: 'Agua Mineral', cantidad: 1, precio: 500 }
-          ]
-        },
-        {
-          id: 1004,
-          cliente: 'Ana Martínez',
-          direccion: 'Ruta 9 Km 5',
-          total: 2800,
-          fecha: '12/11/2025 15:15',
-          estado: 'enviado',
-          items: [
-            { id: 7, nombre: 'Empanadas (docena)', cantidad: 1, precio: 2800 }
-          ]
-        }
-      ];
-      this.loading = false;
-    }, 1000);
+    this.cargarPedidos();
   }
 
-  selectPedido(pedido: Pedido) {
-    this.selectedPedido = pedido;
+  cargarPedidos() {
+    this.loading = true;
+    this.errorMessage = '';
+    this.productoService.getPedidosEnCurso().subscribe({
+      next: (data) => {
+        this.pedidos = data.map(p => ({
+          ...p,
+          estado: (p.estado || '').toLowerCase() as PedidoEstado
+        }));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar pedidos:', err);
+        this.errorMessage = 'Error al cargar los pedidos en curso';
+        this.loading = false;
+      }
+    });
+  }
+
+  selectPedido(pedido: { id: number }) {
+    const base = this.pedidos.find(p => p.id === pedido.id);
+    if (base) this.selectedPedido = { ...base };
   }
 
   closePedido() {
@@ -96,23 +52,30 @@ export class LandingPage implements OnInit {
   }
 
   cambiarEstado(nuevoEstado: 'preparando' | 'listo' | 'enviado') {
-    if (this.selectedPedido) {
-      this.selectedPedido.estado = nuevoEstado;
-      const index = this.pedidos.findIndex(p => p.id === this.selectedPedido!.id);
-      if (index !== -1) {
-        this.pedidos[index].estado = nuevoEstado;
+    if (!this.selectedPedido) return;
+    const id = this.selectedPedido.id;
+    this.productoService.updateEstadoPedido(id, nuevoEstado).subscribe({
+      next: () => {
+        this.selectedPedido!.estado = nuevoEstado as PedidoEstado;
+        const idx = this.pedidos.findIndex(p => p.id === id);
+        if (idx !== -1) this.pedidos[idx].estado = nuevoEstado as PedidoEstado;
+      },
+      error: (err) => {
+        console.error('Error actualizando estado:', err);
+        alert('No se pudo actualizar el estado del pedido');
       }
-    }
+    });
   }
 
   getEstadoLabel(estado: string): string {
+    const key = (estado || '').toLowerCase();
     const labels: { [key: string]: string } = {
-      'pendiente': 'PENDIENTE',
-      'preparando': 'PREPARANDO',
-      'listo': 'LISTO',
-      'enviado': 'ENVIADO',
-      'entregado': 'ENTREGADO'
+      pendiente: 'PENDIENTE',
+      preparando: 'PREPARANDO',
+      listo: 'LISTO',
+      enviado: 'ENVIADO',
+      entregado: 'ENTREGADO'
     };
-    return labels[estado] || estado;
+    return labels[key] || key.toUpperCase();
   }
 }
