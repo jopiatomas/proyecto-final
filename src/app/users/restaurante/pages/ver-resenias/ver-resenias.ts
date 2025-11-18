@@ -27,11 +27,6 @@ export class VerResenias implements OnInit {
 
     this.reseniaService.getResenias().subscribe({
       next: (raw: ReseniaBackendDTO[]) => {
-        // Debug: payload crudo desde backend
-        console.log('[Reseñas][raw] Cantidad recibida:', raw?.length ?? 0);
-        console.table(raw, ['idCliente', 'resenia', 'puntuacion', 'fecha']);
-
-        // Normalizar datos a la forma usada por la UI
         const normalized: ReseniaDTO[] = (raw || []).map((r, idx) => ({
           id: idx,
           clienteNombre: r.clienteNombre ?? (r.idCliente != null ? `Cliente ${r.idCliente}` : 'Cliente'),
@@ -40,10 +35,6 @@ export class VerResenias implements OnInit {
           fecha: r.fecha
         }));
 
-        // Debug: datos normalizados
-        console.table(normalized, ['id', 'clienteNombre', 'comentario', 'calificacion', 'fecha']);
-
-        // Ordenar por fecha si existe, sino mantener orden original
         const sorted = [...normalized].sort((a, b) => {
           const ta = a.fecha ? new Date(a.fecha).getTime() : 0;
           const tb = b.fecha ? new Date(b.fecha).getTime() : 0;
@@ -52,9 +43,8 @@ export class VerResenias implements OnInit {
         this.resenias.set(sorted);
         this.isLoading.set(false);
       },
-      error: (err: any) => {
+      error: () => {
         this.errorMessage.set('No se pudieron cargar las reseñas. Intenta nuevamente.');
-        console.error('Error cargando reseñas', err);
         this.isLoading.set(false);
       }
     });

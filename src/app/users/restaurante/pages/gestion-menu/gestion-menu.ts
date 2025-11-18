@@ -179,13 +179,33 @@ export class GestionMenu implements OnInit {
   }
 
   guardarProducto() {
+    // Validaciones simples de formulario
+    this.error = '';
+    const nombre = (this.formulario.nombre || '').trim();
+    const caracteristicas = (this.formulario.caracteristicas || '').trim();
+    const precioNum = Number(this.formulario.precio);
+    const stockNum = Number(this.formulario.stock);
+
+    if (!nombre || !caracteristicas) {
+      this.error = 'Completa nombre y características';
+      return;
+    }
+    if (isNaN(precioNum) || precioNum < 0) {
+      this.error = 'Precio inválido';
+      return;
+    }
+    if (!Number.isFinite(stockNum) || stockNum < 0) {
+      this.error = 'Stock inválido';
+      return;
+    }
+
     if (this.isAdding) {
       // Crear nuevo producto
       const nuevoProducto: ProductoCrearDTO = {
-        nombre: this.formulario.nombre,
-        caracteristicas: this.formulario.caracteristicas,
-        precio: this.formulario.precio,
-        stock: this.formulario.stock
+        nombre,
+        caracteristicas,
+        precio: precioNum,
+        stock: stockNum
       };
 
       this.productoService.crearProducto(nuevoProducto).subscribe({
@@ -196,16 +216,17 @@ export class GestionMenu implements OnInit {
         },
         error: (err) => {
           console.error('Error al crear producto:', err);
-          this.error = 'Error al crear el producto';
+          const backendMsg = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message);
+          this.error = backendMsg || 'Error al crear el producto';
         }
       });
     } else if (this.isEditing && this.selectedProducto) {
       // Actualizar producto existente
       const productoModificado: ProductoModificarDTO = {
-        nombre: this.formulario.nombre,
-        caracteristicas: this.formulario.caracteristicas,
-        precio: this.formulario.precio,
-        stock: this.formulario.stock
+        nombre,
+        caracteristicas,
+        precio: precioNum,
+        stock: stockNum
       };
 
       this.productoService.modificarProducto(this.selectedProducto.id, productoModificado).subscribe({
@@ -216,7 +237,8 @@ export class GestionMenu implements OnInit {
         },
         error: (err) => {
           console.error('Error al actualizar producto:', err);
-          this.error = 'Error al actualizar el producto';
+          const backendMsg = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message);
+          this.error = backendMsg || 'Error al actualizar el producto';
         }
       });
     }
