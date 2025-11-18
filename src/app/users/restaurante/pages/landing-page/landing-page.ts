@@ -97,9 +97,7 @@ export class LandingPage implements OnInit {
 
   cambiarEstado(nuevoEstado: 'preparando' | 'listo' | 'enviado') {
     if (this.selectedPedido) {
-      // El restaurante no puede asignar 'pendiente' ni 'entregado'
       this.selectedPedido.estado = nuevoEstado;
-      // Actualizar el pedido en la lista
       const index = this.pedidos.findIndex(p => p.id === this.selectedPedido!.id);
       if (index !== -1) {
         this.pedidos[index].estado = nuevoEstado;
@@ -109,11 +107,11 @@ export class LandingPage implements OnInit {
 
   getEstadoLabel(estado: string): string {
     const labels: { [key: string]: string } = {
-      'pendiente': 'Pendiente',
-      'preparando': 'Preparando',
-      'listo': 'Listo',
-      'enviado': 'Enviado',
-      'entregado': 'Entregado'
+      'pendiente': 'PENDIENTE',
+      'preparando': 'PREPARANDO',
+      'listo': 'LISTO',
+      'enviado': 'ENVIADO',
+      'entregado': 'ENTREGADO'
     };
     return labels[estado] || estado;
   }
