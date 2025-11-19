@@ -33,11 +33,15 @@ export class LoginForm {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           this.loading.set(false);
+          console.log('Login exitoso');
         },
         error: (error) => {
           this.loading.set(false);
+          console.error('ERROR COMPLETO:', error);
+          console.error('Status:', error.status);
+          console.error('Message:', error.message);
+          console.error('Error:', error.error);
           this.errorMessage.set('Usuario o contraseña incorrectos');
-          console.error('Error en login:', error);
         }
       });
     }

@@ -1,1 +1,60 @@
-<app-header></app-header> <app-footer></app-footer>
+<app-header></app-header>
+
+<main>
+  <div class="container">
+    <h1>Historial de Pedidos</h1>
+    
+    <div class="contenido-principal">
+      <div class="pedidos-lista">
+        <div *ngFor="let pedido of pedidos()" 
+             class="pedido-card"
+             [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
+             (click)="verDetalle(pedido)">
+          <div class="pedido-header">
+            <h3>Pedido #{{ pedido.id }}</h3>
+            <span class="estado" [class]="pedido.estado.toLowerCase()">
+              {{ pedido.estado }}
+            </span>
+          </div>
+          <div class="pedido-info">
+            <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+            <p><strong>Total:</strong> ${{ pedido.total }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="pedidoSeleccionado()" class="detalles-pedido">
+        <div class="detalles-header">
+          <h2>Detalles del Pedido #{{ pedidoSeleccionado()!.id }}</h2>
+          <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
+        </div>
+        
+        <div class="detalles-contenido">
+          <div class="info-grupo">
+            <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha }}</p>
+            <p><strong>Estado:</strong> 
+              <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
+                {{ pedidoSeleccionado()!.estado }}
+              </span>
+            </p>
+          </div>
+
+          <div class="productos-lista">
+            <h3>Productos:</h3>
+            <ul>
+              <li *ngFor="let detalle of pedidoSeleccionado()!.detalles">
+                {{ detalle.cantidad }}x {{ detalle.nombreProducto }} - ${{ detalle.precioUnitario }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="total">
+            <h3>Total: ${{ pedidoSeleccionado()!.total }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
