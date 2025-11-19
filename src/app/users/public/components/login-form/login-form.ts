@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth-service';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-login-form',
@@ -36,8 +36,15 @@ export class LoginForm {
         },
         error: (error) => {
           this.loading.set(false);
-          this.errorMessage.set('Usuario o contraseña incorrectos');
           console.error('Error en login:', error);
+          
+          if (error.status === 401) {
+            this.errorMessage.set('Usuario o contraseña incorrectos');
+          } else if (error.status === 0) {
+            this.errorMessage.set('No se pudo conectar con el servidor');
+          } else {
+            this.errorMessage.set('Error al iniciar sesión. Inténtalo de nuevo.');
+          }
         }
       });
     }

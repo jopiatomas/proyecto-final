@@ -19,6 +19,9 @@
       </button>
       
       <a class="perfil" routerLink="/cliente/perfil" aria-label="Perfil">
+        @if (authService.currentUser(); as usuario) {
+          <span class="usuario-nombre">{{ usuario.nombre }}</span>
+        }
         <img src="/image.png" alt="Perfil del usuario" />
       </a>
     </div>

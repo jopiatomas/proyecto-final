@@ -24,7 +24,7 @@
         @for (restaurante of restaurantes; track restaurante.id) {
           <div class="restaurant-card" (click)="verRestaurante(restaurante)">
             <h3>{{ restaurante.nombre }}</h3>
-            <p class="categoria">{{ restaurante.categoria }}</p>
+            <p class="categoria">Restaurante</p>
           </div>
         } @empty {
           <div class="no-restaurants">

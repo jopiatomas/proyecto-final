@@ -3,15 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
-import { RestauranteService } from '../../../../services/restaurante.service';
-
-interface Restaurante {
-  id: number;
-  nombre: string;
-  categoria: string;
-  descripcion?: string;
-  direccion?: string;
-}
+import { ClienteService } from '../../../../services/cliente.service';
+import { RestauranteResumen } from '../../../../models/app.models';
 
 @Component({
   selector: 'app-landing-page',
@@ -20,10 +13,10 @@ interface Restaurante {
   styleUrl: './landing-page.css',
 })
 export class LandingPage implements OnInit {
-  private restauranteService = inject(RestauranteService);
+  private clienteService = inject(ClienteService);
   private router = inject(Router);
   
-  restaurantes: Restaurante[] = [];
+  restaurantes: RestauranteResumen[] = [];
   loading = false;
 
   ngOnInit() {
@@ -32,7 +25,7 @@ export class LandingPage implements OnInit {
 
   cargarRestaurantes() {
     this.loading = true;
-    this.restauranteService.getRestaurantes().subscribe({
+    this.clienteService.getRestaurantes().subscribe({
       next: (restaurantes) => {
         this.restaurantes = restaurantes;
         this.loading = false;
@@ -42,18 +35,19 @@ export class LandingPage implements OnInit {
         this.loading = false;
         // Datos de prueba si falla la conexión
         this.restaurantes = [
-          { id: 1, nombre: 'Pizza Palace', categoria: 'Pizza' },
-          { id: 2, nombre: 'Burger King', categoria: 'Hamburguesas' },
-          { id: 3, nombre: 'Sushi Zen', categoria: 'Sushi' },
-          { id: 4, nombre: 'Taco Bell', categoria: 'Mexicana' },
-          { id: 5, nombre: 'Pasta Roma', categoria: 'Italiana' },
-          { id: 6, nombre: 'Wok Express', categoria: 'China' }
+          { id: 1, nombre: 'Pizza Palace' },
+          { id: 2, nombre: 'Burger King' },
+          { id: 3, nombre: 'Sushi Zen' },
+          { id: 4, nombre: 'Taco Bell' },
+          { id: 5, nombre: 'Pasta Roma' },
+          { id: 6, nombre: 'Wok Express' }
         ];
       }
     });
   }
 
-  verRestaurante(restaurante: Restaurante) {
-    this.router.navigate(['/cliente/restaurante', restaurante.id]);
+  verRestaurante(restaurante: RestauranteResumen) {
+    // Navegamos usando el nombre del restaurante como parámetro
+    this.router.navigate(['/cliente/restaurante', encodeURIComponent(restaurante.nombre)]);
   }
 }

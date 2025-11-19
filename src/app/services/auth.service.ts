@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { from, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { LoginRequest, RegisterRequest, Usuario } from '../../models/app.models';
+import { LoginRequest, RegisterRequest, Usuario } from '../models/app.models';
 
 @Injectable({
   providedIn: 'root'
@@ -87,6 +87,7 @@ export class AuthService {
   private getUserFromToken(token: string): Usuario | null {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
+
       
       // Extraer rol del array roles que viene del backend
       let rol = 'CLIENTE';

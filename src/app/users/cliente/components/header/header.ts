@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth-service';
+import { AuthService } from '../../../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs';
 
@@ -16,7 +16,7 @@ export class Header implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    public authService: AuthService
   ) {}
 
   ngOnInit() {

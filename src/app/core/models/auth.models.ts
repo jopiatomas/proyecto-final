@@ -1,4 +1,3 @@
-
 export interface LoginRequest {
   usuario: string;
   contrasenia: string;
@@ -8,6 +7,7 @@ export interface RegisterRequest {
   usuario: string;
   contrasenia: string;
   nombre: string;
+  email: string;
   rol: string; 
 }
 
@@ -20,6 +20,7 @@ export interface Usuario {
   usuario: string;
   nombre: string;
   rol: 'CLIENTE' | 'RESTAURANTE' | 'ADMIN';
-  email?: string;
+  email: string;
   telefono?: string;
+  direccion?: string;
 }

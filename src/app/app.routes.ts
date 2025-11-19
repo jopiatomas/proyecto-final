@@ -37,7 +37,7 @@ export const routes: Routes = [
           import('./users/cliente/pages/metodos-pago/metodos-pago').then((m) => m.MetodosPago),
       },
       {
-        path: 'restaurante/:id',
+        path: 'restaurante/:nombre',
         loadComponent: () =>
           import('./users/cliente/pages/ver-restaurante/ver-restaurante').then(
             (m) => m.VerRestaurante
