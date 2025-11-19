@@ -1,2 +1,100 @@
 <app-header></app-header>
+
+<main class="content">
+  <div class="dashboard-container">
+    <div class="container">
+      <h2>Dashboard de Pedidos</h2>
+      <h3>Pedidos en curso</h3>
+
+      <div *ngIf="loading" class="loading">
+        <div class="spinner"></div>
+      </div>
+
+      <div *ngIf="!loading && pedidos.length === 0" class="empty">
+        No hay pedidos en este momento
+      </div>
+
+      <div *ngIf="!loading && pedidos.length > 0" class="pedidos-section">
+        <div class="pedidos-main">
+          <div class="pedidos-list">
+            <div
+              *ngFor="let pedido of pedidos"
+              class="pedido-item"
+              [class.selected]="selectedPedido?.id === pedido.id"
+              (click)="selectPedido(pedido)"
+            >
+              <div class="pedido-header">
+                <span class="pedido-number">Pedido #{{ pedido.id }}</span>
+                <span class="pedido-status status-{{ pedido.estado }}">
+                  {{ getEstadoLabel(pedido.estado) }}
+                </span>
+              </div>
+              <div class="pedido-info">
+                <p><strong>Cliente:</strong> {{ pedido.cliente }}</p>
+                <p><strong>Total:</strong> ${{ pedido.total }}</p>
+                <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="selectedPedido" class="pedido-details-panel">
+          <div class="panel-header">
+            <h4>Pedido #{{ selectedPedido.id }}</h4>
+            <button class="close-btn" (click)="closePedido()">&times;</button>
+          </div>
+          <div class="panel-content">
+            <div class="detail-section">
+              <h5>Información del Cliente</h5>
+              <p><strong>Nombre:</strong> {{ selectedPedido.cliente }}</p>
+              <p><strong>Dirección:</strong> {{ selectedPedido.direccion }}</p>
+              <p><strong>Fecha:</strong> {{ selectedPedido.fecha }}</p>
+            </div>
+
+            <div class="detail-section">
+              <h5>Items del Pedido</h5>
+              <ul class="items-list">
+                <li *ngFor="let item of selectedPedido.items">
+                  {{ item.cantidad }}x {{ item.nombre }} - ${{ item.precio }}
+                </li>
+              </ul>
+              <p class="total">Total: ${{ selectedPedido.total }}</p>
+            </div>
+
+            <div class="detail-section">
+              <h5>Estado del Pedido</h5>
+              <div class="status-controls">
+                <button
+                  class="status-btn status-preparando"
+                  [class.active]="selectedPedido.estado === 'preparando'"
+                  (click)="cambiarEstado('preparando')"
+                  [disabled]="selectedPedido.estado === 'entregado'"
+                >
+                  Preparando
+                </button>
+                <button
+                  class="status-btn status-listo"
+                  [class.active]="selectedPedido.estado === 'listo'"
+                  (click)="cambiarEstado('listo')"
+                  [disabled]="selectedPedido.estado === 'entregado'"
+                >
+                  Listo
+                </button>
+                <button
+                  class="status-btn status-enviado"
+                  [class.active]="selectedPedido.estado === 'enviado'"
+                  (click)="cambiarEstado('enviado')"
+                  [disabled]="selectedPedido.estado === 'entregado'"
+                >
+                  Enviado
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
 <app-footer></app-footer>

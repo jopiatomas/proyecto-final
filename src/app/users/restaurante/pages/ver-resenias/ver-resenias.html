@@ -1,2 +1,60 @@
 <app-header></app-header>
+
+<div class="content">
+	<div class="resenias-content">
+		<h1>Reseñas Recibidas</h1>
+
+		@if (errorMessage()) {
+			<div class="alert alert-error">{{ errorMessage() }}</div>
+		}
+
+		@if (isLoading()) {
+			<div class="loading">
+				<div class="spinner"></div>
+				<p>Cargando reseñas...</p>
+			</div>
+		}
+
+		@if (!isLoading() && resenias().length === 0) {
+			<div class="empty">
+				<img src="/image.png" alt="Sin reseñas" />
+				<h3>No tienes reseñas todavía</h3>
+				<p>Cuando tus clientes dejen sus comentarios, aparecerán aquí.</p>
+			</div>
+		}
+
+		@if (!isLoading() && resenias().length > 0) {
+			<div class="summary">
+				<span class="count-badge">{{ resenias().length }} reseñas</span>
+			</div>
+
+			<ul class="resenias-list">
+				@for (r of resenias(); track r.id) {
+					<li class="resenia-item">
+						<div class="resenia-header">
+							<div class="cliente">
+								<div class="avatar">{{ (r.clienteNombre || 'C').charAt(0) }}</div>
+								<div>
+									<h4>{{ r.clienteNombre || 'Cliente' }}</h4>
+									@if (r.fecha) {
+										<p class="fecha">{{ r.fecha | date: 'mediumDate' }}</p>
+									}
+								</div>
+							</div>
+							<div class="rating">
+								@for (s of getStarsArray(r.calificacion); track $index) {
+									<span class="star" [class.filled]="s === 1">★</span>
+								}
+								<span class="score">{{ r.calificacion }}/5</span>
+							</div>
+						</div>
+
+						<p class="comentario">{{ r.comentario }}</p>
+					</li>
+				}
+			</ul>
+		}
+	</div>
+</div>
+
 <app-footer></app-footer>

@@ -1,1 +1,108 @@
-<app-header></app-header> <app-footer></app-footer>
+<app-header></app-header>
+
+<main class="content">
+  <div class="historial-container">
+    <div class="container">
+      <h2>Historial de Pedidos</h2>
+      <h3>Pedidos completados</h3>
+
+      <div class="filtros-bar">
+        <div class="filtro-grupo">
+          <label>Buscar por ID</label>
+          <input
+            type="text"
+            placeholder="#ID del pedido"
+            [(ngModel)]="filtroId"
+            (ngModelChange)="aplicarFiltros()"
+          />
+        </div>
+        <div class="filtro-grupo">
+          <label>Estado</label>
+          <select [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltros()">
+            <option value="">Todos</option>
+            <option value="entregado">Entregado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+        <div class="filtro-grupo">
+          <label>Fecha desde</label>
+          <input
+            type="date"
+            [(ngModel)]="filtroFechaDesde"
+            (ngModelChange)="aplicarFiltros()"
+          />
+        </div>
+        <div class="filtro-grupo">
+          <label>Fecha hasta</label>
+          <input
+            type="date"
+            [(ngModel)]="filtroFechaHasta"
+            (ngModelChange)="aplicarFiltros()"
+          />
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="loading">
+        <div class="spinner"></div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="!loading && !errorMessage && pedidosFiltrados.length === 0" class="empty">
+        No hay pedidos en el historial
+      </div>
+
+      <div *ngIf="!loading && pedidosFiltrados.length > 0" class="pedidos-section">
+        <div class="pedidos-main">
+          <div class="pedidos-list">
+            <div
+              *ngFor="let pedido of pedidosFiltrados"
+              class="pedido-item"
+              [class.selected]="selectedPedido?.id === pedido.id"
+              (click)="selectPedido(pedido)"
+            >
+              <div class="pedido-header">
+                <span class="pedido-number">Pedido #{{ pedido.id }}</span>
+                <span class="pedido-status status-{{ (pedido.estado || '').toLowerCase() }}">
+                  {{ getEstadoLabel(pedido.estado) }}
+                </span>
+              </div>
+              <div class="pedido-info">
+                <p><strong>Total:</strong> ${{ pedido.total }}</p>
+                <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="selectedPedido" class="pedido-details-panel">
+          <div class="panel-header">
+            <h4>Pedido #{{ selectedPedido.id }}</h4>
+            <button class="close-btn" (click)="closePedido()">&times;</button>
+          </div>
+          <div class="panel-content">
+            <div class="detail-section">
+              <h5>Información del Pedido</h5>
+              <p><strong>ID:</strong> #{{ selectedPedido.id }}</p>
+              <p><strong>Fecha:</strong> {{ selectedPedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+              <p><strong>Total:</strong> ${{ selectedPedido.total }}</p>
+            </div>
+
+            <div class="detail-section">
+              <h5>Estado Final</h5>
+              <div class="estado-final">
+                <span class="pedido-status status-{{ selectedPedido.estado.toLowerCase() }}">
+                  {{ getEstadoLabel(selectedPedido.estado) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
