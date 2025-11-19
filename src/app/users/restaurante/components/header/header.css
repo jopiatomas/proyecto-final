@@ -81,39 +81,3 @@ header {
   object-fit: cover;
   border-radius: 50%;
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .barra {
-    grid-template-columns: auto 1fr auto;
-    padding: 0 16px;
-    gap: 16px;
-  }
-
-  .tabs {
-    gap: 24px;
-  }
-
-  .tabs a {
-    font-size: 14px;
-  }
-
-  .logo img {
-    height: 24px;
-  }
-
-  .perfil {
-    height: 36px;
-    width: 36px;
-  }
-}
-
-@media (max-width: 480px) {
-  .tabs {
-    gap: 16px;
-  }
-
-  .tabs a {
-    font-size: 13px;
-  }
-}

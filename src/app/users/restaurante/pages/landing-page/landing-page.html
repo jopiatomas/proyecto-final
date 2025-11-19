@@ -1,97 +1,85 @@
 <app-header></app-header>
 
-<main class="content">
-  <div class="dashboard-container">
-    <div class="container">
-      <h2>Dashboard de Pedidos</h2>
-      <h3>Pedidos en curso</h3>
-
-      <div *ngIf="loading" class="loading">
-        <div class="spinner"></div>
-      </div>
-
-      <div *ngIf="!loading && pedidos.length === 0" class="empty">
-        No hay pedidos en este momento
-      </div>
-
-      <div *ngIf="!loading && pedidos.length > 0" class="pedidos-section">
-        <div class="pedidos-main">
-          <div class="pedidos-list">
-            <div
-              *ngFor="let pedido of pedidos"
-              class="pedido-item"
-              [class.selected]="selectedPedido?.id === pedido.id"
-              (click)="selectPedido(pedido)"
-            >
-              <div class="pedido-header">
-                <span class="pedido-number">Pedido #{{ pedido.id }}</span>
-                <span class="pedido-status status-{{ pedido.estado }}">
-                  {{ getEstadoLabel(pedido.estado) }}
-                </span>
-              </div>
-              <div class="pedido-info">
-                <p><strong>Cliente:</strong> {{ pedido.cliente }}</p>
-                <p><strong>Total:</strong> ${{ pedido.total }}</p>
-                <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
-              </div>
-            </div>
+<main>
+  <div class="container">
+    <h1>Pedidos del Restaurante</h1>
+    
+    <div class="contenido-principal">
+      <div class="pedidos-lista">
+        <div *ngIf="pedidos().length === 0" class="mensaje-vacio">
+          <p>Aún no hay pedidos</p>
+        </div>
+        
+        <div *ngFor="let pedido of pedidos()" 
+             class="pedido-card"
+             [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
+             (click)="verDetalle(pedido)">
+          <div class="pedido-header">
+            <h3>Pedido #{{ pedido.id }}</h3>
+            <span class="estado" [class]="pedido.estado.toLowerCase()">
+              {{ pedido.estado }}
+            </span>
+          </div>
+          <div class="pedido-info">
+            <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+            <p><strong>Total:</strong> ${{ pedido.total }}</p>
           </div>
         </div>
+      </div>
 
-        <div *ngIf="selectedPedido" class="pedido-details-panel">
-          <div class="panel-header">
-            <h4>Pedido #{{ selectedPedido.id }}</h4>
-            <button class="close-btn" (click)="closePedido()">&times;</button>
-          </div>
-          <div class="panel-content">
-            <div class="detail-section">
-              <h5>Información del Cliente</h5>
-              <p><strong>Nombre:</strong> {{ selectedPedido.cliente }}</p>
-              <p><strong>Dirección:</strong> {{ selectedPedido.direccion }}</p>
-              <p><strong>Fecha:</strong> {{ selectedPedido.fecha }}</p>
-            </div>
-
-            <div class="detail-section">
-              <h5>Items del Pedido</h5>
-              <ul class="items-list">
-                <li *ngFor="let item of selectedPedido.items">
-                  {{ item.cantidad }}x {{ item.nombre }} - ${{ item.precio }}
-                </li>
-              </ul>
-              <p class="total">Total: ${{ selectedPedido.total }}</p>
-            </div>
-
-            <div class="detail-section">
-              <h5>Estado del Pedido</h5>
-              <div class="status-controls">
-                <button
-                  class="status-btn status-preparando"
-                  [class.active]="selectedPedido.estado === 'preparando'"
-                  (click)="cambiarEstado('preparando')"
-                  [disabled]="selectedPedido.estado === 'entregado'"
-                >
-                  Preparando
-                </button>
-                <button
-                  class="status-btn status-listo"
-                  [class.active]="selectedPedido.estado === 'listo'"
-                  (click)="cambiarEstado('listo')"
-                  [disabled]="selectedPedido.estado === 'entregado'"
-                >
-                  Listo
-                </button>
-                <button
-                  class="status-btn status-enviado"
-                  [class.active]="selectedPedido.estado === 'enviado'"
-                  (click)="cambiarEstado('enviado')"
-                  [disabled]="selectedPedido.estado === 'entregado'"
-                >
-                  Enviado
-                </button>
-              </div>
-            </div>
-          </div>
+      <div *ngIf="pedidoSeleccionado()" class="detalles-pedido">
+      <div class="detalles-header">
+        <h2>Detalles del Pedido #{{ pedidoSeleccionado()!.id }}</h2>
+        <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
+      </div>
+      
+      <div class="detalles-contenido">
+        <div class="info-grupo">
+          <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha }}</p>
+          <p><strong>Estado actual:</strong> 
+            <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
+              {{ pedidoSeleccionado()!.estado }}
+            </span>
+          </p>
         </div>
+
+        <div class="productos-lista">
+          <h3>Productos:</h3>
+          <ul>
+            <li *ngFor="let detalle of pedidoSeleccionado()!.detalles">
+              {{ detalle.cantidad }}x {{ detalle.nombreProducto }} - ${{ detalle.precioUnitario }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="total">
+          <h3>Total: ${{ pedidoSeleccionado()!.total }}</h3>
+        </div>
+
+        <div class="acciones">
+          <h3>Cambiar estado:</h3>
+          <button (click)="seleccionarEstado('PREPARACION')" 
+                  [class.seleccionado-estado]="nuevoEstado() === 'PREPARACION'"
+                  [disabled]="pedidoSeleccionado()!.estado === 'PREPARACION'">
+            En preparación
+          </button>
+          <button (click)="seleccionarEstado('ENVIADO')"
+                  [class.seleccionado-estado]="nuevoEstado() === 'ENVIADO'"
+                  [disabled]="pedidoSeleccionado()!.estado === 'ENVIADO'">
+            Enviado
+          </button>
+          <button (click)="seleccionarEstado('CANCELADO')"
+                  [class.seleccionado-estado]="nuevoEstado() === 'CANCELADO'">
+            Cancelado
+          </button>
+          
+          <button *ngIf="nuevoEstado()" 
+                  class="btn-confirmar" 
+                  (click)="confirmarCambio()">
+                Confirmar cambio
+          </button>
+        </div>
+      </div>
       </div>
     </div>
   </div>

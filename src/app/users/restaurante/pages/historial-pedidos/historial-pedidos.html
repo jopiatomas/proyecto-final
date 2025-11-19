@@ -1,103 +1,55 @@
 <app-header></app-header>
 
-<main class="content">
-  <div class="historial-container">
-    <div class="container">
-      <h2>Historial de Pedidos</h2>
-      <h3>Pedidos completados</h3>
-
-      <div class="filtros-bar">
-        <div class="filtro-grupo">
-          <label>Buscar por ID</label>
-          <input
-            type="text"
-            placeholder="#ID del pedido"
-            [(ngModel)]="filtroId"
-            (ngModelChange)="aplicarFiltros()"
-          />
-        </div>
-        <div class="filtro-grupo">
-          <label>Estado</label>
-          <select [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltros()">
-            <option value="">Todos</option>
-            <option value="entregado">Entregado</option>
-            <option value="cancelado">Cancelado</option>
-          </select>
-        </div>
-        <div class="filtro-grupo">
-          <label>Fecha desde</label>
-          <input
-            type="date"
-            [(ngModel)]="filtroFechaDesde"
-            (ngModelChange)="aplicarFiltros()"
-          />
-        </div>
-        <div class="filtro-grupo">
-          <label>Fecha hasta</label>
-          <input
-            type="date"
-            [(ngModel)]="filtroFechaHasta"
-            (ngModelChange)="aplicarFiltros()"
-          />
-        </div>
-      </div>
-
-      <div *ngIf="loading" class="loading">
-        <div class="spinner"></div>
-      </div>
-
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-
-      <div *ngIf="!loading && !errorMessage && pedidosFiltrados.length === 0" class="empty">
-        No hay pedidos en el historial
-      </div>
-
-      <div *ngIf="!loading && pedidosFiltrados.length > 0" class="pedidos-section">
-        <div class="pedidos-main">
-          <div class="pedidos-list">
-            <div
-              *ngFor="let pedido of pedidosFiltrados"
-              class="pedido-item"
-              [class.selected]="selectedPedido?.id === pedido.id"
-              (click)="selectPedido(pedido)"
-            >
-              <div class="pedido-header">
-                <span class="pedido-number">Pedido #{{ pedido.id }}</span>
-                <span class="pedido-status status-{{ (pedido.estado || '').toLowerCase() }}">
-                  {{ getEstadoLabel(pedido.estado) }}
-                </span>
-              </div>
-              <div class="pedido-info">
-                <p><strong>Total:</strong> ${{ pedido.total }}</p>
-                <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-              </div>
-            </div>
+<main>
+  <div class="container">
+    <h1>Historial de Pedidos</h1>
+    
+    <div class="contenido-principal">
+      <div class="pedidos-lista">
+        <div *ngFor="let pedido of pedidos()" 
+             class="pedido-card"
+             [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
+             (click)="verDetalle(pedido)">
+          <div class="pedido-header">
+            <h3>Pedido #{{ pedido.id }}</h3>
+            <span class="estado" [class]="pedido.estado.toLowerCase()">
+              {{ pedido.estado }}
+            </span>
+          </div>
+          <div class="pedido-info">
+            <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+            <p><strong>Total:</strong> ${{ pedido.total }}</p>
           </div>
         </div>
+      </div>
 
-        <div *ngIf="selectedPedido" class="pedido-details-panel">
-          <div class="panel-header">
-            <h4>Pedido #{{ selectedPedido.id }}</h4>
-            <button class="close-btn" (click)="closePedido()">&times;</button>
+      <div *ngIf="pedidoSeleccionado()" class="detalles-pedido">
+        <div class="detalles-header">
+          <h2>Detalles del Pedido #{{ pedidoSeleccionado()!.id }}</h2>
+          <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
+        </div>
+        
+        <div class="detalles-contenido">
+          <div class="info-grupo">
+            <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha }}</p>
+            <p><strong>Estado:</strong> 
+              <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
+                {{ pedidoSeleccionado()!.estado }}
+              </span>
+            </p>
           </div>
-          <div class="panel-content">
-            <div class="detail-section">
-              <h5>Información del Pedido</h5>
-              <p><strong>ID:</strong> #{{ selectedPedido.id }}</p>
-              <p><strong>Fecha:</strong> {{ selectedPedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-              <p><strong>Total:</strong> ${{ selectedPedido.total }}</p>
-            </div>
 
-            <div class="detail-section">
-              <h5>Estado Final</h5>
-              <div class="estado-final">
-                <span class="pedido-status status-{{ selectedPedido.estado.toLowerCase() }}">
-                  {{ getEstadoLabel(selectedPedido.estado) }}
-                </span>
-              </div>
-            </div>
+          <div class="productos-lista">
+            <h3>Productos:</h3>
+            <ul>
+              <li *ngFor="let detalle of pedidoSeleccionado()!.detalles">
+                {{ detalle.cantidad }}x {{ detalle.nombreProducto }} - ${{ detalle.precioUnitario }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="total">
+            <h3>Total: ${{ pedidoSeleccionado()!.total }}</h3>
           </div>
         </div>
       </div>

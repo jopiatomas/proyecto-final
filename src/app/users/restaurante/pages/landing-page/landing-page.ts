@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
-import { ProductoService, PedidoEnCursoDTO, PedidoItemDTO } from '../../../../core/services/producto.service';
-
-type PedidoEstado = 'pendiente' | 'preparando' | 'listo' | 'enviado' | 'entregado';
+import { RestauranteService, Pedido } from '../../../../core/services/restaurante.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -13,69 +11,67 @@ type PedidoEstado = 'pendiente' | 'preparando' | 'listo' | 'enviado' | 'entregad
   styleUrl: './landing-page.css',
 })
 export class LandingPage implements OnInit {
-  loading = true;
-  errorMessage = '';
-  pedidos: (PedidoEnCursoDTO & { estado: PedidoEstado })[] = [];
-  selectedPedido: (PedidoEnCursoDTO & { estado: PedidoEstado; items?: PedidoItemDTO[] }) | null = null;
-  constructor(private productoService: ProductoService) {}
+  pedidos = signal<Pedido[]>([]);
+  pedidoSeleccionado = signal<Pedido | null>(null);
+  nuevoEstado = signal<string | null>(null);
+
+  constructor(private restauranteService: RestauranteService) {}
 
   ngOnInit() {
     this.cargarPedidos();
   }
 
   cargarPedidos() {
-    this.loading = true;
-    this.errorMessage = '';
-    this.productoService.getPedidosEnCurso().subscribe({
-      next: (data) => {
-        this.pedidos = data.map(p => ({
-          ...p,
-          estado: (p.estado || '').toLowerCase() as PedidoEstado
-        }));
-        this.loading = false;
+    this.restauranteService.getPedidosEnCurso().subscribe({
+      next: (pedidos) => {
+        this.pedidos.set(pedidos);
       },
-      error: (err) => {
-        console.error('Error al cargar pedidos:', err);
-        this.errorMessage = 'Error al cargar los pedidos en curso';
-        this.loading = false;
+      error: (error) => {
+        console.error('Error al cargar pedidos:', error);
       }
     });
   }
 
-  selectPedido(pedido: { id: number }) {
-    const base = this.pedidos.find(p => p.id === pedido.id);
-    if (base) this.selectedPedido = { ...base };
+  verDetalle(pedido: Pedido) {
+    this.pedidoSeleccionado.set(pedido);
+    this.nuevoEstado.set(null);
   }
 
-  closePedido() {
-    this.selectedPedido = null;
+  cerrarDetalle() {
+    this.pedidoSeleccionado.set(null);
+    this.nuevoEstado.set(null);
   }
 
-  cambiarEstado(nuevoEstado: 'preparando' | 'listo' | 'enviado') {
-    if (!this.selectedPedido) return;
-    const id = this.selectedPedido.id;
-    this.productoService.updateEstadoPedido(id, nuevoEstado).subscribe({
-      next: () => {
-        this.selectedPedido!.estado = nuevoEstado as PedidoEstado;
-        const idx = this.pedidos.findIndex(p => p.id === id);
-        if (idx !== -1) this.pedidos[idx].estado = nuevoEstado as PedidoEstado;
-      },
-      error: (err) => {
-        console.error('Error actualizando estado:', err);
-        alert('No se pudo actualizar el estado del pedido');
-      }
-    });
+  seleccionarEstado(estado: string) {
+    this.nuevoEstado.set(estado);
   }
 
-  getEstadoLabel(estado: string): string {
-    const key = (estado || '').toLowerCase();
-    const labels: { [key: string]: string } = {
-      pendiente: 'PENDIENTE',
-      preparando: 'PREPARANDO',
-      listo: 'LISTO',
-      enviado: 'ENVIADO',
-      entregado: 'ENTREGADO'
-    };
-    return labels[key] || key.toUpperCase();
+  confirmarCambio() {
+    const pedido = this.pedidoSeleccionado();
+    const estado = this.nuevoEstado();
+    
+    if (pedido && estado) {
+      this.restauranteService.cambiarEstadoPedido(pedido.id, estado).subscribe({
+        next: (pedidoActualizado) => {
+          // Si el pedido cambió a CANCELADO o ENTREGADO, lo removemos de la lista
+          if (estado === 'CANCELADO' || estado === 'ENTREGADO') {
+            const pedidosActualizados = this.pedidos().filter(p => p.id !== pedido.id);
+            this.pedidos.set(pedidosActualizados);
+            this.cerrarDetalle();
+          } else {
+            // Si sigue en curso, actualizamos su estado
+            const pedidosActualizados = this.pedidos().map(p => 
+              p.id === pedido.id ? pedidoActualizado : p
+            );
+            this.pedidos.set(pedidosActualizados);
+            this.pedidoSeleccionado.set(pedidoActualizado);
+            this.nuevoEstado.set(null);
+          }
+        },
+        error: (error) => {
+          console.error('Error al cambiar estado:', error);
+        }
+      });
+    }
   }
 }
