@@ -71,6 +71,10 @@ export class RestauranteService {
     });
   }
 
+  getProductoPorNombre(nombre: string): Observable<ProductoDetailDTO> {
+    return this.http.get<ProductoDetailDTO>(`${this.apiUrl}/productos/${encodeURIComponent(nombre)}`);
+  }
+
   // ===== MÉTODOS DE PEDIDOS =====
 
   getPedidosEnCurso(): Observable<Pedido[]> {
