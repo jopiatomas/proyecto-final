@@ -3,9 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
-import { RestauranteService, ProductoCrearDTO, ProductoModificarDTO, ProductoDetailDTO } from '../../../../core/services/restaurante.service';
-import { forkJoin } from 'rxjs';
-import { RestauranteService, ProductoCrearDTO, ProductoModificarDTO, ProductoDetailDTO } from '../../../../services/restaurante.service';
+import { ProductoCrearDTO, ProductoDetailDTO, ProductoModificarDTO, RestauranteService } from '../../../../core/services/restaurante.service';
+
 
 interface Producto {
   id: number;
