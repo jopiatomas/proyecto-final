@@ -6,7 +6,11 @@ import {
   RestauranteDetail,
   ProductoResumen, 
   ReseniaCreate, 
-  ReseniaDetail 
+  ReseniaDetail,
+  PedidoCreate,
+  PedidoDetail,
+  DireccionDTO,
+  Tarjeta
 } from '../models/app.models';
 
 @Injectable({
@@ -50,6 +54,35 @@ export class ClienteService {
   getRestauranteByNombre(nombre: string): Observable<RestauranteDetail> {
     return this.http.get<RestauranteDetail>(`${this.baseUrl}/restaurante/${encodeURIComponent(nombre)}`, {
       headers: this.getAuthHeaders()
+    });
+  }
+
+  // POST /clientes/pedir - Crear nuevo pedido
+  crearPedido(pedido: PedidoCreate): Observable<PedidoDetail> {
+    return this.http.post<PedidoDetail>(`${this.baseUrl}/pedir`, pedido, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // GET /direcciones - Obtener direcciones del cliente
+  getDirecciones(): Observable<DireccionDTO[]> {
+    const token = localStorage.getItem('token');
+    return this.http.get<DireccionDTO[]>('http://localhost:8080/direcciones', {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      })
+    });
+  }
+
+  // GET /pagos - Obtener métodos de pago del cliente
+  getMetodosPago(): Observable<Tarjeta[]> {
+    const token = localStorage.getItem('token');
+    return this.http.get<Tarjeta[]>('http://localhost:8080/pagos', {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      })
     });
   }
 }

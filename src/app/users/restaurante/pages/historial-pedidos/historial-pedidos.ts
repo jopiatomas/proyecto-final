@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
@@ -11,10 +11,10 @@ import { RestauranteService, Pedido } from '../../../../core/services/restaurant
   styleUrl: './historial-pedidos.css',
 })
 export class HistorialPedidos implements OnInit {
+  private restauranteService = inject(RestauranteService);
+  
   pedidos = signal<Pedido[]>([]);
   pedidoSeleccionado = signal<Pedido | null>(null);
-
-  constructor(private restauranteService: RestauranteService) {}
 
   ngOnInit() {
     this.cargarHistorial();

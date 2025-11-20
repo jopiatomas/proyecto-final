@@ -101,3 +101,44 @@ export interface ReseniaDetail {
   nombreCliente: string;
   restauranteNombre: string;
 }
+
+// Interfaces para pedidos
+export interface PedidoCreate {
+  restauranteId: number;
+  direccionId: number;
+  pagoId: number;
+  detalles: DetallePedido[];
+}
+
+export interface DetallePedido {
+  productoId: number;
+  cantidad: number;
+}
+
+export interface PedidoDetail {
+  id: number;
+  restauranteNombre: string;
+  estado: string;
+  total: number;
+  fecha: string;
+  detalles: DetallePedido[];
+}
+
+// Interfaces para direcciones
+export interface DireccionDTO {
+  id: number;
+  calle: string;
+  numero: string;
+  ciudad: string;
+  codigoPostal: string;
+  referencia?: string;
+}
+
+// Interfaces para métodos de pago
+export interface Tarjeta {
+  id: number;
+  numeroTarjeta: string;
+  titular: string;
+  fechaVencimiento: string;
+  tipo: string;
+}

@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
-import { ProductoService, ProductoCrearDTO, ProductoModificarDTO, ProductoDetailDTO } from '../../../../core/services/producto.service';
 import { forkJoin } from 'rxjs';
+import { RestauranteService, ProductoCrearDTO, ProductoModificarDTO, ProductoDetailDTO } from '../../../../services/restaurante.service';
 
 interface Producto {
   id: number;
@@ -39,7 +39,7 @@ export class GestionMenu implements OnInit {
     stock: 0
   };
 
-  constructor(private productoService: ProductoService) {}
+  constructor(private restauranteService: RestauranteService) {}
 
   ngOnInit() {
     this.cargarProductos();
@@ -49,13 +49,13 @@ export class GestionMenu implements OnInit {
     this.loading = true;
     this.error = '';
 
-    this.productoService.getAllProductos().subscribe({
+    this.restauranteService.getAllProductos().subscribe({
       next: (resumenes: any[]) => {
         console.log('Productos recibidos del backend:', resumenes);
 
         // El endpoint de lista devuelve un Resumen (sin stock/caracteristicas).
         // Traemos el detalle por nombre para completar la info mostrada.
-        const detailRequests = (resumenes || []).map(r => this.productoService.getProductoPorNombre(r.nombre));
+        const detailRequests = (resumenes || []).map(r => this.restauranteService.getProductoPorNombre(r.nombre));
 
         if (detailRequests.length === 0) {
           this.productos = [];
@@ -85,7 +85,16 @@ export class GestionMenu implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar productos:', err);
-        this.error = 'Error al cargar los productos';
+        console.log('DEBUG - Status:', err.status, 'Error:', err.error, 'Tipo:', typeof err.error);
+        
+        // Si es error 400 y el mensaje es "No hay productos", mostrar productos de prueba sin error
+        if (err.status === 400 && err.error === 'No hay productos cargados actualmente') {
+          console.log('✅ Detectado error 400 sin productos, mostrando productos de prueba');
+          this.error = ''; // No mostrar error
+        } else {
+          console.log('❌ No coincide la condición, mostrando error');
+          this.error = 'Error al cargar los productos';
+        }
         this.loading = false;
         this.productos = [
       {
@@ -208,7 +217,7 @@ export class GestionMenu implements OnInit {
         stock: stockNum
       };
 
-      this.productoService.crearProducto(nuevoProducto).subscribe({
+      this.restauranteService.crearProducto(nuevoProducto).subscribe({
         next: (producto) => {
           console.log('Producto creado:', producto);
           this.cargarProductos();
@@ -229,7 +238,7 @@ export class GestionMenu implements OnInit {
         stock: stockNum
       };
 
-      this.productoService.modificarProducto(this.selectedProducto.id, productoModificado).subscribe({
+      this.restauranteService.modificarProducto(this.selectedProducto.id, productoModificado).subscribe({
         next: (producto) => {
           console.log('Producto actualizado:', producto);
           this.cargarProductos();
@@ -246,7 +255,7 @@ export class GestionMenu implements OnInit {
 
   eliminarProducto() {
     if (this.selectedProducto && confirm(`¿Estás seguro de eliminar "${this.selectedProducto.nombre}"?`)) {
-      this.productoService.eliminarProducto(this.selectedProducto.id).subscribe({
+      this.restauranteService.eliminarProducto(this.selectedProducto.id).subscribe({
         next: (mensaje) => {
           console.log(mensaje);
           this.cargarProductos();

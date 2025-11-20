@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// Interfaces para cuando implementemos funcionalidad de restaurante
+// Interfaces para funcionalidad de restaurante
 export interface RestauranteProfile {
   id: number;
   nombre: string;
@@ -11,6 +11,35 @@ export interface RestauranteProfile {
   direccion?: string;
   descripcion?: string;
   categoria?: string;
+}
+
+// Interfaces para productos
+export interface ProductoCrearDTO {
+  nombre: string;
+  caracteristicas: string;
+  precio: number;
+  stock: number;
+}
+
+export interface ProductoModificarDTO {
+  nombre: string;
+  caracteristicas: string;
+  precio: number;
+  stock: number;
+}
+
+export interface ProductoDetailDTO {
+  id: number;
+  nombre: string;
+  caracteristicas: string;
+  precio: number;
+  stock: number;
+}
+
+export interface ProductoResumenDTO {
+  id: number;
+  nombre: string;
+  precio: number;
 }
 
 // Interface para compatibilidad con código anterior (DEPRECATED)
@@ -42,27 +71,43 @@ export class RestauranteService {
     });
   }
 
-  // TODO: Implementar cuando tengamos los endpoints del backend para restaurantes
-  // Ejemplos de endpoints que probablemente necesitaremos:
-  
+  // Métodos de productos
+  getAllProductos(): Observable<ProductoResumenDTO[]> {
+    return this.http.get<ProductoResumenDTO[]>(`${this.baseUrl}/productos`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getProductoPorNombre(nombre: string): Observable<ProductoDetailDTO> {
+    const buscarDTO = { nombre: nombre };
+    return this.http.post<ProductoDetailDTO>(`${this.baseUrl}/productos/buscar`, buscarDTO, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  crearProducto(producto: ProductoCrearDTO): Observable<ProductoDetailDTO> {
+    return this.http.post<ProductoDetailDTO>(`${this.baseUrl}/productos`, producto, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  modificarProducto(id: number, producto: ProductoModificarDTO): Observable<ProductoDetailDTO> {
+    return this.http.put<ProductoDetailDTO>(`${this.baseUrl}/productos/${id}`, producto, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  eliminarProducto(id: number): Observable<string> {
+    return this.http.delete(`${this.baseUrl}/productos/${id}`, {
+      headers: this.getAuthHeaders(),
+      responseType: 'text'
+    });
+  }
+
+  // TODO: Implementar otros endpoints cuando sea necesario
   // GET /restaurantes/perfil - Obtener perfil del restaurante
-  // getPerfil(): Observable<RestauranteProfile> {
-  //   return this.http.get<RestauranteProfile>(`${this.baseUrl}/perfil`, {
-  //     headers: this.getAuthHeaders()
-  //   });
-  // }
-
   // PUT /restaurantes/perfil - Actualizar perfil del restaurante
-  // actualizarPerfil(datos: any): Observable<RestauranteProfile> {
-  //   return this.http.put<RestauranteProfile>(`${this.baseUrl}/perfil`, datos, {
-  //     headers: this.getAuthHeaders()
-  //   });
-  // }
-
   // GET /restaurantes/pedidos - Ver pedidos del restaurante
-  // POST /restaurantes/productos - Agregar producto al menú
-  // PUT /restaurantes/productos/{id} - Actualizar producto
-  // DELETE /restaurantes/productos/{id} - Eliminar producto
 
   // Método para compatibilidad con código anterior (DEPRECATED)
   getRestauranteById(id: number): Observable<Restaurante> {

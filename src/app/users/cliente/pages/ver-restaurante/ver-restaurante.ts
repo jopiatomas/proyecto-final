@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 import { ClienteService } from '../../../../services/cliente.service';
@@ -9,12 +10,22 @@ import {
   RestauranteResumen, 
   ProductoResumen, 
   ReseniaResumen, 
-  ReseniaCreate 
+  ReseniaCreate,
+  PedidoCreate,
+  DetallePedido,
+  DireccionDTO,
+  Tarjeta
 } from '../../../../models/app.models';
+
+// Interface para items del carrito
+interface CarritoItem {
+  producto: ProductoResumen;
+  cantidad: number;
+}
 
 @Component({
   selector: 'app-ver-restaurante',
-  imports: [Header, Footer, CommonModule, ReactiveFormsModule],
+  imports: [Header, Footer, CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './ver-restaurante.html',
   styleUrl: './ver-restaurante.css',
 })
@@ -37,6 +48,17 @@ export class VerRestaurante implements OnInit {
 
   // Array para mostrar estrellas
   estrellas = [1, 2, 3, 4, 5];
+
+  // Carrito de compras
+  carrito: CarritoItem[] = [];
+
+  // Modal de pedido
+  mostrarModalPedido = false;
+  direcciones: DireccionDTO[] = [];
+  metodosPago: Tarjeta[] = [];
+  direccionSeleccionada?: number;
+  metodoPagoSeleccionado?: number;
+  enviandoPedido = false;
 
   constructor() {
     this.reseniaForm = this.fb.group({
@@ -152,5 +174,147 @@ export class VerRestaurante implements OnInit {
 
   formatearPuntuacion(puntuacion: number): string {
     return puntuacion.toFixed(1);
+  }
+
+  // Métodos del carrito
+  agregarAlCarrito(producto: ProductoResumen) {
+    const itemExistente = this.carrito.find(item => item.producto.id === producto.id);
+    
+    if (itemExistente) {
+      itemExistente.cantidad++;
+    } else {
+      this.carrito.push({ producto, cantidad: 1 });
+    }
+  }
+
+  removerDelCarrito(productoId: number) {
+    const index = this.carrito.findIndex(item => item.producto.id === productoId);
+    if (index > -1) {
+      this.carrito.splice(index, 1);
+    }
+  }
+
+  aumentarCantidad(productoId: number) {
+    const item = this.carrito.find(item => item.producto.id === productoId);
+    if (item) {
+      item.cantidad++;
+    }
+  }
+
+  disminuirCantidad(productoId: number) {
+    const item = this.carrito.find(item => item.producto.id === productoId);
+    if (item && item.cantidad > 1) {
+      item.cantidad--;
+    } else if (item && item.cantidad === 1) {
+      this.removerDelCarrito(productoId);
+    }
+  }
+
+  calcularTotalCarrito(): number {
+    return this.carrito.reduce((total, item) => total + (item.producto.precio * item.cantidad), 0);
+  }
+
+  calcularCantidadTotalItems(): number {
+    return this.carrito.reduce((total, item) => total + item.cantidad, 0);
+  }
+
+  limpiarCarrito() {
+    this.carrito = [];
+  }
+
+  procesarPedido() {
+    if (this.carrito.length === 0) {
+      alert('El carrito está vacío');
+      return;
+    }
+    
+    // Abrir modal y cargar datos
+    this.mostrarModalPedido = true;
+    this.cargarDatosModal();
+  }
+
+  cargarDatosModal() {
+    // Cargar direcciones y métodos de pago en paralelo
+    this.clienteService.getDirecciones().subscribe({
+      next: (direcciones) => {
+        this.direcciones = direcciones;
+      },
+      error: (error) => {
+        console.error('Error cargando direcciones:', error);
+        alert('Error cargando direcciones. Por favor, intenta de nuevo.');
+      }
+    });
+
+    this.clienteService.getMetodosPago().subscribe({
+      next: (metodos) => {
+        this.metodosPago = metodos;
+      },
+      error: (error) => {
+        console.error('Error cargando métodos de pago:', error);
+        alert('Error cargando métodos de pago. Por favor, intenta de nuevo.');
+      }
+    });
+  }
+
+  cerrarModalPedido() {
+    this.mostrarModalPedido = false;
+    this.direccionSeleccionada = undefined;
+    this.metodoPagoSeleccionado = undefined;
+    this.enviandoPedido = false;
+  }
+
+  confirmarPedido() {
+    // Validaciones básicas
+    if (!this.direccionSeleccionada) {
+      alert('Por favor selecciona una dirección');
+      return;
+    }
+
+    if (!this.metodoPagoSeleccionado) {
+      alert('Por favor selecciona un método de pago');
+      return;
+    }
+
+    if (!this.restaurante) {
+      alert('Error: restaurante no encontrado');
+      return;
+    }
+
+    // Preparar datos del pedido
+    const detalles: DetallePedido[] = this.carrito.map(item => ({
+      productoId: item.producto.id,
+      cantidad: item.cantidad
+    }));
+
+    const pedido: PedidoCreate = {
+      restauranteId: this.restaurante.id,
+      direccionId: this.direccionSeleccionada,
+      pagoId: this.metodoPagoSeleccionado,
+      detalles: detalles
+    };
+
+    // Enviar pedido
+    this.enviandoPedido = true;
+    this.clienteService.crearPedido(pedido).subscribe({
+      next: (pedidoCreado) => {
+        // Éxito
+        alert(`¡Pedido realizado exitosamente!\nNúmero de pedido: ${pedidoCreado.id}\nTotal: ${this.formatearPrecio(this.calcularTotalCarrito())}`);
+        this.limpiarCarrito();
+        this.cerrarModalPedido();
+      },
+      error: (error) => {
+        console.error('Error creando pedido:', error);
+        this.enviandoPedido = false;
+        
+        // Manejo de errores más específico
+        if (error.status === 400) {
+          alert('Error en los datos del pedido. Por favor verifica la información.');
+        } else if (error.status === 401) {
+          alert('Error de autenticación. Por favor inicia sesión nuevamente.');
+        } else {
+          alert('Error creando el pedido. Por favor intenta de nuevo.');
+        }
+      }
+    });
   }
 }
