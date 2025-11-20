@@ -4,11 +4,9 @@ import { Observable } from 'rxjs';
 
 // Forma que llega desde el backend (según consola: idCliente, resenia, puntuacion)
 export interface ReseniaBackendDTO {
-  idCliente?: number;
-  resenia?: string;
-  puntuacion?: number; // 1-5
-  fecha?: string; // ISO string
-  clienteNombre?: string; // si en algún momento viene el nombre
+  idCliente: number;
+  resenia: string;
+  puntuacion: number;
 }
 
 // Forma normalizada para la UI
@@ -17,12 +15,11 @@ export interface ReseniaDTO {
   clienteNombre: string;
   comentario: string;
   calificacion: number; // 1-5
-  fecha?: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class ReseniaService {
-  private apiUrl = 'http://localhost:8080/restaurante';
+  private apiUrl = 'http://localhost:8080/restaurantes';
 
   constructor(private http: HttpClient) {}
 

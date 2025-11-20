@@ -10,8 +10,28 @@
       <a routerLink="/restaurante/historial" routerLinkActive="active">Historial de Pedidos</a>
     </nav>
 
-    <button class="perfil" aria-label="Perfil">
-      <img src="/image.png" alt="Perfil del usuario" />
-    </button>
+    <div class="perfil-container">
+      <button class="perfil" aria-label="Perfil" (click)="toggleDropdown()">
+        <img src="/image.png" alt="Perfil del usuario" />
+      </button>
+      
+      @if (dropdownOpen()) {
+        <div class="dropdown-menu">
+          <a routerLink="/restaurante/perfil" class="dropdown-item">
+            Mi Perfil
+          </a>
+          <a routerLink="/restaurante/direcciones" class="dropdown-item">
+            Direcciones
+          </a>
+          <a routerLink="/restaurante/balance" class="dropdown-item">
+            Balance
+          </a>
+          <div class="dropdown-divider"></div>
+          <button (click)="cerrarSesion()" class="dropdown-item logout">
+            Cerrar Sesión
+          </button>
+        </div>
+      }
+    </div>
   </div>
 </header>

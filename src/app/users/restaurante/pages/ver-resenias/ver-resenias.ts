@@ -29,21 +29,15 @@ export class VerResenias implements OnInit {
       next: (raw: ReseniaBackendDTO[]) => {
         const normalized: ReseniaDTO[] = (raw || []).map((r, idx) => ({
           id: idx,
-          clienteNombre: r.clienteNombre ?? (r.idCliente != null ? `Cliente ${r.idCliente}` : 'Cliente'),
-          comentario: r.resenia ?? '',
-          calificacion: r.puntuacion ?? 0,
-          fecha: r.fecha
+          clienteNombre: `Cliente ${r.idCliente}`,
+          comentario: r.resenia,
+          calificacion: r.puntuacion
         }));
 
-        const sorted = [...normalized].sort((a, b) => {
-          const ta = a.fecha ? new Date(a.fecha).getTime() : 0;
-          const tb = b.fecha ? new Date(b.fecha).getTime() : 0;
-          return tb - ta;
-        });
-        this.resenias.set(sorted);
+        this.resenias.set(normalized);
         this.isLoading.set(false);
       },
-      error: () => {
+      error: (err) => {
         this.errorMessage.set('No se pudieron cargar las reseñas. Intenta nuevamente.');
         this.isLoading.set(false);
       }
