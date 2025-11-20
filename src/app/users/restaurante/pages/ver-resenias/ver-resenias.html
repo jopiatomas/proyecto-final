@@ -33,13 +33,10 @@
 					<li class="resenia-item">
 						<div class="resenia-header">
 							<div class="cliente">
-								<div class="avatar">{{ (r.clienteNombre || 'C').charAt(0) }}</div>
-								<div>
-									<h4>{{ r.clienteNombre || 'Cliente' }}</h4>
-									@if (r.fecha) {
-										<p class="fecha">{{ r.fecha | date: 'mediumDate' }}</p>
-									}
-								</div>
+							<div class="avatar">{{ (r.clienteNombre || 'C').charAt(0) }}</div>
+							<div>
+								<h4>{{ r.clienteNombre }}</h4>
+							</div>
 							</div>
 							<div class="rating">
 								@for (s of getStarsArray(r.calificacion); track $index) {
