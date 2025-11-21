@@ -104,6 +104,40 @@ export class RestauranteService {
     });
   }
 
+  // Métodos de direcciones
+  getDirecciones(): Observable<any[]> {
+    return this.http.get<any[]>('http://localhost:8080/direcciones', {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  crearDireccion(direccion: any): Observable<any> {
+    return this.http.post<any>('http://localhost:8080/direcciones', direccion, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  modificarDireccion(id: number, direccion: any): Observable<any> {
+    return this.http.put<any>(`http://localhost:8080/direcciones/${id}`, direccion, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  eliminarDireccion(eliminarDTO: any): Observable<string> {
+    return this.http.delete(`http://localhost:8080/direcciones`, {
+      headers: this.getAuthHeaders(),
+      body: eliminarDTO,
+      responseType: 'text'
+    });
+  }
+
+  // Método de balance
+  getBalance(filtroDTO: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/balance`, filtroDTO, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
   // TODO: Implementar otros endpoints cuando sea necesario
   // GET /restaurantes/perfil - Obtener perfil del restaurante
   // PUT /restaurantes/perfil - Actualizar perfil del restaurante

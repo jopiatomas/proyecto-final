@@ -82,9 +82,14 @@
 
 .restaurants-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 25px;
   width: 100%;
+  justify-content: center;
+}
+
+.restaurants-grid:has(.no-restaurants) {
+  display: block;
 }
 
 .restaurant-card {
@@ -94,6 +99,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   text-align: center;
   cursor: pointer;
+  max-width: 400px;
 }
 
 .restaurant-card:hover {
@@ -127,4 +133,7 @@
   padding: 60px 20px;
   color: #999;
   font-size: 1.1rem;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 600px;
 }

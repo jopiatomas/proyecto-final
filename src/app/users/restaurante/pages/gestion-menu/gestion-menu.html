@@ -6,7 +6,6 @@
 
     <div class="menu-section">
       <div class="menu-main">
-        <!-- Barra de acciones -->
         <div class="actions-bar">
           <button class="btn-nuevo" (click)="nuevoProducto()">
             <span class="icon">+</span> Agregar Producto
@@ -19,7 +18,7 @@
                 type="text"
                 id="busqueda"
                 [(ngModel)]="filtroBusqueda"
-                (ngModelChange)="onBusquedaChange()"
+                (ngModelChange)="alCambiarBusqueda()"
                 placeholder="Nombre o características...">
             </div>
           </div>
@@ -27,24 +26,24 @@
 
         <h3>Productos ({{productosFiltrados.length}})</h3>
 
-        @if (loading) {
+        @if (cargando) {
           <div class="loading"><div class="spinner"></div></div>
         }
 
-        @if (!loading && error) {
+        @if (!cargando && error) {
           <p class="error-message">{{error}}</p>
         }
 
-        @if (!loading && productosFiltrados.length === 0) {
+        @if (!cargando && productosFiltrados.length === 0) {
           <p class="empty">No se encontraron productos</p>
         }
 
-        @if (!loading && productosFiltrados.length > 0) {
+        @if (!cargando && productosFiltrados.length > 0) {
           <div class="productos-list">
             @for (producto of productosFiltrados; track producto.id) {
               <div
                 class="producto-item"
-                [class.selected]="selectedProducto?.id === producto.id"
+                [class.selected]="productoSeleccionado?.id === producto.id"
                 [class.no-disponible]="producto.stock === 0"
                 (click)="seleccionarProducto(producto)">
                 <div class="producto-header">
@@ -65,11 +64,10 @@
         }
       </div>
 
-      <!-- Panel lateral para editar/agregar -->
-      @if (selectedProducto || isAdding) {
+      @if (productoSeleccionado || estaAgregando) {
         <div class="producto-form-panel">
           <div class="panel-header">
-            <h4>{{isAdding ? 'Nuevo Producto' : 'Editar Producto'}}</h4>
+            <h4>{{estaAgregando ? 'Nuevo Producto' : 'Editar Producto'}}</h4>
             <button class="close-btn" (click)="cerrarFormulario()">×</button>
           </div>
 
@@ -132,9 +130,9 @@
 
             <div class="form-actions">
               <button type="submit" class="btn-guardar">
-                {{isAdding ? 'Agregar Producto' : 'Guardar Cambios'}}
+                {{estaAgregando ? 'Agregar Producto' : 'Guardar Cambios'}}
               </button>
-              @if (isEditing) {
+              @if (estaEditando) {
                 <button type="button" class="btn-eliminar" (click)="eliminarProducto()">
                   Eliminar Producto
                 </button>

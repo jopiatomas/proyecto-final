@@ -2,30 +2,30 @@
 <div class="content">
   <div class="perfil-container">
     <h2>Mi Perfil</h2>
-    @if (usuario()) {
-      <p>Bienvenido, <strong>{{ usuario()!.nombreYapellido }}</strong></p>
+    @if (authService.currentUser(); as usuario) {
+      <p>Bienvenido, <strong>{{ usuario.nombre }}</strong></p>
     }
 
-    @if (loading()) {
+    @if (cargando()) {
       <div class="loading-section">
         <div class="loading-spinner"></div>
         <p>Cargando datos del perfil...</p>
       </div>
     } @else {
       <div class="perfil-content">
-        <form class="perfil-form" [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
-          <h3>Información Personal</h3>
+        <form class="perfil-form" [formGroup]="formularioPerfil" (ngSubmit)="alEnviar()">
+          <h3>Información del Restaurante</h3>
           
           <div class="form-row">
             <div class="form-group">
-              <label>Nombre completo *</label>
+              <label>Nombre del Restaurante *</label>
               <input 
                 type="text" 
                 formControlName="nombre" 
                 class="form-input"
-                placeholder="Ingresa tu nombre completo"
+                placeholder="Ingresa el nombre del restaurante"
               />
-              @if (perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched) {
+              @if (formularioPerfil.get('nombre')?.invalid && formularioPerfil.get('nombre')?.touched) {
                 <small style="color: red;">Nombre requerido (mínimo 3 caracteres)</small>
               }
             </div>
@@ -38,7 +38,7 @@
                 class="form-input"
                 placeholder="Nombre de usuario"
               />
-              @if (perfilForm.get('usuario')?.invalid && perfilForm.get('usuario')?.touched) {
+              @if (formularioPerfil.get('usuario')?.invalid && formularioPerfil.get('usuario')?.touched) {
                 <small style="color: red;">Usuario requerido (solo letras y números)</small>
               }
             </div>
@@ -52,7 +52,7 @@
               class="form-input"
               placeholder="tu@email.com"
             />
-            @if (perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched) {
+            @if (formularioPerfil.get('email')?.invalid && formularioPerfil.get('email')?.touched) {
               <small style="color: red;">Email requerido y válido</small>
             }
           </div>
@@ -65,7 +65,7 @@
               class="form-input"
               placeholder="Ingresa tu contraseña actual para verificar identidad"
             />
-            @if (perfilForm.get('contrasenia')?.invalid && perfilForm.get('contrasenia')?.touched) {
+            @if (formularioPerfil.get('contrasenia')?.invalid && formularioPerfil.get('contrasenia')?.touched) {
               <small style="color: red;">Contraseña requerida (mínimo 6 caracteres)</small>
             }
           </div>
@@ -74,9 +74,9 @@
             <button 
               type="submit" 
               class="btn-primary"
-              [disabled]="loading()"
+              [disabled]="cargando()"
             >
-              @if (loading()) {
+              @if (cargando()) {
                 Guardando...
               } @else {
                 Guardar Cambios
@@ -87,17 +87,17 @@
 
         <div class="quick-links">
           <h3>Accesos Rápidos</h3>
-          <button class="link-card" (click)="navegarA('/cliente/direcciones')">
+          <button class="link-card" (click)="navegarA('/restaurante/balance')">
             <div>
-              <h4>Mis Direcciones</h4>
-              <p>Gestiona tus direcciones de entrega</p>
+              <h4>Balance</h4>
+              <p>Ver ingresos y estadísticas</p>
             </div>
             <span class="flecha">→</span>
           </button>
-          <button class="link-card" (click)="navegarA('/cliente/metodos-pago')">
+          <button class="link-card" (click)="navegarA('/restaurante/direcciones')">
             <div>
-              <h4>Métodos de Pago</h4>
-              <p>Administra tus tarjetas</p>
+              <h4>Direcciones</h4>
+              <p>Gestiona la ubicación del restaurante</p>
             </div>
             <span class="flecha">→</span>
           </button>

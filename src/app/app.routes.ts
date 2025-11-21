@@ -80,7 +80,17 @@ export const routes: Routes = [
       {
         path: 'perfil',
         loadComponent: () =>
-          import('./users/restaurante/pages/ver-perfil/ver-perfil').then((m) => m.VerPerfil),
+          import('./users/restaurante/pages/ver-perfil/perfil').then((m) => m.Perfil),
+      },
+      {
+        path: 'direcciones',
+        loadComponent: () =>
+          import('./users/restaurante/pages/direcciones/direcciones').then((m) => m.Direcciones),
+      },
+      {
+        path: 'balance',
+        loadComponent: () =>
+          import('./users/restaurante/pages/balance/balance').then((m) => m.Balance),
       },
       {
         path: 'resenias',

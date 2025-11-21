@@ -11,8 +11,8 @@ import { ReseniaService, ReseniaDTO, ReseniaBackendDTO } from '../../../../core/
   styleUrl: './ver-resenias.css',
 })
 export class VerResenias implements OnInit {
-  isLoading = signal<boolean>(false);
-  errorMessage = signal<string>('');
+  estaCargando = signal<boolean>(false);
+  mensajeError = signal<string>('');
   resenias = signal<ReseniaDTO[]>([]);
 
   constructor(private reseniaService: ReseniaService) {}
@@ -22,29 +22,29 @@ export class VerResenias implements OnInit {
   }
 
   cargarResenias(): void {
-    this.isLoading.set(true);
-    this.errorMessage.set('');
+    this.estaCargando.set(true);
+    this.mensajeError.set('');
 
     this.reseniaService.getResenias().subscribe({
-      next: (raw: ReseniaBackendDTO[]) => {
-        const normalized: ReseniaDTO[] = (raw || []).map((r, idx) => ({
+      next: (datos: ReseniaBackendDTO[]) => {
+        const normalizadas: ReseniaDTO[] = (datos || []).map((r, idx) => ({
           id: idx,
           clienteNombre: `Cliente ${r.idCliente}`,
           comentario: r.resenia,
           calificacion: r.puntuacion
         }));
 
-        this.resenias.set(normalized);
-        this.isLoading.set(false);
+        this.resenias.set(normalizadas);
+        this.estaCargando.set(false);
       },
       error: (err) => {
-        this.errorMessage.set('No se pudieron cargar las reseñas. Intenta nuevamente.');
-        this.isLoading.set(false);
+        this.mensajeError.set('No se pudieron cargar las reseñas. Intenta nuevamente.');
+        this.estaCargando.set(false);
       }
     });
   }
 
-  getStarsArray(rating: number): number[] {
-    return Array.from({ length: 5 }, (_, i) => i < Math.round(rating) ? 1 : 0);
+  obtenerArregloEstrellas(calificacion: number): number[] {
+    return Array.from({ length: 5 }, (_, i) => i < Math.round(calificacion) ? 1 : 0);
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
@@ -8,7 +9,7 @@ import { RestauranteResumen } from '../../../../models/app.models';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [Header, Footer, CommonModule],
+  imports: [Header, Footer, CommonModule, FormsModule],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
 })
@@ -18,9 +19,21 @@ export class LandingPage implements OnInit {
   
   restaurantes: RestauranteResumen[] = [];
   loading = false;
+  terminoBusqueda = '';
 
   ngOnInit() {
     this.cargarRestaurantes();
+  }
+
+  get restaurantesFiltrados(): RestauranteResumen[] {
+    if (!this.terminoBusqueda.trim()) {
+      return this.restaurantes;
+    }
+    
+    const termino = this.terminoBusqueda.toLowerCase().trim();
+    return this.restaurantes.filter(restaurante => 
+      restaurante.nombre.toLowerCase().includes(termino)
+    );
   }
 
   cargarRestaurantes() {
