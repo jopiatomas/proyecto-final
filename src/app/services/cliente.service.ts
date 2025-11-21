@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { 
   RestauranteResumen, 
   RestauranteDetail,
@@ -11,7 +12,8 @@ import {
   PedidoDetailDTO,
   PedidoResumenDTO,
   DireccionDTO,
-  Tarjeta
+  Tarjeta,
+  TarjetaRequest
 } from '../models/app.models';
 
 @Injectable({
@@ -67,23 +69,73 @@ export class ClienteService {
 
   // GET /direcciones - Obtener direcciones del cliente
   getDirecciones(): Observable<DireccionDTO[]> {
-    const token = localStorage.getItem('token');
     return this.http.get<DireccionDTO[]>('http://localhost:8080/direcciones', {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      })
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // POST /direcciones - Crear nueva dirección
+  crearDireccion(direccion: Omit<DireccionDTO, 'id'>): Observable<DireccionDTO> {
+    return this.http.post<DireccionDTO>('http://localhost:8080/direcciones', direccion, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // PUT /direcciones/{id} - Modificar dirección existente
+  modificarDireccion(id: number, direccion: Omit<DireccionDTO, 'id'>): Observable<DireccionDTO> {
+    return this.http.put<DireccionDTO>(`http://localhost:8080/direcciones/${id}`, direccion, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // DELETE /direcciones - Eliminar dirección (requiere DireccionEliminarDTO en body)
+  eliminarDireccion(direccionEliminar: { id: number; direccion?: string; codigoPostal?: string }): Observable<void> {
+    return this.http.delete<void>('http://localhost:8080/direcciones', {
+      headers: this.getAuthHeaders(),
+      body: direccionEliminar
     });
   }
 
   // GET /pagos - Obtener métodos de pago del cliente
   getMetodosPago(): Observable<Tarjeta[]> {
-    const token = localStorage.getItem('token');
-    return this.http.get<Tarjeta[]>('http://localhost:8080/pagos', {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+    return this.http.get('http://localhost:8080/pagos', {
+      headers: this.getAuthHeaders(),
+      responseType: 'text'
+    }).pipe(
+      map((response: any) => {
+        try {
+          // Intentar parsear el JSON manualmente
+          const cleanResponse = response.trim();
+          // Buscar el primer [ y el último ] válido
+          const firstBracket = cleanResponse.indexOf('[');
+          const lastBracket = cleanResponse.lastIndexOf(']');
+          
+          if (firstBracket !== -1 && lastBracket !== -1) {
+            const jsonString = cleanResponse.substring(firstBracket, lastBracket + 1);
+            return JSON.parse(jsonString);
+          }
+          
+          return JSON.parse(cleanResponse);
+        } catch (e) {
+          console.error('Error parsing response:', e);
+          console.error('Response text:', response);
+          return [];
+        }
       })
+    );
+  }
+
+  // POST /pagos - Agregar nuevo método de pago
+  agregarMetodoPago(tarjeta: TarjetaRequest): Observable<Tarjeta> {
+    return this.http.post<Tarjeta>('http://localhost:8080/pagos', tarjeta, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // DELETE /pagos/{id-pago} - Eliminar método de pago
+  eliminarMetodoPago(idPago: number): Observable<void> {
+    return this.http.delete<void>(`http://localhost:8080/pagos/${idPago}`, {
+      headers: this.getAuthHeaders()
     });
   }
 

@@ -23,6 +23,7 @@ export interface Usuario {
   email: string;
   telefono?: string;
   direccion?: string;
+  exp?: number; // Timestamp de expiración del JWT
 }
 
 // Interfaces para perfil de usuario (ClienteDetailDto del backend)
@@ -141,18 +142,25 @@ export interface PedidoDetailDTO {
 // Interfaces para direcciones
 export interface DireccionDTO {
   id: number;
-  calle: string;
-  numero: string;
+  direccion: string;  // Dirección completa (calle y número)
   ciudad: string;
+  pais: string;
   codigoPostal: string;
-  referencia?: string;
 }
 
 // Interfaces para métodos de pago
 export interface Tarjeta {
   id: number;
-  numeroTarjeta: string;
+  tipo: string;  // MetodoDePago (CREDITO, DEBITO, etc.)
+  numero: string;  // Número enmascarado que devuelve el backend
   titular: string;
-  fechaVencimiento: string;
+  vencimiento: string;  // MM/YY
+}
+
+export interface TarjetaRequest {
   tipo: string;
+  numero: string;  // 16 dígitos
+  titular: string;
+  vencimiento: string;  // MM/YY
+  cvv: string;  // 3 dígitos
 }
