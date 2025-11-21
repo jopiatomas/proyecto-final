@@ -162,10 +162,6 @@ export class VerRestaurante implements OnInit {
     return `$${precio.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
 
-  getEstrellaIcon(puntuacion: number, estrella: number): string {
-    return estrella <= puntuacion ? '★' : '☆';
-  }
-
   calcularPromedioPuntuacion(): number {
     if (this.resenias.length === 0) return 0;
     const suma = this.resenias.reduce((acc, resenia) => acc + resenia.calificacion, 0);
@@ -264,7 +260,7 @@ export class VerRestaurante implements OnInit {
   }
 
   confirmarPedido() {
-    // Validaciones básicas
+    // Validaciones
     if (!this.direccionSeleccionada) {
       alert('Por favor selecciona una dirección');
       return;
