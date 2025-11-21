@@ -17,16 +17,16 @@ export class Perfil implements OnInit {
   private router = inject(Router);
   public authService = inject(AuthService);
   
-  perfilForm!: FormGroup;
-  loading = signal(false);
+  formularioPerfil!: FormGroup;
+  cargando = signal(false);
 
   ngOnInit() {
-    this.initForm();
+    this.inicializarFormulario();
     this.cargarDatosUsuario();
   }
 
-  initForm() {
-    this.perfilForm = this.fb.nonNullable.group({
+  inicializarFormulario() {
+    this.formularioPerfil = this.fb.nonNullable.group({
       nombre: ['', [
         Validators.required, 
         Validators.minLength(3), 
@@ -51,21 +51,21 @@ export class Perfil implements OnInit {
   }
 
   cargarDatosUsuario() {
-    this.loading.set(true);
+    this.cargando.set(true);
     
-    const currentUser = this.authService.currentUser();
-    if (currentUser) {
-      this.perfilForm.patchValue({
-        nombre: currentUser.nombre,
-        usuario: currentUser.usuario,
-        email: currentUser.email
+    const usuarioActual = this.authService.currentUser();
+    if (usuarioActual) {
+      this.formularioPerfil.patchValue({
+        nombre: usuarioActual.nombre,
+        usuario: usuarioActual.usuario,
+        email: usuarioActual.email
       });
     }
-    this.loading.set(false);
+    this.cargando.set(false);
   }
 
-  onSubmit() {
-    if (this.perfilForm.valid) {
+  alEnviar() {
+    if (this.formularioPerfil.valid) {
       const confirmacion = confirm('¿Estás seguro de que deseas actualizar tu perfil?');
       
       if (confirmacion) {
@@ -77,15 +77,15 @@ export class Perfil implements OnInit {
   }
 
   actualizarPerfil() {
-    this.loading.set(true);
+    this.cargando.set(true);
     const datosActualizados = {
-      nombre: this.perfilForm.value.nombre,
-      email: this.perfilForm.value.email,
-      contraseniaActual: this.perfilForm.value.contrasenia
+      nombre: this.formularioPerfil.value.nombre,
+      email: this.formularioPerfil.value.email,
+      contraseniaActual: this.formularioPerfil.value.contrasenia
     };
     
     setTimeout(() => {
-      this.loading.set(false);
+      this.cargando.set(false);
       alert('Perfil actualizado exitosamente');
       this.cargarDatosUsuario();
     }, 1000);

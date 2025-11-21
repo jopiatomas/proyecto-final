@@ -4,18 +4,18 @@
 	<div class="resenias-content">
 		<h1>Reseñas Recibidas</h1>
 
-		@if (errorMessage()) {
-			<div class="alert alert-error">{{ errorMessage() }}</div>
+		@if (mensajeError()) {
+			<div class="alert alert-error">{{ mensajeError() }}</div>
 		}
 
-		@if (isLoading()) {
+		@if (estaCargando()) {
 			<div class="loading">
 				<div class="spinner"></div>
 				<p>Cargando reseñas...</p>
 			</div>
 		}
 
-		@if (!isLoading() && resenias().length === 0) {
+		@if (!estaCargando() && resenias().length === 0) {
 			<div class="empty">
 				<img src="/image.png" alt="Sin reseñas" />
 				<h3>No tienes reseñas todavía</h3>
@@ -23,7 +23,7 @@
 			</div>
 		}
 
-		@if (!isLoading() && resenias().length > 0) {
+		@if (!estaCargando() && resenias().length > 0) {
 			<div class="summary">
 				<span class="count-badge">{{ resenias().length }} reseñas</span>
 			</div>
@@ -39,7 +39,7 @@
 							</div>
 							</div>
 							<div class="rating">
-								@for (s of getStarsArray(r.calificacion); track $index) {
+								@for (s of obtenerArregloEstrellas(r.calificacion); track $index) {
 									<span class="star" [class.filled]="s === 1">★</span>
 								}
 								<span class="score">{{ r.calificacion }}/5</span>

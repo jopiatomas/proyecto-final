@@ -5,9 +5,8 @@
     <h2>Balance</h2>
 
     <div class="balance-section">
-      <!-- Tarjeta principal de balance -->
       <div class="balance-card">
-        @if (loading()) {
+        @if (cargando()) {
           <div class="loading"><div class="spinner"></div></div>
         } @else {
           <div class="balance-main">
@@ -31,7 +30,6 @@
         }
       </div>
 
-      <!-- Filtros -->
       <div class="filtros-section">
         <h3>Filtrar Balance</h3>
         
@@ -42,7 +40,7 @@
               name="filtroTipo" 
               value="dia" 
               [(ngModel)]="filtroTipo"
-              (change)="onFiltroChange()"
+              (change)="alCambiarFiltro()"
             />
             <span>Por Día</span>
           </label>
@@ -52,7 +50,7 @@
               name="filtroTipo" 
               value="mes" 
               [(ngModel)]="filtroTipo"
-              (change)="onFiltroChange()"
+              (change)="alCambiarFiltro()"
             />
             <span>Por Mes</span>
           </label>
@@ -65,7 +63,7 @@
               type="date" 
               id="fecha"
               [(ngModel)]="fechaSeleccionada"
-              (change)="onFechaChange()"
+              (change)="alCambiarFecha()"
               class="date-input"
             />
           </div>
@@ -78,7 +76,7 @@
               type="month" 
               id="mes"
               [(ngModel)]="mesSeleccionado"
-              (change)="onMesChange()"
+              (change)="alCambiarMes()"
               class="date-input"
             />
           </div>

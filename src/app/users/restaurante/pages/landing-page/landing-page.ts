@@ -13,7 +13,7 @@ import { RestauranteService, Pedido } from '../../../../core/services/restaurant
 export class LandingPage implements OnInit {
   pedidos = signal<Pedido[]>([]);
   pedidoSeleccionado = signal<Pedido | null>(null);
-  nuevoEstado = signal<string | null>(null);
+  estadoNuevo = signal<string | null>(null);
 
   constructor(private restauranteService: RestauranteService) {}
 
@@ -34,38 +34,36 @@ export class LandingPage implements OnInit {
 
   verDetalle(pedido: Pedido) {
     this.pedidoSeleccionado.set(pedido);
-    this.nuevoEstado.set(null);
+    this.estadoNuevo.set(null);
   }
 
   cerrarDetalle() {
     this.pedidoSeleccionado.set(null);
-    this.nuevoEstado.set(null);
+    this.estadoNuevo.set(null);
   }
 
   seleccionarEstado(estado: string) {
-    this.nuevoEstado.set(estado);
+    this.estadoNuevo.set(estado);
   }
 
   confirmarCambio() {
     const pedido = this.pedidoSeleccionado();
-    const estado = this.nuevoEstado();
+    const estado = this.estadoNuevo();
     
     if (pedido && estado) {
       this.restauranteService.cambiarEstadoPedido(pedido.id, estado).subscribe({
         next: (pedidoActualizado) => {
-          // Si el pedido cambió a CANCELADO o ENTREGADO, lo removemos de la lista
           if (estado === 'CANCELADO' || estado === 'ENTREGADO') {
             const pedidosActualizados = this.pedidos().filter(p => p.id !== pedido.id);
             this.pedidos.set(pedidosActualizados);
             this.cerrarDetalle();
           } else {
-            // Si sigue en curso, actualizamos su estado
             const pedidosActualizados = this.pedidos().map(p => 
               p.id === pedido.id ? pedidoActualizado : p
             );
             this.pedidos.set(pedidosActualizados);
             this.pedidoSeleccionado.set(pedidoActualizado);
-            this.nuevoEstado.set(null);
+            this.estadoNuevo.set(null);
           }
         },
         error: (error) => {

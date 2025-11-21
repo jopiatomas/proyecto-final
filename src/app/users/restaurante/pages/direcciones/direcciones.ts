@@ -24,18 +24,18 @@ export class Direcciones implements OnInit {
   private restauranteService = inject(RestauranteService);
   
   direcciones = signal<Direccion[]>([]);
-  direccionForm!: FormGroup;
+  formularioDireccion!: FormGroup;
   panelAbierto = signal(false);
   editandoId = signal<number | null>(null);
-  loading = signal(false);
+  cargando = signal(false);
 
   ngOnInit() {
-    this.initForm();
+    this.inicializarFormulario();
     this.cargarDirecciones();
   }
 
-  initForm() {
-    this.direccionForm = this.fb.nonNullable.group({
+  inicializarFormulario() {
+    this.formularioDireccion = this.fb.nonNullable.group({
       direccion: ['', [Validators.required, Validators.minLength(5)]],
       ciudad: ['', [Validators.required, Validators.minLength(2)]],
       pais: ['', [Validators.required, Validators.minLength(2)]],
@@ -44,15 +44,15 @@ export class Direcciones implements OnInit {
   }
 
   cargarDirecciones() {
-    this.loading.set(true);
+    this.cargando.set(true);
     this.restauranteService.getDirecciones().subscribe({
       next: (direcciones) => {
         this.direcciones.set(direcciones);
-        this.loading.set(false);
+        this.cargando.set(false);
       },
       error: (error) => {
         console.error('Error al cargar direcciones:', error);
-        this.loading.set(false);
+        this.cargando.set(false);
         alert('Error al cargar las direcciones');
       }
     });
@@ -61,19 +61,19 @@ export class Direcciones implements OnInit {
   abrirPanel() {
     this.panelAbierto.set(true);
     this.editandoId.set(null);
-    this.direccionForm.reset();
+    this.formularioDireccion.reset();
   }
 
   cerrarPanel() {
     this.panelAbierto.set(false);
     this.editandoId.set(null);
-    this.direccionForm.reset();
+    this.formularioDireccion.reset();
   }
 
   editarDireccion(direccion: Direccion) {
     this.editandoId.set(direccion.id);
     this.panelAbierto.set(true);
-    this.direccionForm.patchValue(direccion);
+    this.formularioDireccion.patchValue(direccion);
   }
 
   eliminarDireccion(id: number) {
@@ -81,7 +81,7 @@ export class Direcciones implements OnInit {
     if (!direccion) return;
     
     if (confirm('¿Estás seguro de eliminar esta dirección?')) {
-      this.loading.set(true);
+      this.cargando.set(true);
       const eliminarDTO = {
         id: direccion.id,
         direccion: direccion.direccion,
@@ -97,7 +97,7 @@ export class Direcciones implements OnInit {
         },
         error: (error) => {
           console.error('Error al eliminar dirección:', error);
-          this.loading.set(false);
+          this.cargando.set(false);
           alert('Error al eliminar la dirección');
         }
       });
@@ -105,37 +105,37 @@ export class Direcciones implements OnInit {
   }
 
   guardarDireccion() {
-    if (this.direccionForm.valid) {
-      this.loading.set(true);
-      const direccionData = this.direccionForm.value;
+    if (this.formularioDireccion.valid) {
+      this.cargando.set(true);
+      const datosDireccion = this.formularioDireccion.value;
       
-      console.log('Datos a enviar:', direccionData);
+      console.log('Datos a enviar:', datosDireccion);
       
       if (this.editandoId()) {
-        this.restauranteService.modificarDireccion(this.editandoId()!, direccionData).subscribe({
+        this.restauranteService.modificarDireccion(this.editandoId()!, datosDireccion).subscribe({
           next: () => {
             this.cargarDirecciones();
             this.cerrarPanel();
           },
           error: (error) => {
             console.error('Error completo al modificar dirección:', error);
-            console.error('Status:', error.status);
+            console.error('Estado:', error.status);
             console.error('Mensaje:', error.error);
-            this.loading.set(false);
+            this.cargando.set(false);
             alert(`Error al modificar la dirección: ${error.error?.message || error.message || 'Error desconocido'}`);
           }
         });
       } else {
-        this.restauranteService.crearDireccion(direccionData).subscribe({
+        this.restauranteService.crearDireccion(datosDireccion).subscribe({
           next: () => {
             this.cargarDirecciones();
             this.cerrarPanel();
           },
           error: (error) => {
             console.error('Error completo al crear dirección:', error);
-            console.error('Status:', error.status);
+            console.error('Estado:', error.status);
             console.error('Mensaje:', error.error);
-            this.loading.set(false);
+            this.cargando.set(false);
             alert(`Error al crear la dirección: ${error.error?.message || error.message || 'Error desconocido'}`);
           }
         });

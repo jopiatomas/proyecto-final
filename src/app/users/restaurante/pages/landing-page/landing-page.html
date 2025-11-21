@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-<main>
+<div class="content">
   <div class="container">
     <h1>Pedidos del Restaurante</h1>
     
@@ -59,21 +59,21 @@
         <div class="acciones">
           <h3>Cambiar estado:</h3>
           <button (click)="seleccionarEstado('PREPARACION')" 
-                  [class.seleccionado-estado]="nuevoEstado() === 'PREPARACION'"
+                  [class.seleccionado-estado]="estadoNuevo() === 'PREPARACION'"
                   [disabled]="pedidoSeleccionado()!.estado === 'PREPARACION'">
             En preparación
           </button>
           <button (click)="seleccionarEstado('ENVIADO')"
-                  [class.seleccionado-estado]="nuevoEstado() === 'ENVIADO'"
+                  [class.seleccionado-estado]="estadoNuevo() === 'ENVIADO'"
                   [disabled]="pedidoSeleccionado()!.estado === 'ENVIADO'">
             Enviado
           </button>
           <button (click)="seleccionarEstado('CANCELADO')"
-                  [class.seleccionado-estado]="nuevoEstado() === 'CANCELADO'">
+                  [class.seleccionado-estado]="estadoNuevo() === 'CANCELADO'">
             Cancelado
           </button>
           
-          <button *ngIf="nuevoEstado()" 
+          <button *ngIf="estadoNuevo()" 
                   class="btn-confirmar" 
                   (click)="confirmarCambio()">
                 Confirmar cambio
@@ -83,6 +83,6 @@
       </div>
     </div>
   </div>
-</main>
+</div>
 
 <app-footer></app-footer>

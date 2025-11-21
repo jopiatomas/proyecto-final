@@ -23,11 +23,11 @@ interface Producto {
 export class GestionMenu implements OnInit {
   productos: Producto[] = [];
   productosFiltrados: Producto[] = [];
-  selectedProducto: Producto | null = null;
-  isEditing = false;
-  isAdding = false;
+  productoSeleccionado: Producto | null = null;
+  estaEditando = false;
+  estaAgregando = false;
   filtroBusqueda = '';
-  loading = false;
+  cargando = false;
   error = '';
 
   formulario: Producto = {
@@ -46,7 +46,7 @@ export class GestionMenu implements OnInit {
   }
 
   cargarProductos() {
-    this.loading = true;
+    this.cargando = true;
     this.error = '';
 
     this.restauranteService.getAllProductos().subscribe({
@@ -60,37 +60,37 @@ export class GestionMenu implements OnInit {
         }));
         
         this.aplicarFiltros();
-        this.loading = false;
+        this.cargando = false;
       },
       error: (err) => {
         console.error('Error al cargar productos:', err);
         this.error = 'Error al cargar los productos';
         this.productos = [];
         this.aplicarFiltros();
-        this.loading = false;
+        this.cargando = false;
       }
     });
   }
 
   aplicarFiltros() {
     this.productosFiltrados = this.productos.filter(p => {
-      const matchBusqueda = p.nombre.toLowerCase().includes(this.filtroBusqueda.toLowerCase()) ||
+      const coincideBusqueda = p.nombre.toLowerCase().includes(this.filtroBusqueda.toLowerCase()) ||
       (p.caracteristicas || '').toLowerCase().includes(this.filtroBusqueda.toLowerCase());
-      return matchBusqueda;
+      return coincideBusqueda;
     });
   }
 
   seleccionarProducto(producto: Producto) {
-    this.selectedProducto = producto;
-    this.isEditing = true;
-    this.isAdding = false;
+    this.productoSeleccionado = producto;
+    this.estaEditando = true;
+    this.estaAgregando = false;
     this.formulario = { ...producto };
   }
 
   nuevoProducto() {
-    this.selectedProducto = null;
-    this.isEditing = false;
-    this.isAdding = true;
+    this.productoSeleccionado = null;
+    this.estaEditando = false;
+    this.estaAgregando = true;
     this.formulario = {
       id: 0,
       nombre: '',
@@ -101,9 +101,9 @@ export class GestionMenu implements OnInit {
   }
 
   cerrarFormulario() {
-    this.selectedProducto = null;
-    this.isEditing = false;
-    this.isAdding = false;
+    this.productoSeleccionado = null;
+    this.estaEditando = false;
+    this.estaAgregando = false;
     this.error = '';
   }
 
@@ -127,7 +127,7 @@ export class GestionMenu implements OnInit {
       return;
     }
 
-    if (this.isAdding) {
+    if (this.estaAgregando) {
       const nuevoProducto: ProductoCrearDTO = {
         nombre,
         caracteristicas,
@@ -143,11 +143,11 @@ export class GestionMenu implements OnInit {
         },
         error: (err) => {
           console.error('Error al crear producto:', err);
-          const backendMsg = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message);
-          this.error = backendMsg || 'Error al crear el producto';
+          const mensajeBackend = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message);
+          this.error = mensajeBackend || 'Error al crear el producto';
         }
       });
-    } else if (this.isEditing && this.selectedProducto) {
+    } else if (this.estaEditando && this.productoSeleccionado) {
       const productoModificado: ProductoModificarDTO = {
         nombre,
         caracteristicas,
@@ -155,7 +155,7 @@ export class GestionMenu implements OnInit {
         stock: stockNum
       };
 
-      this.restauranteService.modificarProducto(this.selectedProducto.id, productoModificado).subscribe({
+      this.restauranteService.modificarProducto(this.productoSeleccionado.id, productoModificado).subscribe({
         next: (producto) => {
           console.log('Producto actualizado:', producto);
           this.cargarProductos();
@@ -163,16 +163,16 @@ export class GestionMenu implements OnInit {
         },
         error: (err) => {
           console.error('Error al actualizar producto:', err);
-          const backendMsg = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message);
-          this.error = backendMsg || 'Error al actualizar el producto';
+          const mensajeBackend = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message);
+          this.error = mensajeBackend || 'Error al actualizar el producto';
         }
       });
     }
   }
 
   eliminarProducto() {
-    if (this.selectedProducto && confirm(`¿Estás seguro de eliminar "${this.selectedProducto.nombre}"?`)) {
-      this.restauranteService.eliminarProducto(this.selectedProducto.id).subscribe({
+    if (this.productoSeleccionado && confirm(`¿Estás seguro de eliminar "${this.productoSeleccionado.nombre}"?`)) {
+      this.restauranteService.eliminarProducto(this.productoSeleccionado.id).subscribe({
         next: (mensaje) => {
           console.log(mensaje);
           this.cargarProductos();
@@ -186,7 +186,7 @@ export class GestionMenu implements OnInit {
     }
   }
 
-  onBusquedaChange() {
+  alCambiarBusqueda() {
     this.aplicarFiltros();
   }
 }

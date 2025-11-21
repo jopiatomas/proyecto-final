@@ -5,7 +5,7 @@ import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 import { RestauranteService } from '../../../../services/restaurante.service';
 
-interface BalanceData {
+interface DatosBalance {
   totalRecaudado: number;
   cantidadPedidos: number;
   promedioVenta: number;
@@ -20,7 +20,7 @@ interface BalanceData {
 export class Balance implements OnInit {
   private restauranteService = inject(RestauranteService);
   
-  balance = signal<BalanceData>({
+  balance = signal<DatosBalance>({
     totalRecaudado: 0,
     cantidadPedidos: 0,
     promedioVenta: 0
@@ -29,7 +29,7 @@ export class Balance implements OnInit {
   filtroTipo: 'dia' | 'mes' = 'dia';
   fechaSeleccionada: string = '';
   mesSeleccionado: string = '';
-  loading = signal(false);
+  cargando = signal(false);
 
   ngOnInit() {
     const hoy = new Date();
@@ -39,7 +39,7 @@ export class Balance implements OnInit {
   }
 
   cargarBalance() {
-    this.loading.set(true);
+    this.cargando.set(true);
     
     const filtroDTO = {
       tipoFiltro: this.filtroTipo,
@@ -49,32 +49,32 @@ export class Balance implements OnInit {
     
     
     this.restauranteService.getBalance(filtroDTO).subscribe({
-      next: (response) => {
-        const balanceData: BalanceData = {
-          totalRecaudado: response.totalRecaudado || 0,
-          cantidadPedidos: response.cantidadPedidos || 0,
-          promedioVenta: response.promedioVenta || 0
+      next: (respuesta) => {
+        const datosBalance: DatosBalance = {
+          totalRecaudado: respuesta.totalRecaudado || 0,
+          cantidadPedidos: respuesta.cantidadPedidos || 0,
+          promedioVenta: respuesta.promedioVenta || 0
         };
-        this.balance.set(balanceData);
-        this.loading.set(false);
+        this.balance.set(datosBalance);
+        this.cargando.set(false);
       },
       error: (error) => {
-        this.loading.set(false);
+        this.cargando.set(false);
       }
     });
   }
 
-  onFiltroChange() {
+  alCambiarFiltro() {
     this.cargarBalance();
   }
 
-  onFechaChange() {
+  alCambiarFecha() {
     if (this.filtroTipo === 'dia') {
       this.cargarBalance();
     }
   }
 
-  onMesChange() {
+  alCambiarMes() {
     if (this.filtroTipo === 'mes') {
       this.cargarBalance();
     }

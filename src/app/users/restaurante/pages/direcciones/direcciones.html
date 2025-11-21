@@ -14,15 +14,15 @@
 
         <h3>Direcciones ({{direcciones().length}})</h3>
 
-        @if (loading()) {
+        @if (cargando()) {
           <div class="loading"><div class="spinner"></div></div>
         }
 
-        @if (!loading() && direcciones().length === 0) {
+        @if (!cargando() && direcciones().length === 0) {
           <p class="empty">No hay direcciones registradas</p>
         }
 
-        @if (!loading() && direcciones().length > 0) {
+        @if (!cargando() && direcciones().length > 0) {
           <div class="direcciones-list">
             @for (direccion of direcciones(); track direccion.id) {
               <div class="direccion-item" (click)="editarDireccion(direccion)">
@@ -48,7 +48,7 @@
             <button class="close-btn" (click)="cerrarPanel()">×</button>
           </div>
 
-          <form class="panel-content" [formGroup]="direccionForm" (ngSubmit)="guardarDireccion()">
+          <form class="panel-content" [formGroup]="formularioDireccion" (ngSubmit)="guardarDireccion()">
             <div class="form-section">
               <div class="form-group">
                 <label for="direccion">Dirección *</label>
@@ -58,7 +58,7 @@
                   formControlName="direccion"
                   placeholder="Ej: Av. Corrientes 1234"
                 />
-                @if (direccionForm.get('direccion')?.invalid && direccionForm.get('direccion')?.touched) {
+                @if (formularioDireccion.get('direccion')?.invalid && formularioDireccion.get('direccion')?.touched) {
                   <small class="error">Dirección requerida (mínimo 5 caracteres)</small>
                 }
               </div>
@@ -72,7 +72,7 @@
                     formControlName="ciudad"
                     placeholder="Ej: Buenos Aires"
                   />
-                  @if (direccionForm.get('ciudad')?.invalid && direccionForm.get('ciudad')?.touched) {
+                  @if (formularioDireccion.get('ciudad')?.invalid && formularioDireccion.get('ciudad')?.touched) {
                     <small class="error">Ciudad requerida</small>
                   }
                 </div>
@@ -85,7 +85,7 @@
                     formControlName="pais"
                     placeholder="Ej: Argentina"
                   />
-                  @if (direccionForm.get('pais')?.invalid && direccionForm.get('pais')?.touched) {
+                  @if (formularioDireccion.get('pais')?.invalid && formularioDireccion.get('pais')?.touched) {
                     <small class="error">País requerido</small>
                   }
                 </div>
@@ -99,7 +99,7 @@
                   formControlName="codigoPostal"
                   placeholder="Ej: 1425"
                 />
-                @if (direccionForm.get('codigoPostal')?.invalid && direccionForm.get('codigoPostal')?.touched) {
+                @if (formularioDireccion.get('codigoPostal')?.invalid && formularioDireccion.get('codigoPostal')?.touched) {
                   <small class="error">CP requerido (4-5 dígitos)</small>
                 }
               </div>
