@@ -18,16 +18,16 @@ export class LandingPage implements OnInit {
   constructor(private restauranteService: RestauranteService) {}
 
   ngOnInit() {
-    this.cargarPedidos();
+    this.cargarPedidosCompletos();
   }
 
-  cargarPedidos() {
-    this.restauranteService.getPedidosEnCurso().subscribe({
+  cargarPedidosCompletos() {
+    this.restauranteService.getPedidosCompletos().subscribe({
       next: (pedidos) => {
         this.pedidos.set(pedidos);
       },
       error: (error) => {
-        console.error('Error al cargar pedidos:', error);
+        console.error('Error al cargar pedidos completos:', error);
       }
     });
   }

@@ -88,4 +88,8 @@ export class RestauranteService {
   cambiarEstadoPedido(idPedido: number, nuevoEstado: string): Observable<Pedido> {
     return this.http.put<Pedido>(`${this.apiUrl}/pedidos/${idPedido}/estado`, { estado: nuevoEstado });
   }
+
+  getPedidosCompletos(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.apiUrl}/pedidos-completo`);
+  }
 }

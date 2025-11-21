@@ -58,13 +58,7 @@ export class Perfil implements OnInit {
     this.loading.set(true);
     
     const token = localStorage.getItem('token');
-    console.log('🔍 Cargando perfil del usuario...');
-    console.log('🔑 Token existe?', !!token);
-    console.log('🔑 Token (primeros 50 chars):', token?.substring(0, 50));
-    console.log('👤 Usuario autenticado?', this.authService.isAuthenticated());
-    
     const currentUser = this.authService.currentUser();
-    console.log('👤 Usuario actual:', currentUser);
     
     // Verificar expiración del token
     if (currentUser) {
@@ -73,10 +67,8 @@ export class Perfil implements OnInit {
       
       if (exp) {
         const timeLeft = exp - now;
-        console.log('⏰ Token expira en:', timeLeft, 'segundos (', Math.floor(timeLeft / 60), 'minutos )');
         
         if (timeLeft <= 0) {
-          console.error('❌ Token EXPIRADO');
           localStorage.removeItem('token');
           alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
           this.router.navigate(['/login']);
@@ -87,7 +79,6 @@ export class Perfil implements OnInit {
     
     // Verificar que el usuario esté autenticado
     if (!this.authService.isAuthenticated() || !token) {
-      console.warn('⚠️ No autenticado o sin token, redirigiendo a login');
       alert('Debes iniciar sesión para ver tu perfil.');
       this.router.navigate(['/login']);
       return;
@@ -96,7 +87,6 @@ export class Perfil implements OnInit {
     // Obtener datos del perfil desde la API
     this.perfilService.obtenerPerfil().subscribe({
       next: (datosUsuario) => {
-        console.log('✅ Datos del perfil recibidos:', datosUsuario);
         this.usuario.set(datosUsuario);
         // Mapear nombreYapellido a nombre para el formulario
         this.perfilForm.patchValue({
@@ -107,18 +97,10 @@ export class Perfil implements OnInit {
         this.loading.set(false);
       },
       error: (error) => {
-        console.error('❌ Error al cargar perfil:', error);
-        console.error('📊 Status:', error.status);
-        console.error('📝 Error completo:', error.error);
-        console.error('🔗 URL llamada:', error.url);
-        
         this.loading.set(false);
         
         // Si es 401, usar datos del token como fallback en lugar de cerrar sesión
         if (error.status === 401) {
-          console.warn('⚠️ Error 401: Usando datos del token JWT como fallback');
-          console.error('📝 Mensaje del backend:', error.error?.message || error.message);
-          
           const currentUser = this.authService.currentUser();
           if (currentUser) {
             const datosBasicos: PerfilUsuario = {
@@ -133,7 +115,6 @@ export class Perfil implements OnInit {
               usuario: datosBasicos.usuario,
               email: datosBasicos.email
             });
-            console.log('✅ Perfil cargado desde token JWT:', datosBasicos);
             // NO redirigir al login, permitir que el usuario vea su perfil
             return;
           } else {
@@ -147,7 +128,6 @@ export class Perfil implements OnInit {
         
         // Si es 403, intentar usar datos del token como fallback
         if (error.status === 403) {
-          console.warn('⚠️ Backend rechazó la petición (403), usando datos del token JWT');
           const currentUser = this.authService.currentUser();
           if (currentUser) {
             const datosBasicos: PerfilUsuario = {
@@ -162,7 +142,7 @@ export class Perfil implements OnInit {
               usuario: datosBasicos.usuario,
               email: datosBasicos.email
             });
-            console.log('✅ Perfil cargado desde token JWT:', datosBasicos);
+
             return;
           }
         }
@@ -179,7 +159,7 @@ export class Perfil implements OnInit {
         // Para otros errores, intentar usar datos del token
         const currentUser = this.authService.currentUser();
         if (currentUser) {
-          console.log('ℹ️ Usando datos del token JWT como fallback');
+
           const datosBasicos: PerfilUsuario = {
             id: currentUser.id,
             nombreYapellido: currentUser.nombre,
@@ -219,12 +199,12 @@ export class Perfil implements OnInit {
       contraseniaActual: this.perfilForm.value.contrasenia
     };
     
-    console.log('Datos a enviar al backend:', datosActualizados);
+
     
     // Llamada real al backend
     this.perfilService.actualizarPerfil(datosActualizados).subscribe({
       next: (mensaje) => {
-        console.log(mensaje);
+
         this.loading.set(false);
         alert(mensaje); 
         // Recargar los datos del perfil después de actualizar

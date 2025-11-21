@@ -43,6 +43,7 @@ export interface ActualizarPerfilRequest {
 // Interfaces para restaurantes (desde perspectiva de cliente)
 export interface RestauranteResumen {
   id: number;
+  usuario: string;
   nombre: string;
   categoria?: string;
   descripcion?: string;
@@ -54,6 +55,7 @@ export interface RestauranteResumen {
 
 export interface RestauranteDetail {
   id: number;
+  usuario: string;
   nombre: string;
   email: string;
   menu: ProductoResumen[];
@@ -111,6 +113,28 @@ export interface PedidoCreateDTO {
   detalles: DetallePedidoDTO[];
 }
 
+// Interfaces adicionales para pedidos (nuevas)
+export interface PedidoCreate {
+  restauranteId: number;
+  direccionId: number;
+  pagoId: number;
+  detalles: DetallePedido[];
+}
+
+export interface DetallePedido {
+  productoId: number;
+  cantidad: number;
+}
+
+export interface PedidoDetail {
+  id: number;
+  restauranteNombre: string;
+  estado: string;
+  total: number;
+  fecha: string;
+  detalles: DetallePedido[];
+}
+
 export interface DetallePedidoDTO {
   productoId: number;
   nombreProducto?: string;
@@ -142,7 +166,7 @@ export interface PedidoDetailDTO {
 // Interfaces para direcciones
 export interface DireccionDTO {
   id: number;
-  direccion: string;  // Dirección completa (calle y número)
+  direccion: string;
   ciudad: string;
   pais: string;
   codigoPostal: string;
@@ -151,10 +175,10 @@ export interface DireccionDTO {
 // Interfaces para métodos de pago
 export interface Tarjeta {
   id: number;
-  tipo: string;  // MetodoDePago (CREDITO, DEBITO, etc.)
-  numero: string;  // Número enmascarado que devuelve el backend
+  numero: string;
   titular: string;
-  vencimiento: string;  // MM/YY
+  vencimiento: string;
+  tipo: string;
 }
 
 export interface TarjetaRequest {

@@ -26,8 +26,12 @@ export class ClienteService {
   // Headers con autenticación JWT
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
+    if (!token) {
+      console.warn('No token found in localStorage');
+    }
+    
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${token?.trim()}`, // Eliminar espacios si los hay
       'Content-Type': 'application/json'
     });
   }
@@ -88,8 +92,8 @@ export class ClienteService {
     });
   }
 
-  // DELETE /direcciones - Eliminar dirección (requiere DireccionEliminarDTO en body)
-  eliminarDireccion(direccionEliminar: { id: number; direccion?: string; codigoPostal?: string }): Observable<void> {
+  // DELETE /direcciones - Eliminar dirección usando DireccionEliminarDTO
+  eliminarDireccion(direccionEliminar: { id: number; direccion: string; codigoPostal: string }): Observable<void> {
     return this.http.delete<void>('http://localhost:8080/direcciones', {
       headers: this.getAuthHeaders(),
       body: direccionEliminar
