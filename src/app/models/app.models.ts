@@ -8,7 +8,7 @@ export interface RegisterRequest {
   contrasenia: string;
   nombre: string;
   email: string;
-  rol: string; 
+  rol: string;
 }
 
 export interface AuthResponse {
@@ -54,6 +54,7 @@ export interface RestauranteResumen {
 
 export interface RestauranteDetail {
   id: number;
+  usuario: string;
   nombre: string;
   email: string;
   menu: ProductoResumen[];

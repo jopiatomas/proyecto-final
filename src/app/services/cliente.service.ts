@@ -1,11 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { 
-  RestauranteResumen, 
+import {
+  RestauranteResumen,
   RestauranteDetail,
-  ProductoResumen, 
-  ReseniaCreate, 
+  ProductoResumen,
+  ReseniaCreate,
   ReseniaDetail,
   PedidoCreate,
   PedidoDetail,
@@ -50,9 +50,9 @@ export class ClienteService {
     });
   }
 
-  // GET /clientes/restaurante/{nombre} - Obtener restaurante por nombre (con menú incluido)
-  getRestauranteByNombre(nombre: string): Observable<RestauranteDetail> {
-    return this.http.get<RestauranteDetail>(`${this.baseUrl}/restaurante/${encodeURIComponent(nombre)}`, {
+  // GET /clientes/restaurante/{usuario} - Obtener restaurante por usuario (con menú incluido)
+  getRestauranteByNombre(usuario: string): Observable<RestauranteDetail> {
+    return this.http.get<RestauranteDetail>(`${this.baseUrl}/restaurante/${encodeURIComponent(usuario)}`, {
       headers: this.getAuthHeaders()
     });
   }
