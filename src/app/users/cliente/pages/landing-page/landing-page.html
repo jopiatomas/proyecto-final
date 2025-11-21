@@ -5,8 +5,11 @@
     <p>Hola. ¿Qué vas a pedir hoy?</p>
     
     <div class="search-section">
-      <input type="text" placeholder="Buscar restaurantes..." class="search-input">
-      <button class="search-btn">Buscar</button>
+      <input 
+        type="text" 
+        placeholder="Buscar restaurantes..." 
+        class="search-input"
+        [(ngModel)]="terminoBusqueda">
     </div>
   </div>
 
@@ -19,14 +22,18 @@
       </div>
     } @else {
       <div class="restaurants-grid">
-        @for (restaurante of restaurantes; track restaurante.id) {
+        @for (restaurante of restaurantesFiltrados; track restaurante.id) {
           <div class="restaurant-card" (click)="verRestaurante(restaurante)">
             <h3>{{ restaurante.nombre }}</h3>
             <p class="categoria">Restaurante</p>
           </div>
         } @empty {
           <div class="no-restaurants">
-            <p>No hay restaurantes disponibles</p>
+            @if (terminoBusqueda.trim()) {
+              <p>No se encontraron restaurantes que coincidan con "{{ terminoBusqueda }}"</p>
+            } @else {
+              <p>No hay restaurantes disponibles</p>
+            }
           </div>
         }
       </div>
