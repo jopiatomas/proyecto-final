@@ -10,7 +10,7 @@
     } @else if (restaurante) {
       <!-- Header del Restaurante -->
       <section class="restaurant-header">
-        <h1>{{ restaurante.nombre }}</h1>
+        <h2>{{ restaurante.nombre }}</h2>
         @if (resenias.length > 0) {
           <div class="rating-info">
             <span class="stars">
@@ -119,13 +119,7 @@
               </div>
 
               <!-- Botones -->
-              <div class="form-actions">
-                <button 
-                  type="button" 
-                  class="cancel-btn"
-                  (click)="toggleFormularioResenia()">
-                  Cancelar
-                </button>
+           
                 <button 
                   type="submit" 
                   class="submit-btn"
@@ -136,7 +130,7 @@
                     Enviar Reseña
                   }
                 </button>
-              </div>
+              
             </form>
         }
 

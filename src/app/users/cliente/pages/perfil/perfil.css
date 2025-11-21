@@ -1,12 +1,12 @@
-.perfil-container {
-  min-height: 100vh;
-  background: #f5f5f5;
-  padding: 20px;
+.content {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 30px;
 }
 
-.container {
+.perfil-container {
   max-width: 800px;
-  margin: 0 auto;
   background: white;
   border-radius: 8px;
   padding: 30px;
@@ -14,7 +14,7 @@
 }
 
 h2 {
-  color: #6523d6;
+  color: var(--col-1);
   text-align: center;
   margin-bottom: 10px;
 }
@@ -48,7 +48,7 @@ p {
 .perfil-content {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 2.5rem;
+  gap: 3rem;
   margin-bottom: 2rem;
 }
 
@@ -80,10 +80,10 @@ p {
 }
 
 .form-group label {
-  display: block;
+  display: flex;
   margin-bottom: 5px;
   font-weight: bold;
-  color: #333;
+  color: var(--col-3);
 }
 
 .form-input {
@@ -98,10 +98,6 @@ p {
 .form-input:focus {
   outline: none;
   border-color: #4a148c;
-}
-
-.form-input.error {
-  border-color: red;
 }
 
 .error-text {
@@ -136,17 +132,13 @@ p {
   background: #6a1b9a;
 }
 
-.btn-primary:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
 
 .quick-links {
   margin-top: 20px;
 }
 
 .quick-links h3 {
-  margin: 0 0 15px 0;
+  margin-bottom:15px;
   color: #4a148c;
   font-size: 18px;
 }
@@ -160,7 +152,6 @@ p {
   justify-content: space-between;
   cursor: pointer;
   text-decoration: none;
-  color: inherit;
   margin-bottom: 10px;
   width: 100%;
   box-sizing: border-box;
@@ -177,7 +168,7 @@ p {
 
 .link-card h4 {
   margin: 0 0 5px 0;
-  color: #333;
+  color: var(--col-3);
   font-size: 14px;
   font-weight: bold;
 }
@@ -188,50 +179,10 @@ p {
   font-size: 12.5px;
 }
 
-.link-card .arrow {
+.flecha {
   font-size: 16px;
   color: #4a148c;
   margin-left: 15px;
 }
 
-.success-message {
-  background: #d4edda;
-  color: #155724;
-  padding: 10px;
-  border: 1px solid #c3e6cb;
-  margin-bottom: 15px;
-}
 
-.error-message {
-  background: #f8d7da;
-  color: #721c24;
-  padding: 10px;
-  border: 1px solid #f5c6cb;
-  margin-bottom: 15px;
-}
-
-@media (max-width: 768px) {
-  .perfil-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .form-row {
-    flex-direction: column;
-  }
-  
-  .form-group {
-    min-width: 100%;
-  }
-  
-  .container {
-    padding: 10px;
-  }
-  
-  .header-section h2 {
-    font-size: 24px;
-  }
-  
-  .perfil-form {
-    padding: 15px;
-  }
-}

@@ -1,6 +1,6 @@
 <app-header></app-header>
-<div class="perfil-container">
-  <div class="container">
+<div class="content">
+  <div class="perfil-container">
     <h2>Mi Perfil</h2>
     @if (usuario()) {
       <p>Bienvenido, <strong>{{ usuario()!.nombreYapellido }}</strong></p>
@@ -77,10 +77,8 @@
               [disabled]="loading()"
             >
               @if (loading()) {
-                <span class="btn-loading"></span>
                 Guardando...
               } @else {
-                <span class="btn-icon"></span>
                 Guardar Cambios
               }
             </button>
@@ -94,21 +92,21 @@
               <h4>Mis Direcciones</h4>
               <p>Gestiona tus direcciones de entrega</p>
             </div>
-            <span class="arrow">→</span>
+            <span class="flecha">→</span>
           </button>
           <button class="link-card" (click)="navegarA('/cliente/metodos-pago')">
             <div>
               <h4>Métodos de Pago</h4>
               <p>Administra tus tarjetas</p>
             </div>
-            <span class="arrow">→</span>
+            <span class="flecha">→</span>
           </button>
           <button class="link-card" (click)="navegarA('/cliente/pedidos')">
             <div>
               <h4>Mis Pedidos</h4>
               <p>Ver historial de pedidos</p>
             </div>
-            <span class="arrow">→</span>
+            <span class="flecha">→</span>
           </button>
         </div>
       </div>
