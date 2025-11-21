@@ -1,13 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Header } from '../../components/header/header';
-import { Footer } from '../../components/footer/footer';
+import { FooterCliente } from '../../components/footer/footer';
 import { ClienteService } from '../../../../services/cliente.service';
 import { PedidoDetailDTO, PedidoResumenDTO } from '../../../../models/app.models';
 
 @Component({
   selector: 'app-ver-historial-pedidos',
-  imports: [CommonModule, Header, Footer, DatePipe],
+  imports: [CommonModule, Header, FooterCliente, DatePipe],
   templateUrl: './ver-historial-pedidos.html',
   styleUrl: './ver-historial-pedidos.css',
 })

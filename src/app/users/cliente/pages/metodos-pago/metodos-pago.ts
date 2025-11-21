@@ -5,12 +5,12 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ClienteService } from '../../../../services/cliente.service';
 import { Tarjeta, TarjetaRequest } from '../../../../models/app.models';
 import { Header } from '../../components/header/header';
-import { Footer } from '../../components/footer/footer';
+import { FooterCliente } from "../../components/footer/footer";
 
 @Component({
   selector: 'app-metodos-pago',
   standalone: true,
-  imports: [Header, Footer, ReactiveFormsModule, CommonModule],
+  imports: [Header, ReactiveFormsModule, CommonModule, FooterCliente],
   templateUrl: './metodos-pago.html',
   styleUrl: './metodos-pago.css',
 })

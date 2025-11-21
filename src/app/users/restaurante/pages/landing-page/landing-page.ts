@@ -1,12 +1,12 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
-import { Footer } from '../../components/footer/footer';
 import { RestauranteService, Pedido } from '../../../../core/services/restaurante.service';
+import { FooterRestaurante } from "../../components/footer/footer";
 
 @Component({
   selector: 'app-landing-page',
-  imports: [Header, Footer, CommonModule],
+  imports: [Header, CommonModule, FooterRestaurante],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
 })
@@ -18,16 +18,16 @@ export class LandingPage implements OnInit {
   constructor(private restauranteService: RestauranteService) {}
 
   ngOnInit() {
-    this.cargarPedidosCompletos();
+    this.cargarPedidos();
   }
 
-  cargarPedidosCompletos() {
-    this.restauranteService.getPedidosCompletos().subscribe({
+  cargarPedidos() {
+    this.restauranteService.getPedidosEnCurso().subscribe({
       next: (pedidos) => {
         this.pedidos.set(pedidos);
       },
       error: (error) => {
-        console.error('Error al cargar pedidos completos:', error);
+        console.error('Error al cargar pedidos:', error);
       }
     });
   }

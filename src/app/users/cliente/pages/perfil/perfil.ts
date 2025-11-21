@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
-import { Footer } from '../../components/footer/footer';
+import { FooterCliente } from '../../components/footer/footer';
 import { AuthService } from '../../../../services/auth.service';
 import { PerfilService } from '../../../../services/perfil.service';
 import { PerfilUsuario } from '../../../../models/app.models';
 
 @Component({
   selector: 'app-perfil',
-  imports: [Header, Footer, CommonModule, ReactiveFormsModule],
+  imports: [Header, FooterCliente, CommonModule, ReactiveFormsModule],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })

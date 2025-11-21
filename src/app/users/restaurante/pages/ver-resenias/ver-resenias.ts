@@ -1,12 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
-import { Footer } from '../../components/footer/footer';
+import { FooterRestaurante } from '../../components/footer/footer';
 import { ReseniaService, ReseniaDTO, ReseniaBackendDTO } from '../../../../core/services/resenia.service';
 
 @Component({
   selector: 'app-ver-resenias',
-  imports: [Header, Footer, CommonModule],
+  imports: [Header, FooterRestaurante, CommonModule],
   templateUrl: './ver-resenias.html',
   styleUrl: './ver-resenias.css',
 })

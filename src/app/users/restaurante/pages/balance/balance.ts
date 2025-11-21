@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
-import { Footer } from '../../components/footer/footer';
+import { FooterRestaurante } from '../../components/footer/footer';
 import { RestauranteService } from '../../../../services/restaurante.service';
 
 interface DatosBalance {
@@ -13,7 +13,7 @@ interface DatosBalance {
 
 @Component({
   selector: 'app-balance',
-  imports: [Header, Footer, CommonModule, FormsModule],
+  imports: [Header, FooterRestaurante, CommonModule, FormsModule],
   templateUrl: './balance.html',
   styleUrl: './balance.css',
 })

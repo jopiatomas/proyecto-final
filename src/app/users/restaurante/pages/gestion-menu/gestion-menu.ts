@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Footer } from '../../components/footer/footer';
+import { FooterRestaurante } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
-import { ProductoCrearDTO, ProductoDetailDTO, ProductoModificarDTO, RestauranteService } from '../../../../core/services/restaurante.service';
-
+import { ProductoCrearDTO, ProductoModificarDTO, ProductoDetailDTO, RestauranteService } from '../../../../core/services/restaurante.service';
 
 interface Producto {
   id: number;
@@ -16,7 +15,7 @@ interface Producto {
 
 @Component({
   selector: 'app-gestion-menu',
-  imports: [Header, Footer, CommonModule, FormsModule],
+  imports: [Header, CommonModule, FormsModule, FooterRestaurante],
   templateUrl: './gestion-menu.html',
   styleUrl: './gestion-menu.css',
 })

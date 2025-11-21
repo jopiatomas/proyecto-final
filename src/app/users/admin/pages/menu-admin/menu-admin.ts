@@ -1,14 +1,16 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Footer } from "../../components/footer/footer";
 import { Header } from '../../components/header/header';
 import { AdminClienteService, ClienteDTO, ClienteModificarDTO } from '../../../../core/services/admin-cliente.service';
 import { AdminRestauranteService, RestauranteAdminDTO, RestauranteModificarDTO, ReseniaAdminDTO } from '../../../../core/services/admin-restaurante.service';
+import { FooterAdmin } from "../../components/footer/footer";
+
+
 
 @Component({
   selector: 'app-menu-admin',
-  imports: [Footer, Header, CommonModule, FormsModule],
+  imports: [Header, CommonModule, FormsModule, FooterAdmin],
   templateUrl: './menu-admin.html',
   styleUrl: './menu-admin.css',
 })

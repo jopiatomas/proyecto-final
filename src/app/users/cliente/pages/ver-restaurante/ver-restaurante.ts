@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
-import { Footer } from '../../components/footer/footer';
+import { FooterCliente } from '../../components/footer/footer';
 import { ClienteService } from '../../../../services/cliente.service';
 import {
   RestauranteDetail,
@@ -25,7 +25,7 @@ interface CarritoItem {
 
 @Component({
   selector: 'app-ver-restaurante',
-  imports: [Header, Footer, CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [Header, FooterCliente, CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './ver-restaurante.html',
   styleUrl: './ver-restaurante.css',
 })

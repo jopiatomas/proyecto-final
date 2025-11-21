@@ -1,13 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
-import { Footer } from '../../components/footer/footer';
+import { FooterCliente } from '../../components/footer/footer';
 import { ClienteService } from '../../../../services/cliente.service';
 import { PedidoResumenDTO, PedidoDetailDTO } from '../../../../models/app.models';
 
 @Component({
   selector: 'app-ver-pedidos',
-  imports: [Header, Footer, CommonModule],
+  imports: [Header, FooterCliente, CommonModule],
   templateUrl: './ver-pedidos.html',
   styleUrl: './ver-pedidos.css',
 })

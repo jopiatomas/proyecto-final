@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Header } from '../../components/header/header';
-import { Footer } from '../../components/footer/footer';
+import { FooterRestaurante } from '../../components/footer/footer';
 import { RestauranteService } from '../../../../services/restaurante.service';
 
 interface Direccion {
@@ -15,7 +15,7 @@ interface Direccion {
 
 @Component({
   selector: 'app-direcciones',
-  imports: [Header, Footer, CommonModule, ReactiveFormsModule],
+  imports: [Header, FooterRestaurante, CommonModule, ReactiveFormsModule],
   templateUrl: './direcciones.html',
   styleUrl: './direcciones.css',
 })
