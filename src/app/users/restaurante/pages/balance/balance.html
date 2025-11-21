@@ -1,0 +1,95 @@
+<app-header></app-header>
+
+<div class="content">
+  <div class="container">
+    <h2>Balance</h2>
+
+    <div class="balance-section">
+      <!-- Tarjeta principal de balance -->
+      <div class="balance-card">
+        @if (loading()) {
+          <div class="loading"><div class="spinner"></div></div>
+        } @else {
+          <div class="balance-main">
+            <div class="monto-principal">
+              <span class="label">Total Recaudado</span>
+              <span class="monto">${{ balance().totalRecaudado.toFixed(2) }}</span>
+            </div>
+            
+            <div class="balance-stats">
+              <div class="stat-item">
+                <span class="stat-label">Pedidos</span>
+                <span class="stat-value">{{ balance().cantidadPedidos }}</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <span class="stat-label">Promedio por venta</span>
+                <span class="stat-value">${{ balance().promedioVenta.toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Filtros -->
+      <div class="filtros-section">
+        <h3>Filtrar Balance</h3>
+        
+        <div class="filtro-tipo">
+          <label class="radio-option">
+            <input 
+              type="radio" 
+              name="filtroTipo" 
+              value="dia" 
+              [(ngModel)]="filtroTipo"
+              (change)="onFiltroChange()"
+            />
+            <span>Por Día</span>
+          </label>
+          <label class="radio-option">
+            <input 
+              type="radio" 
+              name="filtroTipo" 
+              value="mes" 
+              [(ngModel)]="filtroTipo"
+              (change)="onFiltroChange()"
+            />
+            <span>Por Mes</span>
+          </label>
+        </div>
+
+        @if (filtroTipo === 'dia') {
+          <div class="form-group">
+            <label for="fecha">Seleccionar Fecha</label>
+            <input 
+              type="date" 
+              id="fecha"
+              [(ngModel)]="fechaSeleccionada"
+              (change)="onFechaChange()"
+              class="date-input"
+            />
+          </div>
+        }
+
+        @if (filtroTipo === 'mes') {
+          <div class="form-group">
+            <label for="mes">Seleccionar Mes</label>
+            <input 
+              type="month" 
+              id="mes"
+              [(ngModel)]="mesSeleccionado"
+              (change)="onMesChange()"
+              class="date-input"
+            />
+          </div>
+        }
+
+        <button class="btn-aplicar" (click)="cargarBalance()">
+          Aplicar Filtro
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

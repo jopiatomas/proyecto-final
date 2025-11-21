@@ -1,0 +1,269 @@
+.content {
+  padding: 15px 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2 {
+  color: #333;
+  margin: 0 0 20px 0;
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+h3 {
+  color: #4a148c;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.actions-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.btn-nuevo {
+  background: #4a148c;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.3rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-nuevo:hover {
+  background: #6a1b9a;
+}
+
+.icon {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.direcciones-section {
+  display: flex;
+  gap: 1.5rem;
+  min-height: 500px;
+  max-height: calc(100vh - 250px);
+}
+
+.direcciones-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.direcciones-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  overflow-y: auto;
+}
+
+.direcciones-section:has(.direccion-form-panel) .direcciones-list {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.direccion-item {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.2rem;
+  cursor: pointer;
+}
+
+.direccion-item:hover {
+  border-color: #4a148c;
+  box-shadow: 0 2px 8px rgba(74, 20, 140, 0.1);
+}
+
+.direccion-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.direccion-nombre {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4a148c;
+}
+
+.direccion-info .descripcion {
+  margin-bottom: 0.75rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.direccion-meta {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cp-badge {
+  padding: 0.4rem 0.8rem;
+  background-color: #e1f5fe;
+  color: #01579b;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.direccion-form-panel {
+  width: 450px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 250px);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: #4a148c;
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+.panel-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  opacity: 0.8;
+}
+
+.panel-content {
+  padding: 1rem 1.5rem 1.5rem;
+  overflow-y: auto;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4a148c;
+}
+
+.form-group input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #4a148c;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 0.75rem;
+  margin-top: 0.2rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ddd;
+}
+
+.form-actions button {
+  padding: 0.65rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: white;
+}
+
+.btn-guardar {
+  background: #4a148c;
+}
+
+.btn-guardar:hover {
+  background: #6a1b9a;
+}
+
+.btn-eliminar {
+  background: #e74c3c;
+}
+
+.btn-eliminar:hover {
+  background: #c0392b;
+}
+
+.btn-cancelar {
+  background: #95a5a6;
+}
+
+.btn-cancelar:hover {
+  background: #7f8c8d;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(74, 20, 140, 0.1);
+  border-top: 5px solid #4a148c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem;
+  color: #999;
+}
