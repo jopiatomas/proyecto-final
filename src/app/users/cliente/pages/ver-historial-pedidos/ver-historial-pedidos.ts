@@ -1,17 +1,18 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 import { ClienteService } from '../../../../services/cliente.service';
-import { PedidoResumenDTO, PedidoDetailDTO } from '../../../../models/app.models';
+import { PedidoDetailDTO, PedidoResumenDTO } from '../../../../models/app.models';
 
 @Component({
-  selector: 'app-ver-pedidos',
-  imports: [Header, Footer, CommonModule],
-  templateUrl: './ver-pedidos.html',
-  styleUrl: './ver-pedidos.css',
+  selector: 'app-ver-historial-pedidos',
+  imports: [CommonModule, Header, Footer, DatePipe],
+  templateUrl: './ver-historial-pedidos.html',
+  styleUrl: './ver-historial-pedidos.css',
 })
-export class VerPedidos implements OnInit {
+export class VerHistorialPedidos implements OnInit {
+
   private clienteService = inject(ClienteService);
 
   pedidos: PedidoResumenDTO[] = [];
@@ -29,18 +30,17 @@ export class VerPedidos implements OnInit {
     this.loading = true;
     this.error = null;
     
-    this.clienteService.getPedidosActivos().subscribe({
+    this.clienteService.getPedidosHistorial().subscribe({
       next: (pedidos) => {
-        // Filtrar solo pedidos con estados activos
-        const estadosActivos = ['PREPARACION', 'ENVIADO', 'PENDIENTE'];
-        this.pedidos = pedidos
-          .filter(pedido => estadosActivos.includes(pedido.estado))
-          .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()); // Más nuevos arriba
+        // Ordenar pedidos con más nuevos arriba
+        this.pedidos = pedidos.sort((a, b) => 
+          new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+        );
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error cargando pedidos:', error);
-        this.error = 'Error cargando los pedidos. Intenta nuevamente.';
+        console.error('Error cargando historial de pedidos:', error);
+        this.error = 'Error cargando el historial de pedidos. Intenta nuevamente.';
         this.loading = false;
       }
     });
@@ -108,6 +108,7 @@ export class VerPedidos implements OnInit {
   }
 
   puedeSerCancelado(estado: string): boolean {
-    return estado === 'PENDIENTE';
+    // Solo se pueden cancelar pedidos que están pendientes o en preparación
+    return estado === 'PENDIENTE' || estado === 'PREPARACION';
   }
 }

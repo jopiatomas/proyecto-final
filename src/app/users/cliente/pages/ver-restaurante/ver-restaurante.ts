@@ -11,8 +11,8 @@ import {
   ProductoResumen, 
   ReseniaResumen, 
   ReseniaCreate,
-  PedidoCreate,
-  DetallePedido,
+  PedidoCreateDTO,
+  DetallePedidoDTO,
   DireccionDTO,
   Tarjeta
 } from '../../../../models/app.models';
@@ -277,12 +277,12 @@ export class VerRestaurante implements OnInit {
     }
 
     // Preparar datos del pedido
-    const detalles: DetallePedido[] = this.carrito.map(item => ({
+    const detalles: DetallePedidoDTO[] = this.carrito.map(item => ({
       productoId: item.producto.id,
       cantidad: item.cantidad
     }));
 
-    const pedido: PedidoCreate = {
+    const pedido: PedidoCreateDTO = {
       restauranteId: this.restaurante.id,
       direccionId: this.direccionSeleccionada,
       pagoId: this.metodoPagoSeleccionado,

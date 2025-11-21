@@ -102,26 +102,40 @@ export interface ReseniaDetail {
   restauranteNombre: string;
 }
 
-// Interfaces para pedidos
-export interface PedidoCreate {
+// Interfaces para pedidos (mapeando DTOs del backend)
+export interface PedidoCreateDTO {
   restauranteId: number;
   direccionId: number;
   pagoId: number;
-  detalles: DetallePedido[];
+  detalles: DetallePedidoDTO[];
 }
 
-export interface DetallePedido {
+export interface DetallePedidoDTO {
   productoId: number;
+  nombreProducto?: string;
+  precioUnitario?: number;
   cantidad: number;
 }
 
-export interface PedidoDetail {
+export interface EstadoPedidoDTO {
+  estado: string;
+}
+
+export interface PedidoResumenDTO {
   id: number;
-  restauranteNombre: string;
+  fecha: string;
   estado: string;
   total: number;
+}
+
+export interface PedidoDetailDTO {
+  id: number;
   fecha: string;
-  detalles: DetallePedido[];
+  estado: string; // Será el enum del backend
+  total: number;
+  nombreRestaurante: string;
+  idCliente: number;
+  detalles: DetallePedidoDTO[];
 }
 
 // Interfaces para direcciones

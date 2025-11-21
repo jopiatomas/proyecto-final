@@ -7,8 +7,9 @@ import {
   ProductoResumen, 
   ReseniaCreate, 
   ReseniaDetail,
-  PedidoCreate,
-  PedidoDetail,
+  PedidoCreateDTO,
+  PedidoDetailDTO,
+  PedidoResumenDTO,
   DireccionDTO,
   Tarjeta
 } from '../models/app.models';
@@ -58,8 +59,8 @@ export class ClienteService {
   }
 
   // POST /clientes/pedir - Crear nuevo pedido
-  crearPedido(pedido: PedidoCreate): Observable<PedidoDetail> {
-    return this.http.post<PedidoDetail>(`${this.baseUrl}/pedir`, pedido, {
+  crearPedido(pedido: PedidoCreateDTO): Observable<PedidoDetailDTO> {
+    return this.http.post<PedidoDetailDTO>(`${this.baseUrl}/pedir`, pedido, {
       headers: this.getAuthHeaders()
     });
   }
@@ -83,6 +84,34 @@ export class ClienteService {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       })
+    });
+  }
+
+  // GET /clientes/pedidos-activos - Obtener pedidos activos del cliente
+  getPedidosActivos(): Observable<PedidoResumenDTO[]> {
+    return this.http.get<PedidoResumenDTO[]>(`${this.baseUrl}/pedidos-activos`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // GET /clientes/pedido/{id} - Obtener detalle de un pedido específico
+  getPedidoDetalle(id: number): Observable<PedidoDetailDTO> {
+    return this.http.get<PedidoDetailDTO>(`${this.baseUrl}/pedido/${id}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // PUT /clientes/pedido/{id}/cancelar - Cancelar un pedido
+  cancelarPedido(id: number): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/pedido/${id}/cancelar`, {}, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // GET /clientes/historial-pedidos - Obtener historial completo de pedidos del cliente
+  getPedidosHistorial(): Observable<PedidoResumenDTO[]> {
+    return this.http.get<PedidoResumenDTO[]>(`${this.baseUrl}/historial-pedidos`, {
+      headers: this.getAuthHeaders()
     });
   }
 }

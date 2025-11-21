@@ -53,7 +53,7 @@ export const routes: Routes = [
       {
         path: 'historial',
         loadComponent: () =>
-          import('./users/cliente/pages/ver-pedidos/ver-pedidos').then((m) => m.VerPedidos),
+          import('./users/cliente/pages/ver-historial-pedidos/ver-historial-pedidos').then((m) => m.VerHistorialPedidos),
       },
     ],
   },
