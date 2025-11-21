@@ -16,7 +16,7 @@ import { RestauranteResumen } from '../../../../models/app.models';
 export class LandingPage implements OnInit {
   private clienteService = inject(ClienteService);
   private router = inject(Router);
-  
+
   restaurantes: RestauranteResumen[] = [];
   loading = false;
   terminoBusqueda = '';
@@ -29,9 +29,9 @@ export class LandingPage implements OnInit {
     if (!this.terminoBusqueda.trim()) {
       return this.restaurantes;
     }
-    
+
     const termino = this.terminoBusqueda.toLowerCase().trim();
-    return this.restaurantes.filter(restaurante => 
+    return this.restaurantes.filter(restaurante =>
       restaurante.nombre.toLowerCase().includes(termino)
     );
   }
@@ -46,21 +46,12 @@ export class LandingPage implements OnInit {
       error: (error) => {
         console.error('Error cargando restaurantes:', error);
         this.loading = false;
-        // Datos de prueba si falla la conexión
-        this.restaurantes = [
-          { id: 1, nombre: 'Pizza Palace' },
-          { id: 2, nombre: 'Burger King' },
-          { id: 3, nombre: 'Sushi Zen' },
-          { id: 4, nombre: 'Taco Bell' },
-          { id: 5, nombre: 'Pasta Roma' },
-          { id: 6, nombre: 'Wok Express' }
-        ];
       }
     });
   }
 
   verRestaurante(restaurante: RestauranteResumen) {
-    // Navegamos usando el nombre del restaurante como parámetro
-    this.router.navigate(['/cliente/restaurante', encodeURIComponent(restaurante.nombre)]);
+    // Navegamos usando el usuario del restaurante como parámetro
+    this.router.navigate(['/cliente/restaurante', encodeURIComponent(restaurante.usuario)]);
   }
 }

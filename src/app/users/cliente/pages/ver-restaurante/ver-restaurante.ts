@@ -6,10 +6,10 @@ import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 import { ClienteService } from '../../../../services/cliente.service';
-import { 
-  RestauranteResumen, 
-  ProductoResumen, 
-  ReseniaResumen, 
+import {
+  RestauranteDetail,
+  ProductoResumen,
+  ReseniaResumen,
   ReseniaCreate,
   PedidoCreate,
   DetallePedido,
@@ -33,14 +33,14 @@ export class VerRestaurante implements OnInit {
   private route = inject(ActivatedRoute);
   private clienteService = inject(ClienteService);
   private fb = inject(FormBuilder);
-  
-  restaurante: RestauranteResumen | null = null;
+
+  restaurante: RestauranteDetail | null = null;
   menu: ProductoResumen[] = [];
   resenias: ReseniaResumen[] = [];
   loading = true;
   loadingMenu = true;
   nombreRestaurante = '';
-  
+
   // Formulario para nueva reseña
   reseniaForm: FormGroup;
   submittingResenia = false;
@@ -68,13 +68,13 @@ export class VerRestaurante implements OnInit {
   }
 
   ngOnInit() {
-    // Obtenemos el nombre del restaurante de la URL
+    // Obtenemos el usuario del restaurante de la URL (ya que el backend usa usuario, no nombre)
     this.nombreRestaurante = this.route.snapshot.paramMap.get('nombre') || '';
     if (this.nombreRestaurante) {
       this.cargarDatosRestaurante();
     } else {
       this.loading = false;
-      console.error('No se proporcionó nombre de restaurante');
+      console.error('No se proporcionó usuario de restaurante');
     }
   }
 
@@ -113,7 +113,7 @@ export class VerRestaurante implements OnInit {
   submitResenia() {
     if (this.reseniaForm.valid && this.restaurante) {
       this.submittingResenia = true;
-      
+
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
         comentario: this.reseniaForm.value.resenia.trim(),
@@ -123,7 +123,7 @@ export class VerRestaurante implements OnInit {
       this.clienteService.crearResenia(reseniaData).subscribe({
         next: (nuevaResenia) => {
 
-          
+
           // Agregar la nueva reseña al principio de la lista
           const reseniaResumen: ReseniaResumen = {
             id: nuevaResenia.id,
@@ -133,7 +133,7 @@ export class VerRestaurante implements OnInit {
             nombreCliente: nuevaResenia.nombreCliente
           };
           this.resenias.unshift(reseniaResumen);
-          
+
           // Resetear formulario y ocultar
           this.reseniaForm.reset({
             resenia: '',
@@ -141,7 +141,7 @@ export class VerRestaurante implements OnInit {
           });
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
-          
+
           alert('¡Reseña enviada exitosamente!');
         },
         error: (error) => {
@@ -175,7 +175,7 @@ export class VerRestaurante implements OnInit {
   // Métodos del carrito
   agregarAlCarrito(producto: ProductoResumen) {
     const itemExistente = this.carrito.find(item => item.producto.id === producto.id);
-    
+
     if (itemExistente) {
       itemExistente.cantidad++;
     } else {
@@ -223,7 +223,7 @@ export class VerRestaurante implements OnInit {
       alert('El carrito está vacío');
       return;
     }
-    
+
     // Abrir modal y cargar datos
     this.mostrarModalPedido = true;
     this.cargarDatosModal();
@@ -301,7 +301,7 @@ export class VerRestaurante implements OnInit {
       error: (error) => {
         console.error('Error creando pedido:', error);
         this.enviandoPedido = false;
-        
+
         // Manejo de errores más específico
         if (error.status === 400) {
           alert('Error en los datos del pedido. Por favor verifica la información.');

@@ -42,6 +42,7 @@ export interface ActualizarPerfilRequest {
 // Interfaces para restaurantes (desde perspectiva de cliente)
 export interface RestauranteResumen {
   id: number;
+  usuario: string;
   nombre: string;
   categoria?: string;
   descripcion?: string;
