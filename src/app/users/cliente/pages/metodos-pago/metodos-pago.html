@@ -1,112 +1,146 @@
 <app-header></app-header>
-<div class="metodos-pago-container">
+
+<div class="content">
   <div class="container">
-    <div class="header">
-      <h2>Métodos de Pago</h2>
-      <!--<button (click)="toggleForm()" class="btn-primary">
-        {{ showForm() ? 'Cancelar' : '+ Nueva Tarjeta' }}
-      </button>
-      -->
-      <button class="btn-primary">Nueva Tarjeta</button>
-    </div>
-    <!--
-    @if (successMessage()) {
-    <div class="success-message">{{ successMessage() }}</div>
-    } @if (errorMessage()) {
-    <div class="error-message">{{ errorMessage() }}</div>
-    } @if (showForm()) {
-    <div class="form-card">
-      <h3>Nueva Tarjeta</h3>
-      <form [formGroup]="tarjetaForm" (ngSubmit)="agregarTarjeta()">
-        <div class="form-group">
-          <label>Número de Tarjeta *</label>
-          <input
-            type="text"
-            formControlName="numeroTarjeta"
-            class="form-input"
-            placeholder="1234567890123456"
-            maxlength="16"
-          />
-          @if (tarjetaForm.get('numeroTarjeta')?.invalid &&
-          tarjetaForm.get('numeroTarjeta')?.touched) {
-          <span class="error-text">Debe tener 16 dígitos</span>
+    <h2>Gestión de Métodos de Pago</h2>
+
+    <div class="tarjetas-section">
+      <div class="tarjetas-main">
+        <div class="actions-bar">
+          <button class="btn-nuevo" (click)="abrirPanel()">
+            <span class="icon">+</span> Agregar Medio de Pago
+          </button>
+        </div>
+
+        <h3>Tarjetas ({{ tarjetas().length }})</h3>
+
+        @if (cargando()) {
+        <div class="loading"><div class="spinner"></div></div>
+        } @if (!cargando() && tarjetas().length === 0) {
+        <p class="empty">No tienes tarjetas registradas</p>
+        } @if (!cargando() && tarjetas().length > 0) {
+        <div class="tarjetas-list">
+          @for (tarjeta of tarjetas(); track tarjeta.id) {
+          <div class="tarjeta-item">
+            <div class="tarjeta-header">
+              <span class="tarjeta-tipo">💳 {{ tarjeta.tipo }}</span>
+            </div>
+            <div class="tarjeta-info">
+              <p class="tarjeta-numero">{{ tarjeta.numero }}</p>
+              <div class="tarjeta-meta">
+                <span class="titular-label">{{ tarjeta.titular }}</span>
+                <span class="vence-badge">Vence: {{ tarjeta.vencimiento }}</span>
+              </div>
+            </div>
+            <button (click)="eliminarTarjeta(tarjeta.id)" class="btn-delete-card">🗑️</button>
+          </div>
           }
         </div>
-        <div class="form-group">
-          <label>Nombre del Titular *</label>
-          <input
-            type="text"
-            formControlName="nombreTitular"
-            class="form-input"
-            placeholder="JUAN PEREZ"
-          />
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Vencimiento (MM/AA) *</label>
-            <input
-              type="text"
-              formControlName="fechaVencimiento"
-              class="form-input"
-              placeholder="12/25"
-              maxlength="5"
-            />
-            @if (tarjetaForm.get('fechaVencimiento')?.invalid &&
-            tarjetaForm.get('fechaVencimiento')?.touched) {
-            <span class="error-text">Formato: MM/AA</span>
-            }
-          </div>
-          <div class="form-group">
-            <label>CVV *</label>
-            <input
-              type="text"
-              formControlName="cvv"
-              class="form-input"
-              placeholder="123"
-              maxlength="4"
-            />
-            @if (tarjetaForm.get('cvv')?.invalid && tarjetaForm.get('cvv')?.touched) {
-            <span class="error-text">3 o 4 dígitos</span>
-            }
-          </div>
-        </div>
-        <button type="submit" [disabled]="tarjetaForm.invalid || loading()" class="btn-primary">
-          {{ loading() ? 'Guardando...' : 'Guardar Tarjeta' }}
-        </button>
-      </form>
-    </div>
-    } @if (loading() && !showForm()) {
-    <div class="loading"><div class="spinner"></div></div>
-    } @if (!loading() && tarjetas().length === 0 && !showForm()) {
-    <div class="empty-state">
-      <p>No tienes tarjetas guardadas</p>
-    </div>
-    }
-    -->
+        }
+      </div>
 
-    <!--
-    <div class="tarjetas-grid">
-      @for (tarjeta of tarjetas(); track tarjeta.id) {
-      <div class="tarjeta-card">
-        <div class="card-visual">
-          <div class="card-chip">💳</div>
-          <div class="card-number">**** **** **** {{ tarjeta.numeroTarjeta.slice(-4) }}</div>
-          <div class="card-footer">
-            <div>
-              <div class="card-label">Titular</div>
-              <div class="card-name">{{ tarjeta.nombreTitular }}</div>
+      @if (panelAbierto()) {
+      <div class="tarjeta-form-panel">
+        <div class="panel-header">
+          <h4>Nuevo Método de Pago</h4>
+          <button class="close-btn" (click)="cerrarPanel()">×</button>
+        </div>
+
+        <form class="panel-content" [formGroup]="formularioTarjeta" (ngSubmit)="guardarTarjeta()">
+          <div class="form-section">
+            <div class="form-group">
+              <label for="tipo">Tipo de Tarjeta *</label>
+              <select id="tipo" formControlName="tipo">
+                <option value="">Selecciona tipo</option>
+                <option value="CREDITO">Crédito</option>
+                <option value="DEBITO">Débito</option>
+              </select>
+              @if (formularioTarjeta.get('tipo')?.invalid && formularioTarjeta.get('tipo')?.touched)
+              {
+              <small class="error">Tipo de tarjeta requerido</small>
+              }
             </div>
-            <div>
-              <div class="card-label">Vence</div>
-              <div class="card-expiry">{{ tarjeta.fechaVencimiento }}</div>
+
+            <div class="form-group">
+              <label for="numero">Número de Tarjeta *</label>
+              <input
+                type="text"
+                id="numero"
+                formControlName="numero"
+                placeholder="1234567890123456"
+                maxlength="16"
+              />
+              @if (formularioTarjeta.get('numero')?.invalid &&
+              formularioTarjeta.get('numero')?.touched) {
+              <small class="error">Debe tener 16 dígitos</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="titular">Nombre del Titular *</label>
+              <input
+                type="text"
+                id="titular"
+                formControlName="titular"
+                placeholder="JUAN PEREZ"
+                maxlength="100"
+              />
+              @if (formularioTarjeta.get('titular')?.invalid &&
+              formularioTarjeta.get('titular')?.touched) {
+              <small class="error">Titular requerido (máx. 100 caracteres)</small>
+              }
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="vencimiento">Vencimiento (MM/YY) *</label>
+                <input
+                  type="text"
+                  id="vencimiento"
+                  formControlName="vencimiento"
+                  placeholder="12/25"
+                  maxlength="5"
+                />
+                @if (formularioTarjeta.get('vencimiento')?.hasError('pattern') &&
+                formularioTarjeta.get('vencimiento')?.touched) {
+                <small class="error">Formato: MM/YY</small>
+                }
+                @if (formularioTarjeta.get('vencimiento')?.hasError('vencimientoAntiguo') &&
+                formularioTarjeta.get('vencimiento')?.touched) {
+                <small class="error">La tarjeta debe vencer a partir de 01/26</small>
+                }
+                @if (formularioTarjeta.get('vencimiento')?.hasError('vencida') &&
+                formularioTarjeta.get('vencimiento')?.touched) {
+                <small class="error">La tarjeta está vencida</small>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="cvv">CVV *</label>
+                <input type="text" id="cvv" formControlName="cvv" placeholder="123" maxlength="3" />
+                @if (formularioTarjeta.get('cvv')?.invalid && formularioTarjeta.get('cvv')?.touched)
+                {
+                <small class="error">3 dígitos</small>
+                }
+              </div>
             </div>
           </div>
-        </div>
-        <button (click)="eliminarTarjeta(tarjeta.id)" class="btn-delete">🗑️ Eliminar</button>
+
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn-guardar"
+              [disabled]="formularioTarjeta.invalid || cargando()"
+            >
+              Agregar Tarjeta
+            </button>
+            <button type="button" class="btn-cancelar" (click)="cerrarPanel()">Cancelar</button>
+          </div>
+        </form>
       </div>
       }
     </div>
-    -->
   </div>
 </div>
+
 <app-footer></app-footer>

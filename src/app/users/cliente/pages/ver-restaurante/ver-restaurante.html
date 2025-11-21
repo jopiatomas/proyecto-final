@@ -259,7 +259,7 @@
               <option value="">Selecciona una dirección</option>
               @for (direccion of direcciones; track direccion.id) {
                 <option [value]="direccion.id">
-                  {{ direccion.calle }} {{ direccion.numero }}, {{ direccion.ciudad }}
+                  {{ direccion.direccion }}, {{ direccion.ciudad }}
                 </option>
               }
             </select>
@@ -272,7 +272,7 @@
               <option value="">Selecciona un método de pago</option>
               @for (tarjeta of metodosPago; track tarjeta.id) {
                 <option [value]="tarjeta.id">
-                  {{ tarjeta.tipo }} **** {{ tarjeta.numeroTarjeta.slice(-4) }} - {{ tarjeta.titular }}
+                  {{ tarjeta.tipo }} **** {{ tarjeta.numero.slice(-4) }} - {{ tarjeta.titular }}
                 </option>
               }
             </select>
