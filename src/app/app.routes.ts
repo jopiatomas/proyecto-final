@@ -90,6 +90,16 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'admin',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./users/admin/pages/menu-admin/menu-admin').then((m) => m.MenuAdmin),
+      },
+    ],
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',

@@ -1,0 +1,228 @@
+<app-header (tabSelected)="onTabSelected($event)"></app-header>
+
+<div class="admin-container">
+	@if (success()) {
+		<div class="alert alert-success">{{ success() }}</div>
+	}
+	@if (error()) {
+		<div class="alert alert-error">{{ error() }}</div>
+	}
+
+	@if (activeView() === 'welcome') {
+		<div class="welcome">
+			<h1>Panel de Administración</h1>
+			<p>Selecciona una opción en el menú superior para comenzar</p>
+			<div class="welcome-icons">
+				<div class="icon-card">
+					<h3>👥 Clientes</h3>
+					<p>Gestiona usuarios clientes</p>
+				</div>
+				<div class="icon-card">
+					<h3>🍽️ Restaurantes</h3>
+					<p>Gestiona restaurantes y reseñas</p>
+				</div>
+			</div>
+		</div>
+	}
+
+	@if (activeView() === 'clientes') {
+		<div class="content-layout">
+			<div class="list-panel">
+				<h2>Clientes ({{ clientes().length }})</h2>
+
+				@if (loading() && !selectedCliente()) {
+					<div class="loading"><div class="spinner"></div></div>
+				}
+
+				@if (!loading() && clientes().length === 0) {
+					<p class="empty">No hay clientes</p>
+				}
+
+				<div class="items-list">
+					@for (cliente of clientes(); track cliente.id) {
+						<div
+							class="list-item"
+							[class.selected]="selectedCliente()?.id === cliente.id"
+							(click)="selectCliente(cliente)">
+						<div class="item-header">
+							<strong>{{ cliente.nombreYapellido }}</strong>
+							<span class="badge">ID: {{ cliente.id }}</span>
+						</div>
+							<p class="item-detail">Usuario: {{ cliente.usuario }}</p>
+						</div>
+					}
+				</div>
+			</div>
+
+			@if (selectedCliente()) {
+				<div class="detail-panel">
+					<div class="panel-header">
+						<h3>{{ selectedCliente()!.nombreYapellido }}</h3>
+						<button class="close-btn" (click)="clearSelection()">×</button>
+					</div>
+
+					@if (!editingCliente()) {
+						<div class="detail-content">
+							<div class="detail-item">
+								<label>ID:</label>
+								<span>{{ selectedCliente()!.id }}</span>
+							</div>
+							<div class="detail-item">
+								<label>Usuario:</label>
+								<span>{{ selectedCliente()!.usuario }}</span>
+							</div>
+							<div class="detail-item">
+								<label>Nombre:</label>
+								<span>{{ selectedCliente()!.nombreYapellido }}</span>
+							</div>
+
+							<div class="actions">
+								<button class="btn btn-primary" (click)="enableEditCliente()">Modificar Datos</button>
+								<button class="btn btn-danger" (click)="eliminarCliente()">Eliminar Cliente</button>
+							</div>
+						</div>
+					}
+
+					@if (editingCliente()) {
+						<form class="edit-form" (ngSubmit)="guardarCliente()">
+							<div class="form-group">
+								<label>Usuario:</label>
+								<input type="text" [(ngModel)]="clienteForm.usuario" name="usuario" required>
+							</div>
+							<div class="form-group">
+								<label>Nombre:</label>
+								<input type="text" [(ngModel)]="clienteForm.nombre" name="nombre" required>
+							</div>
+							<div class="actions">
+								<button type="submit" class="btn btn-primary" [disabled]="loading()">Guardar</button>
+								<button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
+							</div>
+						</form>
+					}
+				</div>
+			}
+		</div>
+	}
+
+	@if (activeView() === 'restaurantes') {
+		<div class="content-layout">
+			<div class="list-panel">
+				<h2>Restaurantes ({{ restaurantes().length }})</h2>
+
+				@if (loading() && !selectedRestaurante()) {
+					<div class="loading"><div class="spinner"></div></div>
+				}
+
+				@if (!loading() && restaurantes().length === 0) {
+					<p class="empty">No hay restaurantes</p>
+				}
+
+				<div class="items-list">
+					@for (rest of restaurantes(); track rest.id) {
+						<div
+							class="list-item"
+							[class.selected]="selectedRestaurante()?.id === rest.id"
+							(click)="selectRestaurante(rest)">
+						<div class="item-header">
+							<strong>{{ rest.nombre }}</strong>
+							<span class="badge">ID: {{ rest.id }}</span>
+						</div>
+							<p class="item-detail">Usuario: {{ rest.usuario }}</p>
+						</div>
+					}
+				</div>
+			</div>
+
+			@if (selectedRestaurante()) {
+				<div class="detail-panel">
+					<div class="panel-header">
+						<h3>{{ selectedRestaurante()!.nombre }}</h3>
+						<button class="close-btn" (click)="clearSelection()">×</button>
+					</div>
+
+					@if (!editingRestaurante() && !showResenias()) {
+						<div class="detail-content">
+							<div class="detail-item">
+								<label>ID:</label>
+								<span>{{ selectedRestaurante()!.id }}</span>
+							</div>
+							<div class="detail-item">
+								<label>Usuario:</label>
+								<span>{{ selectedRestaurante()!.usuario }}</span>
+							</div>
+							<div class="detail-item">
+								<label>Nombre:</label>
+								<span>{{ selectedRestaurante()!.nombre }}</span>
+							</div>
+
+							<div class="actions">
+								<button class="btn btn-primary" (click)="enableEditRestaurante()">Modificar Datos</button>
+								<button class="btn btn-info" (click)="verResenias()">Ver Reseñas</button>
+								<button class="btn btn-danger" (click)="eliminarRestaurante()">Eliminar Restaurante</button>
+							</div>
+						</div>
+					}
+
+					@if (editingRestaurante()) {
+						<form class="edit-form" (ngSubmit)="guardarRestaurante()">
+							<div class="form-group">
+								<label>Usuario:</label>
+								<input type="text" [(ngModel)]="restauranteForm.usuario" name="usuario" required>
+							</div>
+							<div class="form-group">
+								<label>Nombre:</label>
+								<input type="text" [(ngModel)]="restauranteForm.nombre" name="nombre" required>
+							</div>
+							<div class="actions">
+								<button type="submit" class="btn btn-primary" [disabled]="loading()">Guardar</button>
+								<button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancelar</button>
+							</div>
+						</form>
+					}
+
+					@if (showResenias()) {
+						<div class="resenias-section">
+							<div class="section-header">
+								<h4>Reseñas ({{ resenias().length }})</h4>
+								<button class="btn btn-secondary btn-sm" (click)="showResenias.set(false)">Volver</button>
+							</div>
+
+							@if (loading()) {
+								<div class="loading"><div class="spinner"></div></div>
+							}
+
+							@if (!loading() && resenias().length === 0) {
+								<p class="empty">No hay reseñas</p>
+							}
+
+							<div class="resenias-list">
+								@for (resenia of resenias(); track resenia.id) {
+									<div class="resenia-card">
+										<div class="resenia-header">
+											<div class="rating">
+												@for (s of getStarsArray(resenia.puntuacion); track $index) {
+													<span class="star" [class.filled]="s === 1">★</span>
+												}
+												<span class="score">{{ resenia.puntuacion }}/5</span>
+											</div>
+											<button class="btn-delete" (click)="eliminarResenia(resenia)">🗑️</button>
+										</div>
+										<p class="resenia-text">{{ resenia.resenia }}</p>
+										<div class="resenia-footer">
+											<span class="cliente-info">Cliente ID: {{ resenia.idCliente }}</span>
+											@if (resenia.fecha) {
+												<span class="fecha">{{ resenia.fecha | date: 'short' }}</span>
+											}
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					}
+				</div>
+			}
+		</div>
+	}
+</div>
+
+<app-footer></app-footer>
