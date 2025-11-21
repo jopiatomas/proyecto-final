@@ -1,0 +1,37 @@
+<header>
+  <div class="barra">
+    <a class="logo" routerLink="/admin" (click)="goHome($event)">
+      <img src="/img-quickish-header.png" alt="Quickish" />
+    </a>
+
+    <nav class="tabs">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'clientes'"
+        (click)="selectTab('clientes')">
+        Clientes
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'restaurantes'"
+        (click)="selectTab('restaurantes')">
+        Restaurantes
+      </button>
+    </nav>
+
+    <div class="perfil-container">
+      <button class="perfil" aria-label="Perfil" (click)="toggleDropdown()">
+        <img src="/image.png" alt="Perfil del usuario" />
+      </button>
+
+      @if (dropdownOpen()) {
+        <div class="dropdown-menu">
+          <div class="dropdown-divider"></div>
+          <button (click)="cerrarSesion()" class="dropdown-item logout">
+            Cerrar Sesión
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</header>

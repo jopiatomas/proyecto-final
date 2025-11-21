@@ -8,7 +8,7 @@ export interface RegisterRequest {
   contrasenia: string;
   nombre: string;
   email: string;
-  rol: string; 
+  rol: string;
 }
 
 export interface AuthResponse {

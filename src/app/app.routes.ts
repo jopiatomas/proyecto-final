@@ -80,12 +80,32 @@ export const routes: Routes = [
       {
         path: 'perfil',
         loadComponent: () =>
-          import('./users/restaurante/pages/ver-perfil/ver-perfil').then((m) => m.VerPerfil),
+          import('./users/restaurante/pages/ver-perfil/perfil').then((m) => m.Perfil),
+      },
+      {
+        path: 'direcciones',
+        loadComponent: () =>
+          import('./users/restaurante/pages/direcciones/direcciones').then((m) => m.Direcciones),
+      },
+      {
+        path: 'balance',
+        loadComponent: () =>
+          import('./users/restaurante/pages/balance/balance').then((m) => m.Balance),
       },
       {
         path: 'resenias',
         loadComponent: () =>
           import('./users/restaurante/pages/ver-resenias/ver-resenias').then((m) => m.VerResenias),
+      },
+    ],
+  },
+  {
+    path: 'admin',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./users/admin/pages/menu-admin/menu-admin').then((m) => m.MenuAdmin),
       },
     ],
   },
