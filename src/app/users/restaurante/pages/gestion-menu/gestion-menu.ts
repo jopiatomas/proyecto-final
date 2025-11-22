@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FooterRestaurante } from '../../components/footer/footer';
+import {FooterRestaurante } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
-import { ProductoCrearDTO, ProductoModificarDTO, ProductoDetailDTO, RestauranteService } from '../../../../core/services/restaurante.service';
+import { ProductoCrearDTO, ProductoDetailDTO, ProductoModificarDTO, RestauranteService } from '../../../../core/services/restaurante.service';
+
 
 interface Producto {
   id: number;
@@ -15,7 +16,7 @@ interface Producto {
 
 @Component({
   selector: 'app-gestion-menu',
-  imports: [Header, CommonModule, FormsModule, FooterRestaurante],
+  imports: [Header, FooterRestaurante, CommonModule, FormsModule],
   templateUrl: './gestion-menu.html',
   styleUrl: './gestion-menu.css',
 })
@@ -63,7 +64,10 @@ export class GestionMenu implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar productos:', err);
-        this.error = 'Error al cargar los productos';
+        // Solo mostrar error si es un error real (no 404 o lista vacía)
+        if (err.status !== 404 && err.status !== 400) {
+          this.error = 'Error al cargar los productos';
+        }
         this.productos = [];
         this.aplicarFiltros();
         this.cargando = false;
@@ -90,6 +94,7 @@ export class GestionMenu implements OnInit {
     this.productoSeleccionado = null;
     this.estaEditando = false;
     this.estaAgregando = true;
+    this.error = '';  // Limpiar error al abrir formulario
     this.formulario = {
       id: 0,
       nombre: '',
@@ -168,7 +173,7 @@ export class GestionMenu implements OnInit {
       });
     }
   }
-
+// hola que tal
   eliminarProducto() {
     if (this.productoSeleccionado && confirm(`¿Estás seguro de eliminar "${this.productoSeleccionado.nombre}"?`)) {
       this.restauranteService.eliminarProducto(this.productoSeleccionado.id).subscribe({
@@ -179,7 +184,7 @@ export class GestionMenu implements OnInit {
         },
         error: (err) => {
           console.error('Error al eliminar producto:', err);
-          this.error = 'Error al eliminar el producto';
+          this.error = 'No se puede eliminar el producto porque está asociado a pedidos del restaurante.';
         }
       });
     }
