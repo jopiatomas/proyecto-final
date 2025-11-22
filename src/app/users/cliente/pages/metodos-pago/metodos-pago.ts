@@ -1,11 +1,10 @@
-
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ClienteService } from '../../../../services/cliente.service';
 import { Tarjeta, TarjetaRequest } from '../../../../models/app.models';
 import { Header } from '../../components/header/header';
-import { FooterCliente } from "../../components/footer/footer";
+import { FooterCliente } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-metodos-pago',
@@ -17,7 +16,7 @@ import { FooterCliente } from "../../components/footer/footer";
 export class MetodosPago implements OnInit {
   private fb = inject(FormBuilder);
   private clienteService = inject(ClienteService);
-  
+
   tarjetas = signal<Tarjeta[]>([]);
   formularioTarjeta!: FormGroup;
   panelAbierto = signal(false);
@@ -33,8 +32,15 @@ export class MetodosPago implements OnInit {
       tipo: ['', [Validators.required]],
       numero: ['', [Validators.required, Validators.pattern(/^\d{16}$/)]],
       titular: ['', [Validators.required, Validators.maxLength(100)]],
-      vencimiento: ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/), this.validarVencimiento.bind(this)]],
-      cvv: ['', [Validators.required, Validators.pattern(/^\d{3}$/)]]
+      vencimiento: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/),
+          this.validarVencimiento.bind(this),
+        ],
+      ],
+      cvv: ['', [Validators.required, Validators.pattern(/^\d{3}$/)]],
     });
   }
 
@@ -90,7 +96,7 @@ export class MetodosPago implements OnInit {
         if (error.status === 400 || error.status === 404) {
           this.tarjetas.set([]);
         }
-      }
+      },
     });
   }
 
@@ -114,8 +120,12 @@ export class MetodosPago implements OnInit {
         error: (error) => {
           console.error('Error al eliminar tarjeta:', error);
           this.cargando.set(false);
-          alert(`Error al eliminar la tarjeta: ${error.error?.message || error.message || 'Error desconocido'}`);
-        }
+          alert(
+            `Error al eliminar la tarjeta: ${
+              error.error?.message || error.message || 'Error desconocido'
+            }`
+          );
+        },
       });
     }
   }
@@ -124,7 +134,7 @@ export class MetodosPago implements OnInit {
     if (this.formularioTarjeta.valid) {
       this.cargando.set(true);
       const tarjetaRequest: TarjetaRequest = this.formularioTarjeta.value;
-      
+
       this.clienteService.agregarMetodoPago(tarjetaRequest).subscribe({
         next: () => {
           this.cargarTarjetas();
@@ -133,8 +143,12 @@ export class MetodosPago implements OnInit {
         error: (error) => {
           console.error('Error al agregar tarjeta:', error);
           this.cargando.set(false);
-          alert(`Error al agregar la tarjeta: ${error.error?.message || error.message || 'Error desconocido'}`);
-        }
+          alert(
+            `Error al agregar la tarjeta: ${
+              error.error?.message || error.message || 'Error desconocido'
+            }`
+          );
+        },
       });
     } else {
       alert('Por favor completa todos los campos correctamente');

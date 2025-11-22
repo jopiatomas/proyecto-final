@@ -3,28 +3,28 @@
 <main class="ver-restaurante">
   <div class="main-content">
     @if (loading) {
-      <div class="loading-container">
-        <div class="loading-spinner"></div>
-        <p>Cargando información del restaurante...</p>
-      </div>
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Cargando información del restaurante...</p>
+    </div>
     } @else if (restaurante) {
-      <!-- Header del Restaurante -->
-      <section class="restaurant-header">
-        <h2>{{ restaurante.nombre }}</h2>
-        @if (resenias.length > 0) {
-          <div class="rating-info">
-            <span class="stars">
-              @for (estrella of estrellas; track estrella) {
-                <span [class.filled]="estrella <= calcularPromedioPuntuacion()">★</span>
-              }
-            </span>
-            <span class="rating-text">
-              {{ formatearPuntuacion(calcularPromedioPuntuacion()) }} 
-              ({{ resenias.length }} {{ resenias.length === 1 ? 'reseña' : 'reseñas' }})
-            </span>
-          </div>
-        }
-      </section>
+    <!-- Header del Restaurante -->
+    <section class="restaurant-header">
+      <h2>{{ restaurante.nombre }}</h2>
+      @if (resenias.length > 0) {
+      <div class="rating-info">
+        <span class="stars">
+          @for (estrella of estrellas; track estrella) {
+          <span [class.filled]="estrella <= calcularPromedioPuntuacion()">★</span>
+          }
+        </span>
+        <span class="rating-text">
+          {{ formatearPuntuacion(calcularPromedioPuntuacion()) }}
+          ({{ resenias.length }} {{ resenias.length === 1 ? 'reseña' : 'reseñas' }})
+        </span>
+      </div>
+      }
+    </section>
 
     <!-- Menú del Restaurante -->
     <section class="menu-section">
@@ -35,28 +35,28 @@
         </div>
 
         @if (loadingMenu) {
-          <div class="loading-menu">
-            <div class="loading-spinner"></div>
-            <p>Cargando menú...</p>
-          </div>
+        <div class="loading-menu">
+          <div class="loading-spinner"></div>
+          <p>Cargando menú...</p>
+        </div>
         } @else if (menu.length > 0) {
-          <div class="menu-grid">
-            @for (producto of menu; track producto.id) {
-              <div class="menu-item">
-                <div class="item-content">
-                  <h3>{{ producto.nombre }}</h3>
-                  <p class="price">{{ formatearPrecio(producto.precio) }}</p>
-                </div>
-                <button class="add-btn" type="button" (click)="agregarAlCarrito(producto)">
-                  <span>+</span>
-                </button>
-              </div>
-            }
+        <div class="menu-grid">
+          @for (producto of menu; track producto.id) {
+          <div class="menu-item">
+            <div class="item-content">
+              <h3>{{ producto.nombre }}</h3>
+              <p class="price">{{ formatearPrecio(producto.precio) }}</p>
+            </div>
+            <button class="add-btn" type="button" (click)="agregarAlCarrito(producto)">
+              <span>+</span>
+            </button>
           </div>
+          }
+        </div>
         } @else {
-          <div class="empty-menu">
-            <p>Este restaurante aún no tiene productos en su menú.</p>
-          </div>
+        <div class="empty-menu">
+          <p>Este restaurante aún no tiene productos en su menú.</p>
+        </div>
         }
       </div>
     </section>
@@ -66,105 +66,98 @@
       <div class="container">
         <div class="section-header">
           <h2>Reseñas</h2>
-          <button 
-            class="review-btn" 
-            type="button"
-            (click)="toggleFormularioResenia()"> {{ mostrarFormularioResenia ? 'Cancelar' : 'Escribir Reseña' }}
+          <button class="review-btn" type="button" (click)="toggleFormularioResenia()">
+            {{ mostrarFormularioResenia ? 'Cancelar' : 'Escribir Reseña' }}
           </button>
         </div>
 
         <!-- Formulario para Nueva Reseña -->
         @if (mostrarFormularioResenia) {
-          <form [formGroup]="reseniaForm" (ngSubmit)="submitResenia()" class="review-form">
-            <h3>Deja tu reseña</h3>
-              
-              <!-- Rating -->
-              <div class="rating-input">
-                <label>Calificación:</label>
-                <div class="stars-input">
-                  @for (estrella of estrellas; track estrella) {
-                    <button 
-                      type="button"
-                      class="star-btn"
-                      [class.selected]="estrella <= reseniaForm.value.calificacion"
-                      (click)="establecerPuntuacion(estrella)">
-                      ★
-                    </button>
-                  }
-                </div>
-              </div>
+        <form [formGroup]="reseniaForm" (ngSubmit)="submitResenia()" class="review-form">
+          <h3>Deja tu reseña</h3>
 
-              <!-- Comentario -->
-              <div class="form-group">
-                <label for="resenia">Tu comentario:</label>
-                <textarea 
-                  id="resenia"
-                  formControlName="resenia"
-                  placeholder="Cuéntanos sobre tu experiencia..."
-                  rows="4">
-                </textarea>
-                @if (reseniaForm.get('resenia')?.touched && reseniaForm.get('resenia')?.errors) {
-                  <div class="error-message">
-                    @if (reseniaForm.get('resenia')?.errors?.['required']) {
-                      El comentario es obligatorio
-                    }
-                    @if (reseniaForm.get('resenia')?.errors?.['minlength']) {
-                      El comentario debe tener al menos 10 caracteres
-                    }
-                    @if (reseniaForm.get('resenia')?.errors?.['maxlength']) {
-                      El comentario no puede exceder los 500 caracteres
-                    }
-                  </div>
-                }
-              </div>
+          <!-- Rating -->
+          <div class="rating-input">
+            <label>Calificación:</label>
+            <div class="stars-input">
+              @for (estrella of estrellas; track estrella) {
+              <button
+                type="button"
+                class="star-btn"
+                [class.selected]="estrella <= reseniaForm.value.calificacion"
+                (click)="establecerPuntuacion(estrella)"
+              >
+                ★
+              </button>
+              }
+            </div>
+          </div>
 
-              <!-- Botones -->
-           
-                <button 
-                  type="submit" 
-                  class="submit-btn"
-                  [disabled]="reseniaForm.invalid || submittingResenia">
-                  @if (submittingResenia) {
-                    Enviando...
-                  } @else {
-                    Enviar Reseña
-                  }
-                </button>
-              
-            </form>
+          <!-- Comentario -->
+          <div class="form-group">
+            <label for="resenia">Tu comentario:</label>
+            <textarea
+              id="resenia"
+              formControlName="resenia"
+              placeholder="Cuéntanos sobre tu experiencia..."
+              rows="4"
+            >
+            </textarea>
+            @if (reseniaForm.get('resenia')?.touched && reseniaForm.get('resenia')?.errors) {
+            <div class="error-message">
+              @if (reseniaForm.get('resenia')?.errors?.['required']) { El comentario es obligatorio
+              } @if (reseniaForm.get('resenia')?.errors?.['minlength']) { El comentario debe tener
+              al menos 10 caracteres } @if (reseniaForm.get('resenia')?.errors?.['maxlength']) { El
+              comentario no puede exceder los 500 caracteres }
+            </div>
+            }
+          </div>
+
+          <!-- Botones -->
+
+          <button
+            type="submit"
+            class="submit-btn"
+            [disabled]="reseniaForm.invalid || submittingResenia"
+          >
+            @if (submittingResenia) { Enviando... } @else { Enviar Reseña }
+          </button>
+        </form>
         }
 
         <!-- Lista de Reseñas -->
         @if (resenias.length > 0) {
-          <div class="reviews-list">
-            @for (resenia of resenias; track $index) {
-              <div class="review-item">
-                <div class="reviewer-info">
-                  <span class="reviewer-name">{{ resenia.nombreCliente || 'Cliente #' + resenia.idCliente }}</span>
-                  <div class="review-rating">
-                    @for (estrella of estrellas; track estrella) {
-                      <span class="star" [class.filled]="estrella <= resenia.puntuacion">★</span>
-                    }
-                    <span class="rating-value">({{ formatearPuntuacion(resenia.puntuacion) }})</span>
-                  </div>
-                </div>
-                <p class="review-text">{{ resenia.resenia }}</p>
+        <div class="reviews-list">
+          @for (resenia of resenias; track $index) {
+          <div class="review-item">
+            <div class="reviewer-info">
+              <span class="reviewer-name">{{
+                resenia.nombreCliente || 'Cliente #' + resenia.idCliente
+              }}</span>
+              <div class="review-rating">
+                @for (estrella of estrellas; track estrella) {
+                <span class="star" [class.filled]="estrella <= resenia.puntuacion">★</span>
+                }
+                <span class="rating-value">({{ formatearPuntuacion(resenia.puntuacion) }})</span>
               </div>
-            }
+            </div>
+            <p class="review-text">{{ resenia.resenia }}</p>
           </div>
+          }
+        </div>
         } @else {
-          <div class="empty-reviews">
-            <p>Este restaurante aún no tiene reseñas.</p>
-            <p>¡Sé el primero en compartir tu experiencia!</p>
-          </div>
+        <div class="empty-reviews">
+          <p>Este restaurante aún no tiene reseñas.</p>
+          <p>¡Sé el primero en compartir tu experiencia!</p>
+        </div>
         }
       </div>
     </section>
-  } @else {
-      <div class="error-container">
-        <h2>Restaurante no encontrado</h2>
-        <p>No pudimos cargar la información del restaurante solicitado.</p>
-      </div>
+    } @else {
+    <div class="error-container">
+      <h2>Restaurante no encontrado</h2>
+      <p>No pudimos cargar la información del restaurante solicitado.</p>
+    </div>
     }
   </div>
 
@@ -173,120 +166,110 @@
     <div class="cart-header">
       <h3>Tu Pedido</h3>
     </div>
-      
-      <div class="cart-content">
-        @if (carrito.length > 0) {
-          <div class="cart-items">
-            @for (item of carrito; track item.producto.id) {
-              <div class="cart-item">
-                <div class="item-info">
-                  <h4>{{ item.producto.nombre }}</h4>
-                  <p class="item-price">{{ formatearPrecio(item.producto.precio) }}</p>
-                </div>
-                <div class="quantity-controls">
-                  <button class="quantity-btn" (click)="disminuirCantidad(item.producto.id)">-</button>
-                  <span class="quantity">{{ item.cantidad }}</span>
-                  <button class="quantity-btn" (click)="aumentarCantidad(item.producto.id)">+</button>
-                </div>
-                <div class="item-total">
-                  {{ formatearPrecio(item.producto.precio * item.cantidad) }}
-                </div>
-              </div>
-            }
+
+    <div class="cart-content">
+      @if (carrito.length > 0) {
+      <div class="cart-items">
+        @for (item of carrito; track item.producto.id) {
+        <div class="cart-item">
+          <div class="item-info">
+            <h4>{{ item.producto.nombre }}</h4>
+            <p class="item-price">{{ formatearPrecio(item.producto.precio) }}</p>
           </div>
-          
-          <div class="cart-summary">
-            <div class="total-items">
-              Total items: {{ calcularCantidadTotalItems() }}
-            </div>
-            <div class="total-price">
-              Total: {{ formatearPrecio(calcularTotalCarrito()) }}
-            </div>
+          <div class="quantity-controls">
+            <button class="quantity-btn" (click)="disminuirCantidad(item.producto.id)">-</button>
+            <span class="quantity">{{ item.cantidad }}</span>
+            <button class="quantity-btn" (click)="aumentarCantidad(item.producto.id)">+</button>
           </div>
-          
-          <div class="cart-actions">
-            <button class="clear-cart-btn" (click)="limpiarCarrito()">
-              Limpiar Carrito
-            </button>
-            <button class="checkout-btn" (click)="procesarPedido()">
-              Realizar Pedido
-            </button>
+          <div class="item-total">
+            {{ formatearPrecio(item.producto.precio * item.cantidad) }}
           </div>
-        } @else {
-          <div class="empty-cart">
-            <p>Tu carrito está vacío</p>
-          </div>
+        </div>
         }
       </div>
+
+      <div class="cart-summary">
+        <div class="total-items">Total items: {{ calcularCantidadTotalItems() }}</div>
+        <div class="total-price">Total: {{ formatearPrecio(calcularTotalCarrito()) }}</div>
+      </div>
+
+      <div class="cart-actions">
+        <button class="clear-cart-btn" (click)="limpiarCarrito()">Limpiar Carrito</button>
+        <button class="checkout-btn" (click)="procesarPedido()">Realizar Pedido</button>
+      </div>
+      } @else {
+      <div class="empty-cart">
+        <p>Tu carrito está vacío</p>
+      </div>
+      }
     </div>
+  </div>
 
   <!-- Modal de Confirmación de Pedido -->
   @if (mostrarModalPedido) {
-    <div class="modal-overlay" (click)="cerrarModalPedido()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h2>Confirmar Pedido</h2>
-          <button class="close-modal-btn" (click)="cerrarModalPedido()">×</button>
-        </div>
+  <div class="modal-overlay" (click)="cerrarModalPedido()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Confirmar Pedido</h2>
+        <button class="close-modal-btn" (click)="cerrarModalPedido()">×</button>
+      </div>
 
-        <div class="modal-body">
-          <!-- Resumen del Pedido -->
-          <div class="order-summary">
-            <h3>Resumen del Pedido</h3>
-            <div class="summary-items">
-              @for (item of carrito; track item.producto.id) {
-                <div class="summary-item">
-                  <span class="item-name">{{ item.cantidad }}x {{ item.producto.nombre }}</span>
-                  <span class="item-total">{{ formatearPrecio(item.producto.precio * item.cantidad) }}</span>
-                </div>
-              }
+      <div class="modal-body">
+        <!-- Resumen del Pedido -->
+        <div class="order-summary">
+          <h3>Resumen del Pedido</h3>
+          <div class="summary-items">
+            @for (item of carrito; track item.producto.id) {
+            <div class="summary-item">
+              <span class="item-name">{{ item.cantidad }}x {{ item.producto.nombre }}</span>
+              <span class="item-total">{{
+                formatearPrecio(item.producto.precio * item.cantidad)
+              }}</span>
             </div>
-            <div class="summary-total">
-              <strong>Total: {{ formatearPrecio(calcularTotalCarrito()) }}</strong>
-            </div>
-          </div>
-
-          <!-- Selección de Dirección -->
-          <div class="form-section">
-            <label for="direccion">Dirección de Entrega:</label>
-            <select id="direccion" [(ngModel)]="direccionSeleccionada" class="form-select">
-              <option value="">Selecciona una dirección</option>
-              @for (direccion of direcciones; track direccion.id) {
-                <option [value]="direccion.id">
-                  {{ direccion.direccion }}, {{ direccion.ciudad }}
-                </option>
-              }
-            </select>
-          </div>
-
-          <!-- Selección de Método de Pago -->
-          <div class="form-section">
-            <label for="metodoPago">Método de Pago:</label>
-            <select id="metodoPago" [(ngModel)]="metodoPagoSeleccionado" class="form-select">
-              <option value="">Selecciona un método de pago</option>
-              @for (tarjeta of metodosPago; track tarjeta.id) {
-                <option [value]="tarjeta.id">
-                  {{ tarjeta.tipo }} **** {{ tarjeta.numero.slice(-4) }} - {{ tarjeta.titular }}
-                </option>
-              }
-            </select>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button class="cancel-btn" (click)="cerrarModalPedido()" [disabled]="enviandoPedido">
-            Cancelar
-          </button>
-          <button class="confirm-btn" (click)="confirmarPedido()" [disabled]="enviandoPedido">
-            @if (enviandoPedido) {
-              Procesando...
-            } @else {
-              Confirmar Pedido
             }
-          </button>
+          </div>
+          <div class="summary-total">
+            <strong>Total: {{ formatearPrecio(calcularTotalCarrito()) }}</strong>
+          </div>
+        </div>
+
+        <!-- Selección de Dirección -->
+        <div class="form-section">
+          <label for="direccion">Dirección de Entrega:</label>
+          <select id="direccion" [(ngModel)]="direccionSeleccionada" class="form-select">
+            <option value="">Selecciona una dirección</option>
+            @for (direccion of direcciones; track direccion.id) {
+            <option [value]="direccion.id">
+              {{ direccion.direccion }}, {{ direccion.ciudad }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <!-- Selección de Método de Pago -->
+        <div class="form-section">
+          <label for="metodoPago">Método de Pago:</label>
+          <select id="metodoPago" [(ngModel)]="metodoPagoSeleccionado" class="form-select">
+            <option value="">Selecciona un método de pago</option>
+            @for (tarjeta of metodosPago; track tarjeta.id) {
+            <option [value]="tarjeta.id">
+              {{ tarjeta.tipo }} **** {{ tarjeta.numero.slice(-4) }} - {{ tarjeta.titular }}
+            </option>
+            }
+          </select>
         </div>
       </div>
+
+      <div class="modal-footer">
+        <button class="cancel-btn" (click)="cerrarModalPedido()" [disabled]="enviandoPedido">
+          Cancelar
+        </button>
+        <button class="confirm-btn" (click)="confirmarPedido()" [disabled]="enviandoPedido">
+          @if (enviandoPedido) { Procesando... } @else { Confirmar Pedido }
+        </button>
+      </div>
     </div>
+  </div>
   }
 </main>
 

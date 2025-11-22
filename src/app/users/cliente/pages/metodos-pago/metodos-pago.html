@@ -104,12 +104,10 @@
                 @if (formularioTarjeta.get('vencimiento')?.hasError('pattern') &&
                 formularioTarjeta.get('vencimiento')?.touched) {
                 <small class="error">Formato: MM/YY</small>
-                }
-                @if (formularioTarjeta.get('vencimiento')?.hasError('vencimientoAntiguo') &&
+                } @if (formularioTarjeta.get('vencimiento')?.hasError('vencimientoAntiguo') &&
                 formularioTarjeta.get('vencimiento')?.touched) {
                 <small class="error">La tarjeta debe vencer a partir de 01/26</small>
-                }
-                @if (formularioTarjeta.get('vencimiento')?.hasError('vencida') &&
+                } @if (formularioTarjeta.get('vencimiento')?.hasError('vencida') &&
                 formularioTarjeta.get('vencimiento')?.touched) {
                 <small class="error">La tarjeta está vencida</small>
                 }

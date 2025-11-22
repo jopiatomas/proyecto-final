@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
-import { FooterCliente } from "../../components/footer/footer";
+import { FooterCliente } from '../../components/footer/footer';
 import { ClienteService } from '../../../../services/cliente.service';
 import { RestauranteResumen, ReseniaCreate } from '../../../../models/app.models';
 
@@ -17,7 +17,7 @@ export class RealizarResenia implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private clienteService = inject(ClienteService);
-  
+
   reseniaForm!: FormGroup;
   restaurantes = signal<RestauranteResumen[]>([]);
   cargando = signal(false);
@@ -33,7 +33,7 @@ export class RealizarResenia implements OnInit {
     this.reseniaForm = this.fb.nonNullable.group({
       restauranteId: ['', [Validators.required]],
       puntuacion: [0, [Validators.required, Validators.min(0.1), Validators.max(5)]],
-      resenia: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]]
+      resenia: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
     });
   }
 
@@ -48,7 +48,7 @@ export class RealizarResenia implements OnInit {
         console.error('Error al cargar restaurantes:', error);
         this.cargando.set(false);
         alert('Error al cargar los restaurantes');
-      }
+      },
     });
   }
 
@@ -74,18 +74,18 @@ export class RealizarResenia implements OnInit {
   enviarResenia() {
     if (this.reseniaForm.valid) {
       const confirmacion = confirm('¿Estás seguro de que deseas enviar esta reseña?');
-      
+
       if (confirmacion) {
         this.cargando.set(true);
         const reseniaData: ReseniaCreate = {
           restauranteId: Number(this.reseniaForm.value.restauranteId),
           puntuacion: Number(this.reseniaForm.value.puntuacion),
-          resenia: this.reseniaForm.value.resenia
+          resenia: this.reseniaForm.value.resenia,
         };
-        
+
         console.log('📤 Datos a enviar:', reseniaData);
         console.log('📋 Valores del formulario:', this.reseniaForm.value);
-        
+
         this.clienteService.crearResenia(reseniaData).subscribe({
           next: (resenia) => {
             console.log('Reseña creada:', resenia);
@@ -105,20 +105,30 @@ export class RealizarResenia implements OnInit {
             } else if (error.error?.message) {
               mensaje = error.error.message;
             } else if (error.status === 400) {
-              mensaje = 'Datos inválidos. Verifica que hayas completado todos los campos correctamente.';
+              mensaje =
+                'Datos inválidos. Verifica que hayas completado todos los campos correctamente.';
             }
             alert(mensaje);
-          }
+          },
         });
       }
     } else {
       console.log('❌ Formulario inválido:', this.reseniaForm.errors);
       console.log('📋 Estado de los campos:');
-      Object.keys(this.reseniaForm.controls).forEach(key => {
+      Object.keys(this.reseniaForm.controls).forEach((key) => {
         const control = this.reseniaForm.get(key);
-        console.log(`  ${key}:`, control?.value, 'válido:', control?.valid, 'errores:', control?.errors);
+        console.log(
+          `  ${key}:`,
+          control?.value,
+          'válido:',
+          control?.valid,
+          'errores:',
+          control?.errors
+        );
       });
-      alert('Por favor, completa todos los campos: restaurante, calificación y reseña (mínimo 10 caracteres)');
+      alert(
+        'Por favor, completa todos los campos: restaurante, calificación y reseña (mínimo 10 caracteres)'
+      );
     }
   }
 

@@ -3,21 +3,21 @@
 <div class="content">
   <div class="container">
     <h2>Dejar una Reseña</h2>
-    
+
     <div class="resenia-form-container">
       <form [formGroup]="reseniaForm" (ngSubmit)="enviarResenia()">
-        
         <!-- Selector de Restaurante -->
         <div class="form-group">
           <label for="restaurante">Restaurante *</label>
           <select id="restaurante" formControlName="restauranteId" class="form-select">
             <option value="">Selecciona un restaurante</option>
             @for (restaurante of restaurantes(); track restaurante.id) {
-              <option [value]="restaurante.id">{{ restaurante.nombre }}</option>
+            <option [value]="restaurante.id">{{ restaurante.nombre }}</option>
             }
           </select>
-          @if (reseniaForm.get('restauranteId')?.invalid && reseniaForm.get('restauranteId')?.touched) {
-            <small class="error">Debes seleccionar un restaurante</small>
+          @if (reseniaForm.get('restauranteId')?.invalid &&
+          reseniaForm.get('restauranteId')?.touched) {
+          <small class="error">Debes seleccionar un restaurante</small>
           }
         </div>
 
@@ -26,22 +26,21 @@
           <label>Calificación *</label>
           <div class="estrellas-container">
             @for (estrella of [1, 2, 3, 4, 5]; track estrella) {
-              <span 
-                class="estrella"
-                [class.activa]="estaActiva(estrella)"
-                (click)="seleccionarCalificacion(estrella)"
-                (mouseenter)="onMouseEnter(estrella)"
-                (mouseleave)="onMouseLeave()"
-              >
-                ★
-              </span>
+            <span
+              class="estrella"
+              [class.activa]="estaActiva(estrella)"
+              (click)="seleccionarCalificacion(estrella)"
+              (mouseenter)="onMouseEnter(estrella)"
+              (mouseleave)="onMouseLeave()"
+            >
+              ★
+            </span>
             }
           </div>
           @if (calificacionSeleccionada() > 0) {
-            <small class="calificacion-texto">{{ calificacionSeleccionada() }} de 5 estrellas</small>
-          }
-          @if (reseniaForm.get('puntuacion')?.invalid && reseniaForm.get('puntuacion')?.touched) {
-            <small class="error">Debes seleccionar una calificación</small>
+          <small class="calificacion-texto">{{ calificacionSeleccionada() }} de 5 estrellas</small>
+          } @if (reseniaForm.get('puntuacion')?.invalid && reseniaForm.get('puntuacion')?.touched) {
+          <small class="error">Debes seleccionar una calificación</small>
           }
         </div>
 
@@ -58,32 +57,25 @@
           <small class="contador-caracteres">
             {{ reseniaForm.get('resenia')?.value?.length || 0 }} / 500 caracteres
           </small>
-          @if (reseniaForm.get('resenia')?.hasError('required') && reseniaForm.get('resenia')?.touched) {
-            <small class="error">La reseña es obligatoria</small>
-          }
-          @if (reseniaForm.get('resenia')?.hasError('minlength') && reseniaForm.get('resenia')?.touched) {
-            <small class="error">La reseña debe tener al menos 10 caracteres</small>
-          }
-          @if (reseniaForm.get('resenia')?.hasError('maxlength') && reseniaForm.get('resenia')?.touched) {
-            <small class="error">La reseña no puede superar los 500 caracteres</small>
+          @if (reseniaForm.get('resenia')?.hasError('required') &&
+          reseniaForm.get('resenia')?.touched) {
+          <small class="error">La reseña es obligatoria</small>
+          } @if (reseniaForm.get('resenia')?.hasError('minlength') &&
+          reseniaForm.get('resenia')?.touched) {
+          <small class="error">La reseña debe tener al menos 10 caracteres</small>
+          } @if (reseniaForm.get('resenia')?.hasError('maxlength') &&
+          reseniaForm.get('resenia')?.touched) {
+          <small class="error">La reseña no puede superar los 500 caracteres</small>
           }
         </div>
 
         <!-- Botones -->
         <div class="form-actions">
-          <button 
-            type="submit" 
-            class="btn-enviar"
-            [disabled]="reseniaForm.invalid || cargando()"
-          >
-            @if (cargando()) {
-              Enviando...
-            } @else {
-              Enviar Reseña
-            }
+          <button type="submit" class="btn-enviar" [disabled]="reseniaForm.invalid || cargando()">
+            @if (cargando()) { Enviando... } @else { Enviar Reseña }
           </button>
-          <button 
-            type="button" 
+          <button
+            type="button"
             class="btn-cancelar"
             (click)="resetFormulario()"
             [disabled]="cargando()"
@@ -94,9 +86,9 @@
       </form>
 
       @if (cargando()) {
-        <div class="loading-overlay">
-          <div class="spinner"></div>
-        </div>
+      <div class="loading-overlay">
+        <div class="spinner"></div>
+      </div>
       }
     </div>
   </div>

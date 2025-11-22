@@ -3,17 +3,19 @@
 <div class="content">
   <div class="container">
     <h1>Pedidos del Restaurante</h1>
-    
+
     <div class="contenido-principal">
       <div class="pedidos-lista">
         <div *ngIf="pedidos().length === 0" class="mensaje-vacio">
           <p>Aún no hay pedidos</p>
         </div>
-        
-        <div *ngFor="let pedido of pedidos()" 
-             class="pedido-card"
-             [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
-             (click)="verDetalle(pedido)">
+
+        <div
+          *ngFor="let pedido of pedidos()"
+          class="pedido-card"
+          [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
+          (click)="verDetalle(pedido)"
+        >
           <div class="pedido-header">
             <h3>Pedido #{{ pedido.id }}</h3>
             <span class="estado" [class]="pedido.estado.toLowerCase()">
@@ -21,72 +23,81 @@
             </span>
           </div>
           <div class="pedido-info">
-            <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong>Fecha:</strong> {{ pedido.fecha | date : 'dd/MM/yyyy HH:mm' }}</p>
             <p><strong>Total:</strong> ${{ pedido.total }}</p>
           </div>
         </div>
       </div>
 
       <div *ngIf="pedidoSeleccionado()" class="detalles-pedido">
-      <div class="detalles-header">
-        <h2>Detalles del Pedido #{{ pedidoSeleccionado()!.id }}</h2>
-        <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
-      </div>
-      
-      <div class="detalles-contenido">
-        <div class="info-grupo">
-          <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-          <p><strong>Estado actual:</strong> 
-            <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
-              {{ pedidoSeleccionado()!.estado }}
-            </span>
-          </p>
+        <div class="detalles-header">
+          <h2>Detalles del Pedido #{{ pedidoSeleccionado()!.id }}</h2>
+          <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
         </div>
 
-        <div class="productos-lista">
-          <h3>Productos:</h3>
-          <div class="productos-items">
-            <div *ngFor="let detalle of pedidoSeleccionado()!.detalles" class="producto-item">
-              <div class="producto-info">
-                <span class="producto-nombre">{{ detalle.nombreProducto }}</span>
-                <span class="producto-cantidad">Cantidad: {{ detalle.cantidad }}</span>
-              </div>
-              <div class="producto-precios">
-                <span class="precio-unitario">${{ detalle.precioUnitario }} c/u</span>
-                <span class="precio-subtotal">${{ detalle.precioUnitario * detalle.cantidad }}</span>
+        <div class="detalles-contenido">
+          <div class="info-grupo">
+            <p>
+              <strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha | date : 'dd/MM/yyyy HH:mm' }}
+            </p>
+            <p>
+              <strong>Estado actual:</strong>
+              <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
+                {{ pedidoSeleccionado()!.estado }}
+              </span>
+            </p>
+          </div>
+
+          <div class="productos-lista">
+            <h3>Productos:</h3>
+            <div class="productos-items">
+              <div *ngFor="let detalle of pedidoSeleccionado()!.detalles" class="producto-item">
+                <div class="producto-info">
+                  <span class="producto-nombre">{{ detalle.nombreProducto }}</span>
+                  <span class="producto-cantidad">Cantidad: {{ detalle.cantidad }}</span>
+                </div>
+                <div class="producto-precios">
+                  <span class="precio-unitario">${{ detalle.precioUnitario }} c/u</span>
+                  <span class="precio-subtotal"
+                    >${{ detalle.precioUnitario * detalle.cantidad }}</span
+                  >
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="total">
-          <h3>Total: ${{ pedidoSeleccionado()!.total }}</h3>
-        </div>
+          <div class="total">
+            <h3>Total: ${{ pedidoSeleccionado()!.total }}</h3>
+          </div>
 
-        <div class="acciones">
-          <h3>Cambiar estado:</h3>
-          <button (click)="seleccionarEstado('PREPARACION')" 
-                  [class.seleccionado-estado]="estadoNuevo() === 'PREPARACION'"
-                  [disabled]="pedidoSeleccionado()!.estado === 'PREPARACION'">
-            En preparación
-          </button>
-          <button (click)="seleccionarEstado('ENVIADO')"
-                  [class.seleccionado-estado]="estadoNuevo() === 'ENVIADO'"
-                  [disabled]="pedidoSeleccionado()!.estado === 'ENVIADO'">
-            Enviado
-          </button>
-          <button (click)="seleccionarEstado('CANCELADO')"
-                  [class.seleccionado-estado]="estadoNuevo() === 'CANCELADO'">
-            Cancelado
-          </button>
-          
-          <button *ngIf="estadoNuevo()" 
-                  class="btn-confirmar" 
-                  (click)="confirmarCambio()">
-                Confirmar cambio
-          </button>
+          <div class="acciones">
+            <h3>Cambiar estado:</h3>
+            <button
+              (click)="seleccionarEstado('PREPARACION')"
+              [class.seleccionado-estado]="estadoNuevo() === 'PREPARACION'"
+              [disabled]="pedidoSeleccionado()!.estado === 'PREPARACION'"
+            >
+              En preparación
+            </button>
+            <button
+              (click)="seleccionarEstado('ENVIADO')"
+              [class.seleccionado-estado]="estadoNuevo() === 'ENVIADO'"
+              [disabled]="pedidoSeleccionado()!.estado === 'ENVIADO'"
+            >
+              Enviado
+            </button>
+            <button
+              (click)="seleccionarEstado('CANCELADO')"
+              [class.seleccionado-estado]="estadoNuevo() === 'CANCELADO'"
+            >
+              Cancelado
+            </button>
+
+            <button *ngIf="estadoNuevo()" class="btn-confirmar" (click)="confirmarCambio()">
+              Confirmar cambio
+            </button>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   </div>
