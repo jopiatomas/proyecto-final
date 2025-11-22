@@ -45,7 +45,7 @@
 							[class.selected]="selectedCliente()?.id === cliente.id"
 							(click)="selectCliente(cliente)">
 						<div class="item-header">
-							<strong>{{ cliente.nombreYapellido }}</strong>
+							<strong>{{ cliente.nombre }}</strong>
 							<span class="badge">ID: {{ cliente.id }}</span>
 						</div>
 							<p class="item-detail">Usuario: {{ cliente.usuario }}</p>
@@ -57,7 +57,7 @@
 			@if (selectedCliente()) {
 				<div class="detail-panel">
 					<div class="panel-header">
-						<h3>{{ selectedCliente()!.nombreYapellido }}</h3>
+						<h3>{{ selectedCliente()!.nombre }}</h3>
 						<button class="close-btn" (click)="clearSelection()">×</button>
 					</div>
 
@@ -73,7 +73,7 @@
 							</div>
 							<div class="detail-item">
 								<label>Nombre:</label>
-								<span>{{ selectedCliente()!.nombreYapellido }}</span>
+								<span>{{ selectedCliente()!.nombre }}</span>
 							</div>
 
 							<div class="actions">

@@ -1,9 +1,9 @@
-<app-header></app-header>
+﻿<app-header></app-header>
 
 <main class="historial-pedidos-container">
   <div class="page-header">
-    <h1>Historial de Pedidos</h1>
-    <p>Revisa todos tus pedidos anteriores</p>
+    <h1>Pedidos</h1>
+    <p>Revisa todos tus pedidos</p>
   </div>
 
   <div class="pedidos-layout">
@@ -11,143 +11,145 @@
     <div class="pedidos-lista">
       <div class="section-header">
         <h2>Tus Pedidos</h2>
-        <button class="btn-reload" (click)="cargarPedidos()" [disabled]="loading">
-          🔄 Actualizar
-        </button>
       </div>
 
-      <div *ngIf="loading" class="loading-state">
+      @if (loading) {
+        <div class="loading-state">
         <div class="loading-spinner"></div>
         <p>Cargando historial de pedidos...</p>
-      </div>
+      </div>}
 
-      <div *ngIf="error && !loading" class="error-state">
-        <p>{{ error }}</p>
-        <button class="btn-retry" (click)="cargarPedidos()">Reintentar</button>
-      </div>
-
-      <div *ngIf="!loading && !error && pedidos.length === 0" class="empty-state">
-        <div class="empty-icon">📦</div>
-        <h3>No tienes pedidos</h3>
-        <p>Cuando realices tu primer pedido, aparecerá aquí.</p>
-      </div>
-
-      <div class="pedidos-grid" *ngIf="!loading && !error && pedidos.length > 0">
-        <div 
-          *ngFor="let pedido of pedidos" 
-          class="pedido-card"
-          [class.selected]="pedidoSeleccionado?.id === pedido.id"
-          (click)="seleccionarPedido(pedido.id)"
-        >
-          <div class="pedido-header">
-            <span class="pedido-id">Pedido #{{ pedido.id }}</span>
-            <span 
-              class="estado-badge" 
-              [style.background-color]="getEstadoColor(pedido.estado)"
-            >
-              {{ formatearEstado(pedido.estado) }}
-            </span>
-          </div>
-          <div class="pedido-info">
-            <p class="fecha">{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-            <p class="total">{{ formatearPrecio(pedido.total) }}</p>
-          </div>
+      @if (error && !loading) {
+        <div class="error-state">
+          <p>{{ error }}</p>
+          <button class="btn-retry" (click)="cargarPedidos()">Reintentar</button>
         </div>
-      </div>
+      }
+
+      @if (!loading && !error && pedidos.length === 0) {
+        <div class="empty-state">
+          <h3>No tienes pedidos</h3>
+          <p>Cuando realices tu primer pedido, aparecerá aquí.</p>
+        </div>
+      }
+
+      @if (!loading && !error && pedidos.length > 0) {
+        <div class="pedidos-grid">
+          @for (pedido of pedidos; track pedido.id) {
+            <div 
+              class="pedido-card"
+              [class.selected]="pedidoSeleccionado?.id === pedido.id"
+              (click)="seleccionarPedido(pedido.id)"
+            >
+              <div class="pedido-header">
+                <span class="pedido-id">Pedido #{{ pedido.id }}</span>
+                <span 
+                  class="estado-badge" 
+                  [style.background-color]="getEstadoColor(pedido.estado)"
+                >
+                  {{ formatearEstado(pedido.estado) }}
+                </span>
+              </div>
+              <div class="pedido-info">
+                <p class="fecha">{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+                <p class="total">{{ formatearPrecio(pedido.total) }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      }
     </div>
 
     <!-- Panel de detalle -->
     <div class="pedido-detalle">
-      <div *ngIf="!pedidoSeleccionado" class="detalle-placeholder">
-        <div class="placeholder-icon">📋</div>
-        <h3>Selecciona un pedido</h3>
-        <p>Haz clic en cualquier pedido de la lista para ver sus detalles.</p>
-      </div>
-
-      <div *ngIf="loadingDetalle" class="loading-detalle">
-        <div class="loading-spinner"></div>
-        <p>Cargando detalles del pedido...</p>
-      </div>
-
-      <div *ngIf="pedidoSeleccionado && !loadingDetalle" class="detalle-content">
-        <div class="detalle-header">
-          <div class="pedido-info-main">
-            <h2>Pedido #{{ pedidoSeleccionado.id }}</h2>
-            <div class="pedido-meta">
-              <span 
-                class="estado-badge large" 
-                [style.background-color]="getEstadoColor(pedidoSeleccionado.estado)"
-              >
-                {{ formatearEstado(pedidoSeleccionado.estado) }}
-              </span>
-            </div>
-          </div>
-          
-          <div class="acciones-pedido">
-            <button 
-              class="btn-menu-opciones"
-              (click)="toggleMenuOpciones()"
-              [class.active]="mostrarMenuOpciones"
-            >
-              ⋮
-            </button>
-            <div class="menu-opciones" *ngIf="mostrarMenuOpciones">
-              <button 
-                *ngIf="puedeSerCancelado(pedidoSeleccionado.estado)"
-                class="opcion-cancelar"
-                (click)="cancelarPedido()"
-              >
-                ❌ Cancelar Pedido
-              </button>
-              <button class="opcion-info" disabled>
-                ℹ️ Más información
-              </button>
-            </div>
-          </div>
+      @if (!pedidoSeleccionado) {
+        <div class="detalle-placeholder">
+          <div class="placeholder-icon">📋</div>
+          <h3>Selecciona un pedido</h3>
+          <p>Haz clic en cualquier pedido de la lista para ver sus detalles.</p>
         </div>
+      }
 
-        <div class="detalle-body">
-          <div class="info-section">
-            <h3>Información del Pedido</h3>
-            <div class="info-grid">
-              <div class="info-item">
-                <label>Restaurante:</label>
-                <span>{{ pedidoSeleccionado.nombreRestaurante }}</span>
-              </div>
-              <div class="info-item">
-                <label>Fecha:</label>
-                <span>{{ pedidoSeleccionado.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
-              </div>
-              <div class="info-item">
-                <label>Estado:</label>
-                <span>{{ formatearEstado(pedidoSeleccionado.estado) }}</span>
-              </div>
-              <div class="info-item">
-                <label>Total:</label>
-                <span class="total-amount">{{ formatearPrecio(pedidoSeleccionado.total) }}</span>
+      @if (pedidoSeleccionado) {
+        <div class="detalle-content">
+          <div class="detalle-header">
+            <div class="pedido-info-main">
+              <h2>Pedido #{{ pedidoSeleccionado.id }}</h2>
+              <div class="pedido-meta">
+                <span 
+                  class="estado-badge large" 
+                  [style.background-color]="getEstadoColor(pedidoSeleccionado.estado)"
+                >
+                  {{ formatearEstado(pedidoSeleccionado.estado) }}
+                </span>
               </div>
             </div>
+            
+            @if (puedeSerCancelado(pedidoSeleccionado.estado)) {
+              <div class="acciones-pedido">
+                <button 
+                  class="btn-menu-opciones"
+                  (click)="toggleMenuOpciones()"
+                  [class.active]="mostrarMenuOpciones"
+                >
+                  ⋮
+                </button>
+                @if (mostrarMenuOpciones) {
+                  <div class="menu-opciones">
+                    <button 
+                      class="opcion-cancelar"
+                      (click)="cancelarPedido()"
+                    >
+                      ❌ Cancelar Pedido
+                    </button>
+                  </div>
+                }
+              </div>
+            }
           </div>
 
-          <div class="items-section">
-            <h3>Productos Pedidos</h3>
-            <div class="items-list">
-              <div 
-                *ngFor="let detalle of pedidoSeleccionado.detalles" 
-                class="item-card"
-              >
-                <div class="item-info">
-                  <h4>{{ detalle.nombreProducto }}</h4>
-                  <p class="item-cantidad">Cantidad: {{ detalle.cantidad }}</p>
+          <div class="detalle-body">
+            <div class="info-section">
+              <h3>Información del Pedido</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>Restaurante:</label>
+                  <span>{{ pedidoSeleccionado.nombreRestaurante }}</span>
                 </div>
-                <div class="item-precio">
-                  {{ detalle.precioUnitario ? formatearPrecio(detalle.precioUnitario * detalle.cantidad) : 'Precio no disponible' }}
+                <div class="info-item">
+                  <label>Fecha:</label>
+                  <span>{{ pedidoSeleccionado.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
                 </div>
+                <div class="info-item">
+                  <label>Estado:</label>
+                  <span>{{ formatearEstado(pedidoSeleccionado.estado) }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Total:</label>
+                  <span class="total-amount">{{ formatearPrecio(pedidoSeleccionado.total) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="items-section">
+              <h3>Productos Pedidos</h3>
+              <div class="items-list">
+                @for (detalle of pedidoSeleccionado.detalles; track detalle.productoId) {
+                  <div class="item-card">
+                    <div class="item-info">
+                      <h4>{{ detalle.nombreProducto }}</h4>
+                      <p class="item-cantidad">Cantidad: {{ detalle.cantidad }}</p>
+                    </div>
+                    <div class="item-precio">
+                      {{ detalle.precioUnitario ? formatearPrecio(detalle.precioUnitario * detalle.cantidad) : 'Precio no disponible' }}
+                    </div>
+                  </div>
+                }
               </div>
             </div>
           </div>
         </div>
-      </div>
+      }
     </div>
   </div>
 </main>

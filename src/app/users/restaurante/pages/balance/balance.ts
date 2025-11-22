@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterRestaurante } from '../../components/footer/footer';
-import { RestauranteService } from '../../../../services/restaurante.service';
+import { RestauranteService } from '../../../../core/services/restaurante.service';
 
 interface DatosBalance {
   totalRecaudado: number;

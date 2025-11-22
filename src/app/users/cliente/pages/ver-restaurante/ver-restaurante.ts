@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import { ClienteService } from '../../../../services/cliente.service';
+import { ClienteService } from '../../../../core/services/cliente.service';
 import {
   RestauranteDetail,
   ProductoResumen,
@@ -14,8 +14,8 @@ import {
   PedidoCreate,
   DetallePedido,
   DireccionDTO,
-  Tarjeta,
-} from '../../../../models/app.models';
+  Tarjeta
+} from '../../../../core/models/app.models';
 
 // Interface para items del carrito
 interface CarritoItem {
@@ -63,7 +63,7 @@ export class VerRestaurante implements OnInit {
   constructor() {
     this.reseniaForm = this.fb.group({
       resenia: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-      calificacion: [5, [Validators.required, Validators.min(0.1), Validators.max(5)]],
+      calificacion: [5, [Validators.required, Validators.min(0.1), Validators.max(5)]]
     });
   }
 
@@ -85,15 +85,6 @@ export class VerRestaurante implements OnInit {
         // Cargar menú y reseñas desde el backend
         this.menu = (restaurante.menu || []).sort((a, b) => a.nombre.localeCompare(b.nombre));
         this.resenias = restaurante.reseniasRestaurante || [];
-
-        // Debug: Ver qué datos vienen en las reseñas
-        console.log('🔍 Reseñas recibidas:', this.resenias);
-        if (this.resenias.length > 0) {
-          console.log('📝 Ejemplo de reseña:', this.resenias[0]);
-          console.log('📝 JSON de la reseña:', JSON.stringify(this.resenias[0], null, 2));
-          console.log('📝 Claves de la reseña:', Object.keys(this.resenias[0]));
-        }
-
         this.loading = false;
         this.loadingMenu = false;
       },
@@ -101,7 +92,7 @@ export class VerRestaurante implements OnInit {
         console.error('Error cargando datos del restaurante:', error);
         this.loading = false;
         this.loadingMenu = false;
-      },
+      }
     });
   }
 
@@ -110,7 +101,7 @@ export class VerRestaurante implements OnInit {
     if (!this.mostrarFormularioResenia) {
       this.reseniaForm.reset({
         resenia: '',
-        calificacion: 5,
+        puntuacion: 5
       });
     }
   }
@@ -120,79 +111,60 @@ export class VerRestaurante implements OnInit {
   }
 
   submitResenia() {
-    console.log('🎯 submitResenia called');
-    console.log('📋 Form valid?', this.reseniaForm.valid);
-    console.log('📋 Form value:', this.reseniaForm.value);
-    console.log('🏪 Restaurante:', this.restaurante);
-
     if (this.reseniaForm.valid && this.restaurante) {
       this.submittingResenia = true;
 
-      const reseniaText = this.reseniaForm.value.resenia?.trim() || '';
-      const puntuacionNum = Number(this.reseniaForm.value.calificacion) || 0;
-
-      console.log('📝 Reseña text:', reseniaText, 'length:', reseniaText.length);
-      console.log('⭐ Puntuación:', puntuacionNum);
-
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
-        resenia: reseniaText,
-        puntuacion: puntuacionNum,
+        comentario: this.reseniaForm.value.resenia.trim(),
+        calificacion: this.reseniaForm.value.calificacion
       };
-
-      console.log('📤 Enviando reseña:', JSON.stringify(reseniaData, null, 2));
 
       this.clienteService.crearResenia(reseniaData).subscribe({
         next: (nuevaResenia) => {
-          console.log('✅ Reseña creada:', nuevaResenia);
 
-          // Recargar restaurante para obtener reseñas actualizadas
-          if (this.nombreRestaurante) {
-            this.cargarDatosRestaurante();
-          }
+
+          // Agregar la nueva reseña al principio de la lista
+          const reseniaResumen: ReseniaResumen = {
+            id: nuevaResenia.id,
+            calificacion: nuevaResenia.calificacion,
+            comentario: nuevaResenia.comentario,
+            fecha: nuevaResenia.fecha,
+            nombreCliente: nuevaResenia.nombreCliente
+          };
+          this.resenias.unshift(reseniaResumen);
 
           // Resetear formulario y ocultar
           this.reseniaForm.reset({
             resenia: '',
-            calificacion: 5,
+            puntuacion: 5
           });
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
+
+          alert('¡Reseña enviada exitosamente!');
         },
         error: (error) => {
-          console.error('❌ Error enviando reseña:', error);
-          console.error('📋 Datos enviados:', reseniaData);
+          console.error('Error enviando reseña:', error);
           this.submittingResenia = false;
-
-          let mensaje = 'Error al enviar la reseña.';
-          if (error.error?.resenia) {
-            mensaje = error.error.resenia;
-          } else if (error.error?.puntuacion) {
-            mensaje = error.error.puntuacion;
-          } else if (error.error?.message) {
-            mensaje = error.error.message;
-          }
-          alert(mensaje);
-        },
+          alert('Error al enviar la reseña. Por favor, inténtalo de nuevo.');
+        }
       });
     } else {
       // Marcar todos los campos como touched para mostrar errores
-      Object.keys(this.reseniaForm.controls).forEach((key) => {
+      Object.keys(this.reseniaForm.controls).forEach(key => {
         this.reseniaForm.get(key)?.markAsTouched();
       });
     }
   }
 
   formatearPrecio(precio: number): string {
-    return `$${precio.toLocaleString('es-AR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+    return `$${precio.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
 
   calcularPromedioPuntuacion(): number {
     if (this.resenias.length === 0) return 0;
-    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.puntuacion, 0);
+    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.calificacion, 0);
     return suma / this.resenias.length;
   }
 
@@ -202,7 +174,7 @@ export class VerRestaurante implements OnInit {
 
   // Métodos del carrito
   agregarAlCarrito(producto: ProductoResumen) {
-    const itemExistente = this.carrito.find((item) => item.producto.id === producto.id);
+    const itemExistente = this.carrito.find(item => item.producto.id === producto.id);
 
     if (itemExistente) {
       itemExistente.cantidad++;
@@ -212,21 +184,21 @@ export class VerRestaurante implements OnInit {
   }
 
   removerDelCarrito(productoId: number) {
-    const index = this.carrito.findIndex((item) => item.producto.id === productoId);
+    const index = this.carrito.findIndex(item => item.producto.id === productoId);
     if (index > -1) {
       this.carrito.splice(index, 1);
     }
   }
 
   aumentarCantidad(productoId: number) {
-    const item = this.carrito.find((item) => item.producto.id === productoId);
+    const item = this.carrito.find(item => item.producto.id === productoId);
     if (item) {
       item.cantidad++;
     }
   }
 
   disminuirCantidad(productoId: number) {
-    const item = this.carrito.find((item) => item.producto.id === productoId);
+    const item = this.carrito.find(item => item.producto.id === productoId);
     if (item && item.cantidad > 1) {
       item.cantidad--;
     } else if (item && item.cantidad === 1) {
@@ -235,7 +207,7 @@ export class VerRestaurante implements OnInit {
   }
 
   calcularTotalCarrito(): number {
-    return this.carrito.reduce((total, item) => total + item.producto.precio * item.cantidad, 0);
+    return this.carrito.reduce((total, item) => total + (item.producto.precio * item.cantidad), 0);
   }
 
   calcularCantidadTotalItems(): number {
@@ -266,7 +238,7 @@ export class VerRestaurante implements OnInit {
       error: (error) => {
         console.error('Error cargando direcciones:', error);
         alert('Error cargando direcciones. Por favor, intenta de nuevo.');
-      },
+      }
     });
 
     this.clienteService.getMetodosPago().subscribe({
@@ -276,7 +248,7 @@ export class VerRestaurante implements OnInit {
       error: (error) => {
         console.error('Error cargando métodos de pago:', error);
         alert('Error cargando métodos de pago. Por favor, intenta de nuevo.');
-      },
+      }
     });
   }
 
@@ -305,16 +277,16 @@ export class VerRestaurante implements OnInit {
     }
 
     // Preparar datos del pedido
-    const detalles: DetallePedido[] = this.carrito.map((item) => ({
+    const detalles: DetallePedido[] = this.carrito.map(item => ({
       productoId: item.producto.id,
-      cantidad: item.cantidad,
+      cantidad: item.cantidad
     }));
 
     const pedido: PedidoCreate = {
       restauranteId: this.restaurante.id,
       direccionId: this.direccionSeleccionada,
       pagoId: this.metodoPagoSeleccionado,
-      detalles: detalles,
+      detalles: detalles
     };
 
     // Enviar pedido
@@ -322,11 +294,7 @@ export class VerRestaurante implements OnInit {
     this.clienteService.crearPedido(pedido).subscribe({
       next: (pedidoCreado) => {
         // Éxito
-        alert(
-          `¡Pedido realizado exitosamente!\nNúmero de pedido: ${
-            pedidoCreado.id
-          }\nTotal: ${this.formatearPrecio(this.calcularTotalCarrito())}`
-        );
+        alert(`¡Pedido realizado exitosamente!\nNúmero de pedido: ${pedidoCreado.id}\nTotal: ${this.formatearPrecio(this.calcularTotalCarrito())}`);
         this.limpiarCarrito();
         this.cerrarModalPedido();
       },
@@ -342,7 +310,7 @@ export class VerRestaurante implements OnInit {
         } else {
           alert('Error creando el pedido. Por favor intenta de nuevo.');
         }
-      },
+      }
     });
   }
 }

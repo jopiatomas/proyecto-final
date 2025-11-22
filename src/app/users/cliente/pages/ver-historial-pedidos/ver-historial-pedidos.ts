@@ -2,8 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import { ClienteService } from '../../../../services/cliente.service';
-import { PedidoDetailDTO, PedidoResumenDTO } from '../../../../models/app.models';
+import { ClienteService } from '../../../../core/services/cliente.service';
+import { PedidoDetailDTO, PedidoResumenDTO } from '../../../../core/models/app.models';
 
 @Component({
   selector: 'app-ver-historial-pedidos',
@@ -15,10 +15,9 @@ export class VerHistorialPedidos implements OnInit {
 
   private clienteService = inject(ClienteService);
 
-  pedidos: PedidoResumenDTO[] = [];
+  pedidos: PedidoDetailDTO[] = [];
   pedidoSeleccionado: PedidoDetailDTO | null = null;
   loading = false;
-  loadingDetalle = false;
   error: string | null = null;
   mostrarMenuOpciones = false;
 
@@ -47,19 +46,8 @@ export class VerHistorialPedidos implements OnInit {
   }
 
   seleccionarPedido(pedidoId: number) {
-    this.loadingDetalle = true;
     this.mostrarMenuOpciones = false;
-    
-    this.clienteService.getPedidoDetalle(pedidoId).subscribe({
-      next: (detalle) => {
-        this.pedidoSeleccionado = detalle;
-        this.loadingDetalle = false;
-      },
-      error: (error) => {
-        console.error('Error cargando detalle del pedido:', error);
-        this.loadingDetalle = false;
-      }
-    });
+    this.pedidoSeleccionado = this.pedidos.find(p => p.id === pedidoId) || null;
   }
 
   toggleMenuOpciones() {
@@ -109,6 +97,6 @@ export class VerHistorialPedidos implements OnInit {
 
   puedeSerCancelado(estado: string): boolean {
     // Solo se pueden cancelar pedidos que están pendientes o en preparación
-    return estado === 'PENDIENTE' || estado === 'PREPARACION';
+    return estado === 'PENDIENTE';
   }
 }

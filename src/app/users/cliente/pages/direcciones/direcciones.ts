@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import { ClienteService } from '../../../../services/cliente.service';
-import { DireccionDTO } from '../../../../models/app.models';
+import { ClienteService } from '../../../../core/services/cliente.service';
+import { DireccionDTO } from '../../../../core/models/app.models';
 
 @Component({
   selector: 'app-direcciones',

@@ -1,44 +1,56 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface ClienteDTO {
   id: number;
   usuario: string;
-  nombreYapellido: string;
-  email?: string;
-  telefono?: string;
+  nombre: string;
+  email: string;
 }
 
 export interface ClienteModificarDTO {
-  usuario: string; // posible nuevo usuario
-  nombreYapellido: string; // campo requerido por backend
+  usuario: string;
+  nombre: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AdminClienteService {
-  private apiUrl = 'http://localhost:8080/admin/clientes';
-
-  constructor(private http: HttpClient) {}
-
-  getAllClientes(): Observable<ClienteDTO[]> {
-    return this.http.get<ClienteDTO[]>(this.apiUrl, { headers: this.getAuthHeaders() });
-  }
-
-
-  modificarCliente(usuarioActual: string, data: ClienteModificarDTO): Observable<string> {
-    return this.http.put(`${this.apiUrl}/${encodeURIComponent(usuarioActual)}`, data, { headers: this.getAuthHeaders(), responseType: 'text' });
-  }
-
-  eliminarCliente(id: number): Observable<string> {
-    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text', headers: this.getAuthHeaders() });
-  }
+  private http = inject(HttpClient);
+  private baseUrl = 'http://localhost:8080/admin/clientes';
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
+    });
+  }
+
+  getAllClientes(): Observable<ClienteDTO[]> {
+    return this.http.get<ClienteDTO[]>(this.baseUrl, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getClienteById(id: number): Observable<ClienteDTO> {
+    return this.http.get<ClienteDTO>(`${this.baseUrl}/${id}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  modificarCliente(id: number, datos: ClienteModificarDTO): Observable<ClienteDTO> {
+    return this.http.put<ClienteDTO>(`${this.baseUrl}/${id}`, datos, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  eliminarCliente(id: number): Observable<string> {
+    return this.http.delete(`${this.baseUrl}/${id}`, {
+      headers: this.getAuthHeaders(),
+      responseType: 'text'
     });
   }
 }
