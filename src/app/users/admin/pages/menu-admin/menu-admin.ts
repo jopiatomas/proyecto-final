@@ -1,10 +1,10 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
-import { AdminClienteService, ClienteDTO, ClienteModificarDTO } from '../../../../core/services/admin-cliente.service';
 import { AdminRestauranteService, RestauranteAdminDTO, RestauranteModificarDTO, ReseniaAdminDTO } from '../../../../core/services/admin-restaurante.service';
 import { FooterAdmin } from "../../components/footer/footer";
+import { AdminClienteService, ClienteDTO, ClienteModificarDTO } from '../../../../core/services/admin-cliente.service';
 
 
 
@@ -110,9 +110,9 @@ export class MenuAdmin implements OnInit {
     this.error.set('');
 
     // Usamos el usuario actual en la ruta (el original), para permitir cambio de username
-    this.clienteService.modificarCliente(cliente.usuario, data).subscribe({
-      next: (mensaje: string) => {
-        this.success.set(mensaje || 'Cliente actualizado correctamente');
+    this.clienteService.modificarCliente(cliente.id, data).subscribe({
+      next: (clienteActualizado: ClienteDTO) => {
+        this.success.set('Cliente actualizado correctamente');
         this.cargarClientes();
         // Re-seleccionar el cliente actualizado usando el nuevo usuario
         setTimeout(() => {

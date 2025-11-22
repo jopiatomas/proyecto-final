@@ -15,16 +15,7 @@ export interface AuthResponse {
   token: string;
 }
 
-export interface Usuario {
-  id: number;
-  usuario: string;
-  nombre: string;
-  rol: 'CLIENTE' | 'RESTAURANTE' | 'ADMIN';
-  email: string;
-  telefono?: string;
-  direccion?: string;
-  exp?: number; // Timestamp de expiración del JWT
-}
+
 
 // Interfaces para perfil de usuario (ClienteDetailDto del backend)
 export interface PerfilUsuario {

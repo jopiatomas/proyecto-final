@@ -4,9 +4,10 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import { AuthService } from '../../../../services/auth.service';
-import { PerfilService } from '../../../../services/perfil.service';
-import { PerfilUsuario } from '../../../../models/app.models';
+import { AuthService } from '../../../../core/services/auth-service';
+import { PerfilService } from '../../../../core/services/perfil.service';
+import { PerfilUsuario } from '../../../../core/models/app.models';
+
 
 @Component({
   selector: 'app-perfil',

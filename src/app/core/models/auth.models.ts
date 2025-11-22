@@ -23,4 +23,5 @@ export interface Usuario {
   email: string;
   telefono?: string;
   direccion?: string;
+  exp?: number;
 }

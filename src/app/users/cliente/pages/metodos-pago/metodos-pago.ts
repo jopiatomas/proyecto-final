@@ -2,10 +2,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ClienteService } from '../../../../services/cliente.service';
-import { Tarjeta, TarjetaRequest } from '../../../../models/app.models';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from "../../components/footer/footer";
+import { ClienteService } from '../../../../core/services/cliente.service';
+import { Tarjeta, TarjetaRequest } from '../../../../core/models/app.models';
 
 @Component({
   selector: 'app-metodos-pago',

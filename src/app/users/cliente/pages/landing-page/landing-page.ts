@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FooterCliente } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
-import { ClienteService } from '../../../../services/cliente.service';
-import { RestauranteResumen } from '../../../../models/app.models';
+import { ClienteService } from '../../../../core/services/cliente.service';
+import { RestauranteResumen } from '../../../../core/models/app.models';
 
 @Component({
   selector: 'app-landing-page',

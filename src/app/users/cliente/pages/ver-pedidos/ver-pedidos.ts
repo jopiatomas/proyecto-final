@@ -2,8 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import { ClienteService } from '../../../../services/cliente.service';
-import { PedidoResumenDTO, PedidoDetailDTO } from '../../../../models/app.models';
+import { ClienteService } from '../../../../core/services/cliente.service';
+import { PedidoDetailDTO, PedidoResumenDTO } from '../../../../core/models/app.models';
 
 @Component({
   selector: 'app-ver-pedidos',
