@@ -165,8 +165,8 @@ export class ClienteService {
   }
 
   // GET /clientes/historial-pedidos - Obtener historial completo de pedidos del cliente
-  getPedidosHistorial(): Observable<PedidoResumenDTO[]> {
-    return this.http.get<PedidoResumenDTO[]>(`${this.baseUrl}/historial-pedidos`, {
+  getPedidosHistorial(): Observable<PedidoDetailDTO[]> {
+    return this.http.get<PedidoDetailDTO[]>(`${this.baseUrl}/historial-pedidos`, {
       headers: this.getAuthHeaders()
     });
   }

@@ -53,27 +53,7 @@
   margin: 0;
 }
 
-.btn-reload {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
 
-.btn-reload:hover:not(:disabled) {
-  background: #0056b3;
-}
-
-.btn-reload:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-}
-
-/* Estados de carga y error */
 .loading-state, .error-state, .empty-state {
   display: flex;
   flex-direction: column;
@@ -98,10 +78,6 @@
   100% { transform: rotate(360deg); }
 }
 
-.empty-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-}
 
 .btn-retry {
   background: #dc3545;
