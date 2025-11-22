@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { FooterRestaurante } from '../../components/footer/footer';
-import { AuthService } from '../../../../services/auth.service';
+import { AuthService } from '../../../../core/services/auth-service';
 
 @Component({
   selector: 'app-perfil',

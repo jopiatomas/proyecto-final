@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import { ClienteService } from '../../../../services/cliente.service';
+import { ClienteService } from '../../../../core/services/cliente.service';
 import {
   RestauranteDetail,
   ProductoResumen,
@@ -15,7 +15,7 @@ import {
   DetallePedido,
   DireccionDTO,
   Tarjeta
-} from '../../../../models/app.models';
+} from '../../../../core/models/app.models';
 
 // Interface para items del carrito
 interface CarritoItem {
