@@ -318,12 +318,13 @@
   gap: 0.5rem;
 }
 
-.review-rating span.filled {
-  color: #ffd700;
+.review-rating .star {
+  font-size: 1.2rem;
+  color: #ddd;
 }
 
-.review-rating span:not(.filled) {
-  color: #ddd;
+.review-rating .star.filled {
+  color: #ffd700;
 }
 
 .rating-value {

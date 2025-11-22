@@ -85,6 +85,15 @@ export class VerRestaurante implements OnInit {
         // Cargar menú y reseñas desde el backend
         this.menu = (restaurante.menu || []).sort((a, b) => a.nombre.localeCompare(b.nombre));
         this.resenias = restaurante.reseniasRestaurante || [];
+        
+        // Debug: Ver qué datos vienen en las reseñas
+        console.log('🔍 Reseñas recibidas:', this.resenias);
+        if (this.resenias.length > 0) {
+          console.log('📝 Ejemplo de reseña:', this.resenias[0]);
+          console.log('📝 JSON de la reseña:', JSON.stringify(this.resenias[0], null, 2));
+          console.log('📝 Claves de la reseña:', Object.keys(this.resenias[0]));
+        }
+        
         this.loading = false;
         this.loadingMenu = false;
       },
@@ -101,7 +110,7 @@ export class VerRestaurante implements OnInit {
     if (!this.mostrarFormularioResenia) {
       this.reseniaForm.reset({
         resenia: '',
-        puntuacion: 5
+        calificacion: 5
       });
     }
   }
@@ -111,43 +120,59 @@ export class VerRestaurante implements OnInit {
   }
 
   submitResenia() {
+    console.log('🎯 submitResenia called');
+    console.log('📋 Form valid?', this.reseniaForm.valid);
+    console.log('📋 Form value:', this.reseniaForm.value);
+    console.log('🏪 Restaurante:', this.restaurante);
+    
     if (this.reseniaForm.valid && this.restaurante) {
       this.submittingResenia = true;
 
+      const reseniaText = this.reseniaForm.value.resenia?.trim() || '';
+      const puntuacionNum = Number(this.reseniaForm.value.calificacion) || 0;
+
+      console.log('📝 Reseña text:', reseniaText, 'length:', reseniaText.length);
+      console.log('⭐ Puntuación:', puntuacionNum);
+
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
-        comentario: this.reseniaForm.value.resenia.trim(),
-        calificacion: this.reseniaForm.value.calificacion
+        resenia: reseniaText,
+        puntuacion: puntuacionNum
       };
+
+      console.log('📤 Enviando reseña:', JSON.stringify(reseniaData, null, 2));
 
       this.clienteService.crearResenia(reseniaData).subscribe({
         next: (nuevaResenia) => {
+          console.log('✅ Reseña creada:', nuevaResenia);
 
-
-          // Agregar la nueva reseña al principio de la lista
-          const reseniaResumen: ReseniaResumen = {
-            id: nuevaResenia.id,
-            calificacion: nuevaResenia.calificacion,
-            comentario: nuevaResenia.comentario,
-            fecha: nuevaResenia.fecha,
-            nombreCliente: nuevaResenia.nombreCliente
-          };
-          this.resenias.unshift(reseniaResumen);
+          // Recargar restaurante para obtener reseñas actualizadas
+          if (this.nombreRestaurante) {
+            this.cargarDatosRestaurante();
+          }
 
           // Resetear formulario y ocultar
           this.reseniaForm.reset({
             resenia: '',
-            puntuacion: 5
+            calificacion: 5
           });
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
-
-          alert('¡Reseña enviada exitosamente!');
         },
         error: (error) => {
-          console.error('Error enviando reseña:', error);
+          console.error('❌ Error enviando reseña:', error);
+          console.error('📋 Datos enviados:', reseniaData);
           this.submittingResenia = false;
-          alert('Error al enviar la reseña. Por favor, inténtalo de nuevo.');
+          
+          let mensaje = 'Error al enviar la reseña.';
+          if (error.error?.resenia) {
+            mensaje = error.error.resenia;
+          } else if (error.error?.puntuacion) {
+            mensaje = error.error.puntuacion;
+          } else if (error.error?.message) {
+            mensaje = error.error.message;
+          }
+          alert(mensaje);
         }
       });
     } else {
@@ -164,7 +189,7 @@ export class VerRestaurante implements OnInit {
 
   calcularPromedioPuntuacion(): number {
     if (this.resenias.length === 0) return 0;
-    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.calificacion, 0);
+    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.puntuacion, 0);
     return suma / this.resenias.length;
   }
 

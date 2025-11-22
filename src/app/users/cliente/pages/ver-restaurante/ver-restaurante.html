@@ -140,15 +140,15 @@
             @for (resenia of resenias; track $index) {
               <div class="review-item">
                 <div class="reviewer-info">
-                  <span class="reviewer-name">{{ resenia.nombreCliente || 'Cliente Anónimo' }}</span>
+                  <span class="reviewer-name">{{ resenia.nombreCliente || 'Cliente #' + resenia.idCliente }}</span>
                   <div class="review-rating">
                     @for (estrella of estrellas; track estrella) {
-                      <span [class.filled]="estrella <= resenia.calificacion">★</span>
+                      <span class="star" [class.filled]="estrella <= resenia.puntuacion">★</span>
                     }
-                    <span class="rating-value">({{ formatearPuntuacion(resenia.calificacion) }})</span>
+                    <span class="rating-value">({{ formatearPuntuacion(resenia.puntuacion) }})</span>
                   </div>
                 </div>
-                <p class="review-text">{{ resenia.comentario }}</p>
+                <p class="review-text">{{ resenia.resenia }}</p>
               </div>
             }
           </div>

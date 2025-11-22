@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// Forma que llega desde el backend (según consola: idCliente, resenia, puntuacion)
+// Forma que llega desde el backend (según consola: idCliente, nombreCliente, resenia, puntuacion)
 export interface ReseniaBackendDTO {
   idCliente: number;
+  nombreCliente: string;  // Ahora el backend incluye el nombre del cliente
   resenia: string;
   puntuacion: number;
 }

@@ -29,7 +29,7 @@ export class VerResenias implements OnInit {
       next: (datos: ReseniaBackendDTO[]) => {
         const normalizadas: ReseniaDTO[] = (datos || []).map((r, idx) => ({
           id: idx,
-          clienteNombre: `Cliente ${r.idCliente}`,
+          clienteNombre: r.nombreCliente || `Cliente #${r.idCliente}`,
           comentario: r.resenia,
           calificacion: r.puntuacion
         }));
