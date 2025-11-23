@@ -7,6 +7,7 @@ import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
 import { DetallePedido, DireccionDTO, PedidoCreate, ProductoResumen, ReseniaCreate, ReseniaResumen, RestauranteDetail, Tarjeta } from '../../../../core/models/app.models';
 import { ClienteService } from '../../../../core/services/cliente.service';
+import { AuthService } from '../../../../core/services/auth-service';
 
 
 // Interface para items del carrito
@@ -24,6 +25,7 @@ interface CarritoItem {
 export class VerRestaurante implements OnInit {
   private route = inject(ActivatedRoute);
   private clienteService = inject(ClienteService);
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
 
   restaurante: RestauranteDetail | null = null;
@@ -66,7 +68,6 @@ export class VerRestaurante implements OnInit {
       this.cargarDatosRestaurante();
     } else {
       this.loading = false;
-      console.error('No se proporcionó usuario de restaurante');
     }
   }
 
@@ -81,7 +82,6 @@ export class VerRestaurante implements OnInit {
         this.loadingMenu = false;
       },
       error: (error) => {
-        console.error('Error cargando datos del restaurante:', error);
         this.loading = false;
         this.loadingMenu = false;
       }
@@ -108,28 +108,26 @@ export class VerRestaurante implements OnInit {
 
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
-        comentario: this.reseniaForm.value.resenia.trim(),
-        calificacion: this.reseniaForm.value.calificacion
+        resenia: this.reseniaForm.value.resenia?.trim() || '',
+        puntuacion: this.reseniaForm.value.calificacion || 5,
       };
 
       this.clienteService.crearResenia(reseniaData).subscribe({
         next: (nuevaResenia) => {
-
-
-          // Agregar la nueva reseña al principio de la lista
+          // Agregar la nueva reseña a la lista existente
+          const currentUser = this.authService.currentUser();
           const reseniaResumen: ReseniaResumen = {
-            id: nuevaResenia.id,
-            calificacion: nuevaResenia.calificacion,
-            comentario: nuevaResenia.comentario,
-            fecha: nuevaResenia.fecha,
-            nombreCliente: nuevaResenia.nombreCliente
+            idCliente: nuevaResenia.idCliente,
+            nombreCliente: currentUser?.usuario || '',
+            resenia: nuevaResenia.resenia,
+            puntuacion: nuevaResenia.puntuacion
           };
           this.resenias.unshift(reseniaResumen);
 
           // Resetear formulario y ocultar
           this.reseniaForm.reset({
             resenia: '',
-            puntuacion: 5
+            calificacion: 5,
           });
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
@@ -137,14 +135,13 @@ export class VerRestaurante implements OnInit {
           alert('¡Reseña enviada exitosamente!');
         },
         error: (error) => {
-          console.error('Error enviando reseña:', error);
           this.submittingResenia = false;
           alert('Error al enviar la reseña. Por favor, inténtalo de nuevo.');
-        }
+        },
       });
     } else {
       // Marcar todos los campos como touched para mostrar errores
-      Object.keys(this.reseniaForm.controls).forEach(key => {
+      Object.keys(this.reseniaForm.controls).forEach((key) => {
         this.reseniaForm.get(key)?.markAsTouched();
       });
     }
@@ -156,7 +153,7 @@ export class VerRestaurante implements OnInit {
 
   calcularPromedioPuntuacion(): number {
     if (this.resenias.length === 0) return 0;
-    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.calificacion, 0);
+    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.puntuacion, 0);
     return suma / this.resenias.length;
   }
 
@@ -244,7 +241,6 @@ export class VerRestaurante implements OnInit {
         this.direcciones = direcciones;
       },
       error: (error) => {
-        console.error('Error cargando direcciones:', error);
         alert('Error cargando direcciones. Por favor, intenta de nuevo.');
       }
     });
@@ -254,7 +250,6 @@ export class VerRestaurante implements OnInit {
         this.metodosPago = metodos;
       },
       error: (error) => {
-        console.error('Error cargando métodos de pago:', error);
         alert('Error cargando métodos de pago. Por favor, intenta de nuevo.');
       }
     });
@@ -316,12 +311,11 @@ export class VerRestaurante implements OnInit {
         this.cerrarModalPedido();
       },
       error: (error) => {
-        console.error('Error creando pedido:', error);
         this.enviandoPedido = false;
 
         // Manejo de errores más específico
         if (error.status === 400) {
-          alert('Error en los datos del pedido. Por favor verifica la información.');
+          alert(error.error || 'Error en los datos del pedido. Por favor verifica la información.');
         } else if (error.status === 401) {
           alert('Error de autenticación. Por favor inicia sesión nuevamente.');
         } else {
