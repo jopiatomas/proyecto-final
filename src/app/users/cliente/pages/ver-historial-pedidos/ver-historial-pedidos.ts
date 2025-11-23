@@ -62,15 +62,23 @@ export class VerHistorialPedidos implements OnInit {
 
     if (confirm('¿Estás seguro de que quieres cancelar este pedido?')) {
       this.clienteService.cancelarPedido(this.pedidoSeleccionado.id).subscribe({
-        next: () => {
-          alert('Pedido cancelado exitosamente');
+        next: (mensaje) => {
+          alert(mensaje || 'Pedido cancelado exitosamente');
           this.cargarPedidos(); // Recargar la lista
           this.pedidoSeleccionado = null; // Limpiar selección
           this.mostrarMenuOpciones = false;
         },
         error: (error) => {
           console.error('Error cancelando pedido:', error);
-          alert('Error al cancelar el pedido. Intenta nuevamente.');
+          
+          // Mostrar mensaje específico del backend
+          const mensajeError = error.error || 'Error al cancelar el pedido';
+          alert(mensajeError);
+          
+          // Recargar la lista para actualizar estados
+          this.cargarPedidos();
+          this.pedidoSeleccionado = null;
+          this.mostrarMenuOpciones = false;
         }
       });
     }
