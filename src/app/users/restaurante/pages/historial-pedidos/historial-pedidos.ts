@@ -22,10 +22,10 @@ export class HistorialPedidos implements OnInit {
 
   cargarHistorial() {
     this.restauranteService.getHistorialPedidos().subscribe({
-      next: (pedidos) => {
+      next: (pedidos: Pedido[]) => {
         this.pedidos.set(pedidos);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error al cargar historial:', error);
       }
     });

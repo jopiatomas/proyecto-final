@@ -4,8 +4,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import { ClienteService } from '../../../../services/cliente.service';
-import { RestauranteResumen, ReseniaCreate } from '../../../../models/app.models';
+import { ClienteService } from '../../../../core/services/cliente.service';
+import { RestauranteResumen, ReseniaCreate } from '../../../../core/models/app.models';
 
 @Component({
   selector: 'app-realizar-resenia',

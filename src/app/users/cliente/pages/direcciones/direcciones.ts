@@ -53,18 +53,13 @@ export class Direcciones implements OnInit {
       },
       error: (error) => {
         this.cargando.set(false);
-        // Si el error es 400 con mensaje de "no hay direcciones", tratarlo como lista vacía
-        if (
-          error.status === 400 &&
-          error.error?.message?.toLowerCase().includes('no hay direcciones')
-        ) {
+        // Si el error es 400 o 404, simplemente dejar la lista vacía sin mostrar error
+        if (error.status === 400 || error.status === 404) {
           this.direcciones.set([]);
-        } else {
+        } else if (error.status !== 0) {
+          // Solo mostrar alert para errores reales del servidor (no 0 que es error de red)
           console.error('Error al cargar direcciones:', error);
-          if (error.status !== 404 && error.status !== 0) {
-            // Solo mostrar alert para errores reales del servidor
-            alert('Error al cargar las direcciones');
-          }
+          alert('Error al cargar las direcciones');
         }
       },
     });

@@ -50,7 +50,7 @@ export class GestionMenu implements OnInit {
     this.error = '';
 
     this.restauranteService.getAllProductos().subscribe({
-      next: (productos: ProductoDetailDTO[]) => {
+      next: (productos: any[]) => {
         this.productos = productos.map(p => ({
           id: p.id,
           nombre: p.nombre,

@@ -116,28 +116,23 @@ export class VerRestaurante implements OnInit {
 
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
-        comentario: this.reseniaForm.value.resenia.trim(),
-        calificacion: this.reseniaForm.value.calificacion
+        resenia: this.reseniaForm.value.resenia!.trim(),
+        puntuacion: Number(this.reseniaForm.value.calificacion) || 0
       };
 
       this.clienteService.crearResenia(reseniaData).subscribe({
         next: (nuevaResenia) => {
+          console.log('✅ Reseña creada:', nuevaResenia);
 
-
-          // Agregar la nueva reseña al principio de la lista
-          const reseniaResumen: ReseniaResumen = {
-            id: nuevaResenia.id,
-            calificacion: nuevaResenia.calificacion,
-            comentario: nuevaResenia.comentario,
-            fecha: nuevaResenia.fecha,
-            nombreCliente: nuevaResenia.nombreCliente
-          };
-          this.resenias.unshift(reseniaResumen);
+          // Recargar restaurante para obtener reseñas actualizadas
+          if (this.nombreRestaurante) {
+            this.cargarDatosRestaurante();
+          }
 
           // Resetear formulario y ocultar
           this.reseniaForm.reset({
             resenia: '',
-            puntuacion: 5
+            calificacion: 5
           });
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
@@ -164,7 +159,7 @@ export class VerRestaurante implements OnInit {
 
   calcularPromedioPuntuacion(): number {
     if (this.resenias.length === 0) return 0;
-    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.calificacion, 0);
+    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.puntuacion, 0);
     return suma / this.resenias.length;
   }
 

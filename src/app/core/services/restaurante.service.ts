@@ -42,6 +42,17 @@ export interface ProductoResumenDTO {
   precio: number;
 }
 
+// Interface para pedidos
+export interface Pedido {
+  id: number;
+  fecha: string;
+  total: number;
+  estado: string;
+  cliente?: string;
+  productos?: any[];
+  detalles?: any[];
+}
+
 // Interface para compatibilidad con código anterior (DEPRECATED)
 export interface Restaurante {
   id: number;
@@ -134,6 +145,25 @@ export class RestauranteService {
   // Método de balance
   getBalance(filtroDTO: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/balance`, filtroDTO, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // Métodos de pedidos
+  getHistorialPedidos(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.baseUrl}/pedidos`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getPedidosEnCurso(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.baseUrl}/pedidos/en-curso`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  cambiarEstadoPedido(idPedido: number, estado: string): Observable<Pedido> {
+    return this.http.put<Pedido>(`${this.baseUrl}/pedidos/${idPedido}/estado`, { estado }, {
       headers: this.getAuthHeaders()
     });
   }
