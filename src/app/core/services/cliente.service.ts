@@ -136,9 +136,10 @@ export class ClienteService {
   }
 
   // PUT /clientes/pedido/{id}/cancelar - Cancelar un pedido
-  cancelarPedido(id: number): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/pedido/${id}/cancelar`, {}, {
-      headers: this.getAuthHeaders()
+  cancelarPedido(id: number): Observable<string> {
+    return this.http.put(`${this.baseUrl}/pedido/${id}/cancelar`, {}, {
+      headers: this.getAuthHeaders(),
+      responseType: 'text'
     });
   }
 
