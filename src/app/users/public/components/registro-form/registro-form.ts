@@ -5,6 +5,7 @@ import { AuthService } from '../../../../core/services/auth-service';
 
 @Component({
   selector: 'app-registro-form',
+  standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './registro-form.html',
   styleUrl: './registro-form.css',
@@ -33,11 +34,6 @@ export class RegistroForm {
         Validators.maxLength(18),
         Validators.pattern(/^[a-zA-Z0-9]+$/)
       ]],
-      email: ['', [
-        Validators.required,
-        Validators.email,
-        Validators.maxLength(100)
-      ]],
       contrasenia: ['', [
         Validators.required, 
         Validators.minLength(6), 
@@ -61,7 +57,6 @@ export class RegistroForm {
       const registerData: any = {
         usuario: this.registroForm.value.usuario,
         contrasenia: this.registroForm.value.contrasenia,
-        email: this.registroForm.value.email,
         rol: rol
       };
 
@@ -72,21 +67,24 @@ export class RegistroForm {
         registerData.nombreRestaurante = nombreIngresado;
       }
 
-
+      console.log('===== DEBUG REGISTRO =====');
+      console.log('Rol seleccionado:', rol);
+      console.log('JSON que se enviará:', JSON.stringify(registerData));
+      console.log('==========================');
 
       // Llamar al servicio de autenticación
       this.authService.register(registerData).subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.loading.set(false);
           this.successMessage.set('¡Registro exitoso! Redirigiendo al login...');
-
+          console.log('Registro exitoso:', response);
           
           // Redirigir al login después de 1.5 segundos
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 1500);
         },
-        error: (error) => {
+        error: (error: any) => {
           this.loading.set(false);
           console.error('Error en registro:', error);
           

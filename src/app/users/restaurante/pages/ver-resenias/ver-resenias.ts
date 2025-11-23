@@ -10,6 +10,7 @@ import {
 
 @Component({
   selector: 'app-ver-resenias',
+  standalone: true,
   imports: [Header, FooterRestaurante, CommonModule],
   templateUrl: './ver-resenias.html',
   styleUrl: './ver-resenias.css',

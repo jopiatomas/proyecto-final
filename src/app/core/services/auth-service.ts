@@ -100,8 +100,8 @@ export class AuthService {
         usuario: payload.sub,
         nombre: payload.nombre || payload.sub,
         rol: rol as 'CLIENTE' | 'RESTAURANTE' | 'ADMIN',
-        email: payload.email || '',
-        telefono: payload.telefono || ''
+        email: payload.email,
+        telefono: payload.telefono
       };
     } catch (error) {
       console.error('Error decodificando token:', error);

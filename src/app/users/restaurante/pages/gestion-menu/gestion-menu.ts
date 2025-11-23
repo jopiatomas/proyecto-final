@@ -50,29 +50,28 @@ export class GestionMenu implements OnInit {
     this.error = '';
 
     this.restauranteService.getAllProductos().subscribe({
-      next: (productos: any[]) => {
-        this.productos = productos.map(p => ({
-          id: p.id,
-          nombre: p.nombre,
-          caracteristicas: p.caracteristicas || '',
-          precio: p.precio,
-          stock: p.stock !== undefined ? p.stock : 0
-        }));
-        
-        this.aplicarFiltros();
-        this.cargando = false;
-      },
-      error: (err) => {
-        console.error('Error al cargar productos:', err);
-        // Solo mostrar error si es un error real (no 404 o lista vacía)
-        if (err.status !== 404 && err.status !== 400) {
-          this.error = 'Error al cargar los productos';
-        }
-        this.productos = [];
-        this.aplicarFiltros();
-        this.cargando = false;
-      }
-    });
+  next: (productos) => {
+    this.productos = productos.map((p: any) => ({
+      id: p.id,
+      nombre: p.nombre,
+      caracteristicas: p.caracteristicas || '',
+      precio: p.precio,
+      stock: p.stock ?? 0
+    }));
+
+    this.aplicarFiltros();
+    this.cargando = false;
+  },
+  error: (err) => {
+    console.error('Error al cargar productos:', err);
+    if (err.status !== 404 && err.status !== 400) {
+      this.error = 'Error al cargar los productos';
+    }
+    this.productos = [];
+    this.aplicarFiltros();
+    this.cargando = false;
+  }
+});
   }
 
   aplicarFiltros() {

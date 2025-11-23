@@ -6,6 +6,7 @@ import { RestauranteService, Pedido } from '../../../../core/services/restaurant
 
 @Component({
   selector: 'app-historial-pedidos',
+  standalone: true,
   imports: [Header, CommonModule, FooterRestaurante],
   templateUrl: './historial-pedidos.html',
   styleUrl: './historial-pedidos.css',

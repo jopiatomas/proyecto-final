@@ -1,37 +1,30 @@
 <header>
   <div class="barra">
     <a class="logo" routerLink="/restaurante">
-      <img src="/img-quickish-header.png" alt="Quickish" />
+      <img src="/img-quickish-header.png" alt="Quickish" class="logo-img" />
     </a>
 
     <nav class="tabs">
-      <a routerLink="/restaurante/menu" routerLinkActive="active" >Menú</a>
+      <a routerLink="/restaurante/menu" routerLinkActive="active">Menú</a>
       <a routerLink="/restaurante/resenias" routerLinkActive="active">Reseñas</a>
       <a routerLink="/restaurante/historial" routerLinkActive="active">Historial de Pedidos</a>
     </nav>
 
-    <div class="perfil-container">
-      <button class="perfil" aria-label="Perfil" (click)="toggleDropdown()">
-        <img src="/image.png" alt="Perfil del usuario" />
+    <div class="derecha">
+      <button 
+        class="btn-accion" 
+        (click)="esPaginaPrincipal ? cerrarSesion() : volver()"
+        [attr.aria-label]="esPaginaPrincipal ? 'Cerrar sesión' : 'Volver atrás'"
+      >
+        {{ esPaginaPrincipal ? 'Cerrar Sesión' : 'Volver' }}
       </button>
       
-      @if (dropdownOpen()) {
-        <div class="dropdown-menu">
-          <a routerLink="/restaurante/perfil" class="dropdown-item">
-            Mi Perfil
-          </a>
-          <a routerLink="/restaurante/direcciones" class="dropdown-item">
-            Direcciones
-          </a>
-          <a routerLink="/restaurante/balance" class="dropdown-item">
-            Balance
-          </a>
-          <div class="dropdown-divider"></div>
-          <button (click)="cerrarSesion()" class="dropdown-item logout">
-            Cerrar Sesión
-          </button>
-        </div>
-      }
+      <a class="perfil" routerLink="/restaurante/perfil" aria-label="Perfil">
+        @if (authService.currentUser(); as usuario) {
+          <span class="usuario-nombre">{{ usuario.nombre }}</span>
+        }
+        <img src="/image.png" alt="Perfil del usuario" />
+      </a>
     </div>
   </div>
 </header>

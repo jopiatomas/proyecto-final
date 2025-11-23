@@ -6,14 +6,14 @@
       <p>Bienvenido, <strong>{{ usuario.nombre }}</strong></p>
     }
 
-    @if (cargando()) {
+    @if (loading()) {
       <div class="loading-section">
         <div class="loading-spinner"></div>
         <p>Cargando datos del perfil...</p>
       </div>
     } @else {
       <div class="perfil-content">
-        <form class="perfil-form" [formGroup]="formularioPerfil" (ngSubmit)="alEnviar()">
+        <form class="perfil-form" [formGroup]="perfilForm" (ngSubmit)="alEnviar()">
           <h3>Información del Restaurante</h3>
           
           <div class="form-row">
@@ -25,7 +25,7 @@
                 class="form-input"
                 placeholder="Ingresa el nombre del restaurante"
               />
-              @if (formularioPerfil.get('nombre')?.invalid && formularioPerfil.get('nombre')?.touched) {
+              @if (perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched) {
                 <small style="color: red;">Nombre requerido (mínimo 3 caracteres)</small>
               }
             </div>
@@ -38,7 +38,7 @@
                 class="form-input"
                 placeholder="Nombre de usuario"
               />
-              @if (formularioPerfil.get('usuario')?.invalid && formularioPerfil.get('usuario')?.touched) {
+              @if (perfilForm.get('usuario')?.invalid && perfilForm.get('usuario')?.touched) {
                 <small style="color: red;">Usuario requerido (solo letras y números)</small>
               }
             </div>
@@ -52,7 +52,7 @@
               class="form-input"
               placeholder="tu@email.com"
             />
-            @if (formularioPerfil.get('email')?.invalid && formularioPerfil.get('email')?.touched) {
+            @if (perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched) {
               <small style="color: red;">Email requerido y válido</small>
             }
           </div>
@@ -65,7 +65,7 @@
               class="form-input"
               placeholder="Ingresa tu contraseña actual para verificar identidad"
             />
-            @if (formularioPerfil.get('contrasenia')?.invalid && formularioPerfil.get('contrasenia')?.touched) {
+            @if (perfilForm.get('contrasenia')?.invalid && perfilForm.get('contrasenia')?.touched) {
               <small style="color: red;">Contraseña requerida (mínimo 6 caracteres)</small>
             }
           </div>
@@ -74,9 +74,9 @@
             <button 
               type="submit" 
               class="btn-primary"
-              [disabled]="cargando()"
+              [disabled]="loading()"
             >
-              @if (cargando()) {
+              @if (loading()) {
                 Guardando...
               } @else {
                 Guardar Cambios

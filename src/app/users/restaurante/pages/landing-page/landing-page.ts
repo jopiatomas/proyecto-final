@@ -6,6 +6,7 @@ import { FooterRestaurante } from "../../components/footer/footer";
 
 @Component({
   selector: 'app-landing-page',
+  standalone: true,
   imports: [Header, CommonModule, FooterRestaurante],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',

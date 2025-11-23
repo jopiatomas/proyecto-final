@@ -13,6 +13,7 @@ interface DatosBalance {
 
 @Component({
   selector: 'app-balance',
+  standalone: true,
   imports: [Header, FooterRestaurante, CommonModule, FormsModule],
   templateUrl: './balance.html',
   styleUrl: './balance.css',
@@ -41,6 +42,9 @@ export class Balance implements OnInit {
   cargarBalance() {
     this.cargando.set(true);
     
+    // El filtro incluye tipo de filtro (día/mes) y la fecha correspondiente
+    // IMPORTANTE: El backend debe calcular el balance SOLO con pedidos en estado "ENTREGADO"
+    // para reflejar las ganancias reales del restaurante (pedidos completados sin problemas)
     const filtroDTO = {
       tipoFiltro: this.filtroTipo,
       fecha: this.filtroTipo === 'dia' ? this.fechaSeleccionada : null,

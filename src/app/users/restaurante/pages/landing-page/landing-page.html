@@ -68,6 +68,11 @@
                   [disabled]="pedidoSeleccionado()!.estado === 'ENVIADO'">
             Enviado
           </button>
+          <button (click)="seleccionarEstado('ENTREGADO')"
+                  [class.seleccionado-estado]="estadoNuevo() === 'ENTREGADO'"
+                  [disabled]="pedidoSeleccionado()!.estado === 'ENTREGADO'">
+            Entregado
+          </button>
           <button (click)="seleccionarEstado('CANCELADO')"
                   [class.seleccionado-estado]="estadoNuevo() === 'CANCELADO'">
             Cancelado
