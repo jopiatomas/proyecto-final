@@ -84,23 +84,22 @@ export interface ProductoResumen {
 }
 
 export interface ReseniaResumen {
-  id: number;
-  calificacion: number;
-  comentario?: string;
-  fecha: string;
-  nombreCliente?: string;
+  idCliente: number;
+  nombreCliente: string; // Agregar este campo cuando el backend lo incluya
+  resenia: string;
+  puntuacion: number;
 }
 
 export interface ReseniaCreate {
   restauranteId: number;
-  calificacion: number;
-  comentario?: string;
+  puntuacion: number; // Double en backend (0.1 - 5.0)
+  resenia: string; // Obligatorio, min 10 chars, max 500
 }
 
 export interface ReseniaDetail {
   id: number;
-  calificacion: number;
-  comentario?: string;
+  puntuacion: number; // Cambió de calificacion a puntuacion
+  resenia?: string; // Cambió de comentario a resenia
   fecha: string;
   nombreCliente: string;
   restauranteNombre: string;
@@ -184,8 +183,8 @@ export interface Tarjeta {
 
 export interface TarjetaRequest {
   tipo: string;
-  numero: string;  // 16 dígitos
+  numero: string; // 16 dígitos
   titular: string;
-  vencimiento: string;  // MM/YY
-  cvv: string;  // 3 dígitos
+  vencimiento: string; // MM/YY
+  cvv: string; // 3 dígitos
 }

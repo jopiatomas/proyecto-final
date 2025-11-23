@@ -2,7 +2,11 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { FooterRestaurante } from '../../components/footer/footer';
-import { ReseniaService, ReseniaDTO, ReseniaBackendDTO } from '../../../../core/services/resenia.service';
+import {
+  ReseniaService,
+  ReseniaDTO,
+  ReseniaBackendDTO,
+} from '../../../../core/services/resenia.service';
 
 @Component({
   selector: 'app-ver-resenias',
@@ -29,9 +33,9 @@ export class VerResenias implements OnInit {
       next: (datos: ReseniaBackendDTO[]) => {
         const normalizadas: ReseniaDTO[] = (datos || []).map((r, idx) => ({
           id: idx,
-          clienteNombre: `Cliente ${r.idCliente}`,
+          clienteNombre: r.nombreCliente || `Cliente #${r.idCliente}`,
           comentario: r.resenia,
-          calificacion: r.puntuacion
+          calificacion: r.puntuacion,
         }));
 
         this.resenias.set(normalizadas);
@@ -40,11 +44,11 @@ export class VerResenias implements OnInit {
       error: (err) => {
         this.mensajeError.set('No se pudieron cargar las reseñas. Intenta nuevamente.');
         this.estaCargando.set(false);
-      }
+      },
     });
   }
 
   obtenerArregloEstrellas(calificacion: number): number[] {
-    return Array.from({ length: 5 }, (_, i) => i < Math.round(calificacion) ? 1 : 0);
+    return Array.from({ length: 5 }, (_, i) => (i < Math.round(calificacion) ? 1 : 0));
   }
 }

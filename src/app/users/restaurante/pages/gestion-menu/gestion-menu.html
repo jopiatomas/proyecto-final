@@ -19,130 +19,128 @@
                 id="busqueda"
                 [(ngModel)]="filtroBusqueda"
                 (ngModelChange)="alCambiarBusqueda()"
-                placeholder="Nombre o características...">
+                placeholder="Nombre o características..."
+              />
             </div>
           </div>
         </div>
 
-        <h3>Productos ({{productosFiltrados.length}})</h3>
+        <h3>Productos ({{ productosFiltrados.length }})</h3>
 
         @if (cargando) {
-          <div class="loading"><div class="spinner"></div></div>
-        }
-
-        @if (!cargando && error) {
-          <p class="error-message">{{error}}</p>
-        }
-
-        @if (!cargando && productosFiltrados.length === 0) {
-          <p class="empty">No se encontraron productos</p>
-        }
-
-        @if (!cargando && productosFiltrados.length > 0) {
-          <div class="productos-list">
-            @for (producto of productosFiltrados; track producto.id) {
-              <div
-                class="producto-item"
-                [class.selected]="productoSeleccionado?.id === producto.id"
-                [class.no-disponible]="producto.stock === 0"
-                (click)="seleccionarProducto(producto)">
-                <div class="producto-header">
-                  <span class="producto-nombre">{{producto.nombre}}</span>
-                  <span class="producto-precio">${{producto.precio}}</span>
-                </div>
-                <div class="producto-info">
-                  <p class="descripcion">{{producto.caracteristicas || 'Sin descripción'}}</p>
-                  <div class="producto-meta">
-                    <span class="stock-badge" [class.sin-stock]="producto.stock === 0">
-                      Stock: {{producto.stock !== undefined ? producto.stock : 'N/A'}}
-                    </span>
-                  </div>
-                </div>
+        <div class="loading"><div class="spinner"></div></div>
+        } @if (!cargando && error) {
+        <p class="error-message">{{ error }}</p>
+        } @if (!cargando && productosFiltrados.length === 0) {
+        <p class="empty">No se encontraron productos</p>
+        } @if (!cargando && productosFiltrados.length > 0) {
+        <div class="productos-list">
+          @for (producto of productosFiltrados; track producto.id) {
+          <div
+            class="producto-item"
+            [class.selected]="productoSeleccionado?.id === producto.id"
+            [class.no-disponible]="producto.stock === 0"
+            (click)="seleccionarProducto(producto)"
+          >
+            <div class="producto-header">
+              <span class="producto-nombre">{{ producto.nombre }}</span>
+              <span class="producto-precio">${{ producto.precio }}</span>
+            </div>
+            <div class="producto-info">
+              <p class="descripcion">{{ producto.caracteristicas || 'Sin descripción' }}</p>
+              <div class="producto-meta">
+                <span class="stock-badge" [class.sin-stock]="producto.stock === 0">
+                  Stock: {{ producto.stock !== undefined ? producto.stock : 'N/A' }}
+                </span>
               </div>
-            }
+            </div>
           </div>
+          }
+        </div>
         }
       </div>
 
       @if (productoSeleccionado || estaAgregando) {
-        <div class="producto-form-panel">
-          <div class="panel-header">
-            <h4>{{estaAgregando ? 'Nuevo Producto' : 'Editar Producto'}}</h4>
-            <button class="close-btn" (click)="cerrarFormulario()">×</button>
+      <div class="producto-form-panel">
+        <div class="panel-header">
+          <h4>{{ estaAgregando ? 'Nuevo Producto' : 'Editar Producto' }}</h4>
+          <button class="close-btn" (click)="cerrarFormulario()">×</button>
+        </div>
+
+        <form class="panel-content" (ngSubmit)="guardarProducto()">
+          @if (error) {
+          <div class="error-message">{{ error }}</div>
+          }
+          <div class="form-section">
+            <div class="form-group">
+              <label for="nombre">Nombre del Producto *</label>
+              <input
+                type="text"
+                id="nombre"
+                [(ngModel)]="formulario.nombre"
+                name="nombre"
+                required
+                placeholder="Ej: Pizza Napolitana"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="caracteristicas">Características *</label>
+              <textarea
+                id="caracteristicas"
+                [(ngModel)]="formulario.caracteristicas"
+                name="caracteristicas"
+                rows="3"
+                required
+                placeholder="Describe los ingredientes y características..."
+              ></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="precio">Precio ($) *</label>
+                <input
+                  type="number"
+                  id="precio"
+                  [(ngModel)]="formulario.precio"
+                  name="precio"
+                  min="0"
+                  step="0.01"
+                  required
+                  placeholder="0.00"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="stock">Stock *</label>
+                <input
+                  type="number"
+                  id="stock"
+                  [(ngModel)]="formulario.stock"
+                  name="stock"
+                  min="0"
+                  required
+                  placeholder="0"
+                />
+              </div>
+            </div>
           </div>
 
-          <form class="panel-content" (ngSubmit)="guardarProducto()">
-            @if (error) {
-              <div class="error-message">{{error}}</div>
+          <div class="form-actions">
+            <button type="submit" class="btn-guardar">
+              {{ estaAgregando ? 'Agregar Producto' : 'Guardar Cambios' }}
+            </button>
+            @if (estaEditando) {
+            <button type="button" class="btn-eliminar" (click)="eliminarProducto()">
+              Eliminar Producto
+            </button>
             }
-            <div class="form-section">
-              <div class="form-group">
-                <label for="nombre">Nombre del Producto *</label>
-                <input
-                  type="text"
-                  id="nombre"
-                  [(ngModel)]="formulario.nombre"
-                  name="nombre"
-                  required
-                  placeholder="Ej: Pizza Napolitana">
-              </div>
-
-              <div class="form-group">
-                <label for="caracteristicas">Características *</label>
-                <textarea
-                  id="caracteristicas"
-                  [(ngModel)]="formulario.caracteristicas"
-                  name="caracteristicas"
-                  rows="3"
-                  required
-                  placeholder="Describe los ingredientes y características..."></textarea>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="precio">Precio ($) *</label>
-                  <input
-                    type="number"
-                    id="precio"
-                    [(ngModel)]="formulario.precio"
-                    name="precio"
-                    min="0"
-                    step="0.01"
-                    required
-                    placeholder="0.00">
-                </div>
-
-                <div class="form-group">
-                  <label for="stock">Stock *</label>
-                  <input
-                    type="number"
-                    id="stock"
-                    [(ngModel)]="formulario.stock"
-                    name="stock"
-                    min="0"
-                    required
-                    placeholder="0">
-                </div>
-              </div>
-
-
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn-guardar">
-                {{estaAgregando ? 'Agregar Producto' : 'Guardar Cambios'}}
-              </button>
-              @if (estaEditando) {
-                <button type="button" class="btn-eliminar" (click)="eliminarProducto()">
-                  Eliminar Producto
-                </button>
-              }
-              <button type="button" class="btn-cancelar" (click)="cerrarFormulario()">
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
+            <button type="button" class="btn-cancelar" (click)="cerrarFormulario()">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
       }
     </div>
   </div>

@@ -3,13 +3,15 @@
 <div class="content">
   <div class="container">
     <h1>Historial de Pedidos</h1>
-    
+
     <div class="contenido-principal">
       <div class="pedidos-lista">
-        <div *ngFor="let pedido of pedidos()" 
-             class="pedido-card"
-             [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
-             (click)="verDetalle(pedido)">
+        <div
+          *ngFor="let pedido of pedidos()"
+          class="pedido-card"
+          [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
+          (click)="verDetalle(pedido)"
+        >
           <div class="pedido-header">
             <h3>Pedido #{{ pedido.id }}</h3>
             <span class="estado" [class]="pedido.estado.toLowerCase()">
@@ -28,11 +30,12 @@
           <h2>Detalles del Pedido #{{ pedidoSeleccionado()!.id }}</h2>
           <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
         </div>
-        
+
         <div class="detalles-contenido">
           <div class="info-grupo">
             <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha }}</p>
-            <p><strong>Estado:</strong> 
+            <p>
+              <strong>Estado:</strong>
               <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
                 {{ pedidoSeleccionado()!.estado }}
               </span>
