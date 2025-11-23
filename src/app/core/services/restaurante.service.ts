@@ -1,10 +1,17 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ActualizarPerfilRequest, ActualizarPerfilRestauranteRequest, PerfilUsuario } from '../models/app.models';
 import { AuthService } from './auth-service';
 
-// Interfaces para funcionalidad de restaurante
+// Interfaces para Productos
+export interface ProductoCrearDTO {
+  nombre: string;
+  caracteristicas: string;
+  precio: number;
+  stock: number;
+}
+
 export interface RestauranteProfile {
   id: number;
   nombre: string;
@@ -13,14 +20,6 @@ export interface RestauranteProfile {
   direccion?: string;
   descripcion?: string;
   categoria?: string;
-}
-
-// Interfaces para productos
-export interface ProductoCrearDTO {
-  nombre: string;
-  caracteristicas: string;
-  precio: number;
-  stock: number;
 }
 
 export interface ProductoModificarDTO {
@@ -62,7 +61,24 @@ export interface Pedido {
   detalles: DetallePedidoDTO[];
 }
 
-// Interface para compatibilidad con código anterior (DEPRECATED)
+// Interfaces para Pedidos
+export interface DetallePedidoDTO {
+  productoId: number;
+  nombreProducto: string;
+  precioUnitario: number;
+  cantidad: number;
+}
+
+export interface Pedido {
+  id: number;
+  fecha: string;
+  estado: string;
+  total: number;
+  nombreRestaurante?: string;
+  idCliente?: number;
+  detalles: DetallePedidoDTO[];
+}
+
 export interface Restaurante {
   id: number;
   nombre: string;
@@ -131,30 +147,45 @@ export class RestauranteService {
     });
   }
 
-  getProductoPorNombre(nombre: string): Observable<ProductoDetailDTO> {
-    const buscarDTO = { nombre: nombre };
-    return this.http.post<ProductoDetailDTO>(`${this.baseUrl}/productos/buscar`, buscarDTO, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
   crearProducto(producto: ProductoCrearDTO): Observable<ProductoDetailDTO> {
     return this.http.post<ProductoDetailDTO>(`${this.baseUrl}/productos`, producto, {
       headers: this.getAuthHeaders()
     });
   }
 
-  modificarProducto(id: number, producto: ProductoModificarDTO): Observable<ProductoDetailDTO> {
-    return this.http.put<ProductoDetailDTO>(`${this.baseUrl}/productos/${id}`, producto, {
+  modificarProducto(idProducto: number, producto: ProductoModificarDTO): Observable<ProductoDetailDTO> {
+    return this.http.put<ProductoDetailDTO>(`${this.baseUrl}/productos/${idProducto}`, producto, {
       headers: this.getAuthHeaders()
     });
   }
 
-  eliminarProducto(id: number): Observable<string> {
-    return this.http.delete(`${this.baseUrl}/productos/${id}`, {
+  eliminarProducto(idProducto: number): Observable<string> {
+    return this.http.delete(`${this.baseUrl}/productos/${idProducto}`, {
       headers: this.getAuthHeaders(),
       responseType: 'text'
     });
+  }
+
+  getProductoPorNombre(nombre: string): Observable<ProductoDetailDTO> {
+    return this.http.get<ProductoDetailDTO>(`${this.baseUrl}/productos/${encodeURIComponent(nombre)}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getPedidosEnCurso(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.baseUrl}/pedidos-en-curso`);
+  }
+
+  getHistorialPedidos(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.baseUrl}/historial-pedidos`);
+  }
+
+  cambiarEstadoPedido(idPedido: number, nuevoEstado: string): Observable<Pedido> {
+    return this.http.put<Pedido>(`${this.baseUrl}/pedidos/${idPedido}/estado`, { estado: nuevoEstado });
+  }
+
+  getPedidosCompletos(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.baseUrl}/pedidos-completo`);
   }
 
   // Métodos de direcciones
@@ -191,26 +222,6 @@ export class RestauranteService {
     });
   }
 
-  // Métodos de pedidos
-  getPedidosEnCurso(): Observable<Pedido[]> {
-    return this.http.get<Pedido[]>(`${this.baseUrl}/pedidos-en-curso`, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  getHistorialPedidos(): Observable<Pedido[]> {
-    return this.http.get<Pedido[]>(`${this.baseUrl}/historial-pedidos`, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  cambiarEstadoPedido(idPedido: number, nuevoEstado: string): Observable<Pedido> {
-    return this.http.put<Pedido>(`${this.baseUrl}/pedidos/${idPedido}/estado`, { estado: nuevoEstado }, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  // Método para compatibilidad con código anterior (DEPRECATED)
   getRestauranteById(id: number): Observable<Restaurante> {
     return new Observable(observer => {
       observer.error(new Error('Método deprecado. Usar ClienteService para funcionalidades de cliente.'));

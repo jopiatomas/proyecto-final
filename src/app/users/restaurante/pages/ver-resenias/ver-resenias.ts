@@ -7,11 +7,7 @@ import {
   ReseniaDTO,
   ReseniaBackendDTO,
 } from '../../../../core/services/resenia.service';
-import {
-  ReseniaService,
-  ReseniaDTO,
-  ReseniaBackendDTO,
-} from '../../../../core/services/resenia.service';
+
 
 @Component({
   selector: 'app-ver-resenias',

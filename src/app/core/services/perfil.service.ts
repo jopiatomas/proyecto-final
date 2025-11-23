@@ -12,10 +12,9 @@ export class PerfilService {
 
   constructor(private http: HttpClient) {}
 
-  // Obtener perfil completo del usuario - GET /clientes/perfil
   obtenerPerfil(): Observable<PerfilUsuario> {
     const headers = this.getHeaders();
-    
+
     return this.http.get(`${this.apiUrl}/perfil`, {
       headers,
       responseType: 'text'
@@ -26,7 +25,7 @@ export class PerfilService {
         const usuario = response.match(/"usuario":"([^"]+)"/)?.[1] || '';
         const nombreYapellido = response.match(/"nombreYapellido":"([^"]+)"/)?.[1] || '';
         const email = response.match(/"email":"([^"]+)"/)?.[1] || '';
-        
+
         return { id, usuario, nombreYapellido, email };
       })
     );

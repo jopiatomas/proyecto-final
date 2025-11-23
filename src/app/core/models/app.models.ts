@@ -105,7 +105,7 @@ export interface ReseniaDetail {
   id: number;
   idCliente: number;
   idRestaurante: number;
-  descripcion: string;
+  resenia: string;
   puntuacion: number;
 }
 

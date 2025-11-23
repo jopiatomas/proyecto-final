@@ -5,18 +5,10 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import {
-  DetallePedido,
-  DireccionDTO,
-  PedidoCreate,
-  ProductoResumen,
-  ReseniaCreate,
-  ReseniaResumen,
-  RestauranteDetail,
-  Tarjeta,
-} from '../../../../core/models/app.models';
+import { DetallePedido, DireccionDTO, PedidoCreate, ProductoResumen, ReseniaCreate, ReseniaResumen, RestauranteDetail, Tarjeta } from '../../../../core/models/app.models';
 import { ClienteService } from '../../../../core/services/cliente.service';
 import { AuthService } from '../../../../core/services/auth-service';
+
 
 // Interface para items del carrito
 interface CarritoItem {
@@ -59,14 +51,14 @@ export class VerRestaurante implements OnInit {
   direcciones: DireccionDTO[] = [];
   metodosPago: Tarjeta[] = [];
   direccionSeleccionada?: number;
-  direccionRestauranteSeleccionada?: number;
   metodoPagoSeleccionado?: number;
+  direccionRestauranteSeleccionada?: number;
   enviandoPedido = false;
 
   constructor() {
     this.reseniaForm = this.fb.group({
-      descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-      puntuacion: [5, [Validators.required, Validators.min(0.1), Validators.max(5)]],
+      resenia: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      puntuacion: [5, [Validators.required, Validators.min(0.1), Validators.max(5)]]
     });
   }
 
@@ -93,7 +85,7 @@ export class VerRestaurante implements OnInit {
       error: (error) => {
         this.loading = false;
         this.loadingMenu = false;
-      },
+      }
     });
   }
 
@@ -101,8 +93,8 @@ export class VerRestaurante implements OnInit {
     this.mostrarFormularioResenia = !this.mostrarFormularioResenia;
     if (!this.mostrarFormularioResenia) {
       this.reseniaForm.reset({
-        descripcion: '',
-        puntuacion: 5,
+        resenia: '',
+        puntuacion: 5
       });
     }
   }
@@ -117,19 +109,19 @@ export class VerRestaurante implements OnInit {
 
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
-        comentario: this.reseniaForm.value.resenia.trim(),
-        calificacion: this.reseniaForm.value.calificacion,
+        resenia: this.reseniaForm.value.resenia.trim(),
+        puntuacion: this.reseniaForm.value.puntuacion,
       };
 
       this.clienteService.crearResenia(reseniaData).subscribe({
         next: (nuevaResenia) => {
           // Agregar la nueva reseña al principio de la lista
+          const currentUser = this.authService.currentUser();
           const reseniaResumen: ReseniaResumen = {
-            id: nuevaResenia.id,
-            calificacion: nuevaResenia.calificacion,
-            comentario: nuevaResenia.comentario,
-            fecha: nuevaResenia.fecha,
-            nombreCliente: nuevaResenia.nombreCliente,
+            idCliente: nuevaResenia.idCliente,
+            nombreCliente: currentUser?.usuario || '',
+            resenia: nuevaResenia.resenia,
+            puntuacion: nuevaResenia.puntuacion,
           };
           this.resenias.unshift(reseniaResumen);
 
@@ -157,10 +149,7 @@ export class VerRestaurante implements OnInit {
   }
 
   formatearPrecio(precio: number): string {
-    return `$${precio.toLocaleString('es-AR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+    return `$${precio.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
 
   calcularPromedioPuntuacion(): number {
@@ -169,9 +158,12 @@ export class VerRestaurante implements OnInit {
     return suma / this.resenias.length;
   }
 
-  formatearPuntuacion(puntuacion: number): string {
-    return puntuacion.toFixed(1);
-  }
+  formatearPuntuacion(puntuacion: number | null | undefined): string {
+  const valor =
+    typeof puntuacion === 'number' && !isNaN(puntuacion) ? puntuacion : 0;
+
+  return valor.toFixed(1);
+}
 
   // Métodos del carrito
   agregarAlCarrito(producto: ProductoResumen) {
@@ -181,7 +173,7 @@ export class VerRestaurante implements OnInit {
       return;
     }
 
-    const itemExistente = this.carrito.find((item) => item.producto.id === producto.id);
+    const itemExistente = this.carrito.find(item => item.producto.id === producto.id);
 
     if (itemExistente) {
       // Validar que no exceda el stock disponible
@@ -196,14 +188,14 @@ export class VerRestaurante implements OnInit {
   }
 
   removerDelCarrito(productoId: number) {
-    const index = this.carrito.findIndex((item) => item.producto.id === productoId);
+    const index = this.carrito.findIndex(item => item.producto.id === productoId);
     if (index > -1) {
       this.carrito.splice(index, 1);
     }
   }
 
   aumentarCantidad(productoId: number) {
-    const item = this.carrito.find((item) => item.producto.id === productoId);
+    const item = this.carrito.find(item => item.producto.id === productoId);
     if (item) {
       // Validar que no exceda el stock
       if (item.producto.stock && item.cantidad >= item.producto.stock) {
@@ -215,7 +207,7 @@ export class VerRestaurante implements OnInit {
   }
 
   disminuirCantidad(productoId: number) {
-    const item = this.carrito.find((item) => item.producto.id === productoId);
+    const item = this.carrito.find(item => item.producto.id === productoId);
     if (item && item.cantidad > 1) {
       item.cantidad--;
     } else if (item && item.cantidad === 1) {
@@ -224,7 +216,7 @@ export class VerRestaurante implements OnInit {
   }
 
   calcularTotalCarrito(): number {
-    return this.carrito.reduce((total, item) => total + item.producto.precio * item.cantidad, 0);
+    return this.carrito.reduce((total, item) => total + (item.producto.precio * item.cantidad), 0);
   }
 
   calcularCantidadTotalItems(): number {
@@ -254,7 +246,7 @@ export class VerRestaurante implements OnInit {
       },
       error: (error) => {
         alert('Error cargando direcciones. Por favor, intenta de nuevo.');
-      },
+      }
     });
 
     this.clienteService.getMetodosPago().subscribe({
@@ -263,7 +255,7 @@ export class VerRestaurante implements OnInit {
       },
       error: (error) => {
         alert('Error cargando métodos de pago. Por favor, intenta de nuevo.');
-      },
+      }
     });
   }
 
@@ -280,14 +272,14 @@ export class VerRestaurante implements OnInit {
   }
 
   obtenerCantidadEnCarrito(productoId: number): number {
-    const item = this.carrito.find((item) => item.producto.id === productoId);
+    const item = this.carrito.find(item => item.producto.id === productoId);
     return item ? item.cantidad : 0;
   }
 
   confirmarPedido() {
     // Validaciones
     if (!this.direccionSeleccionada) {
-      alert('Por favor selecciona tu dirección de entrega');
+      alert('Por favor selecciona una dirección');
       return;
     }
 
@@ -307,9 +299,9 @@ export class VerRestaurante implements OnInit {
     }
 
     // Preparar datos del pedido
-    const detalles: DetallePedido[] = this.carrito.map((item) => ({
+    const detalles: DetallePedido[] = this.carrito.map(item => ({
       productoId: item.producto.id,
-      cantidad: item.cantidad,
+      cantidad: item.cantidad
     }));
 
     const pedido: PedidoCreate = {
@@ -325,11 +317,7 @@ export class VerRestaurante implements OnInit {
     this.clienteService.crearPedido(pedido).subscribe({
       next: (pedidoCreado) => {
         // Éxito
-        alert(
-          `¡Pedido realizado exitosamente!\nNúmero de pedido: ${
-            pedidoCreado.id
-          }\nTotal: ${this.formatearPrecio(this.calcularTotalCarrito())}`
-        );
+        alert(`¡Pedido realizado exitosamente!\nNúmero de pedido: ${pedidoCreado.id}\nTotal: ${this.formatearPrecio(this.calcularTotalCarrito())}`);
         this.limpiarCarrito();
         this.cerrarModalPedido();
       },
@@ -344,7 +332,7 @@ export class VerRestaurante implements OnInit {
         } else {
           alert('Error creando el pedido. Por favor intenta de nuevo.');
         }
-      },
+      }
     });
   }
 }

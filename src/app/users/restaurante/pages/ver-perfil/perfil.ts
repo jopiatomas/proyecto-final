@@ -146,12 +146,12 @@ export class Perfil implements OnInit {
   alert('Enviando al backend:\n\n' + JSON.stringify(datosActualizados, null, 2));
     
   this.restauranteService.actualizarPerfil(datosActualizados as ActualizarPerfilRestauranteRequest).subscribe({
-    next: (mensaje) => {
+    next: (mensaje: string) => {
       this.loading.set(false);
       alert(mensaje);
       this.cargarDatosUsuario();
     },
-    error: (error) => {
+    error: (error: any) => {
       this.loading.set(false);
       
       let mensaje = 'Error al actualizar el perfil.';
