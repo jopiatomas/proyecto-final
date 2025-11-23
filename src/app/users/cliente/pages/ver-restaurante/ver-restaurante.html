@@ -7,7 +7,28 @@
       <div class="loading-spinner"></div>
       <p>Cargando información del restaurante...</p>
     </div>
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Cargando información del restaurante...</p>
+    </div>
     } @else if (restaurante) {
+    <!-- Header del Restaurante -->
+    <section class="restaurant-header">
+      <h2>{{ restaurante.nombre }}</h2>
+      @if (resenias.length > 0) {
+      <div class="rating-info">
+        <span class="stars">
+          @for (estrella of estrellas; track estrella) {
+          <span [class.filled]="estrella <= calcularPromedioPuntuacion()">★</span>
+          }
+        </span>
+        <span class="rating-text">
+          {{ formatearPuntuacion(calcularPromedioPuntuacion()) }}
+          ({{ resenias.length }} {{ resenias.length === 1 ? 'reseña' : 'reseñas' }})
+        </span>
+      </div>
+      }
+    </section>
     <!-- Header del Restaurante -->
     <section class="restaurant-header">
       <h2>{{ restaurante.nombre }}</h2>
@@ -39,32 +60,39 @@
           <div class="loading-spinner"></div>
           <p>Cargando menú...</p>
         </div>
+        <div class="loading-menu">
+          <div class="loading-spinner"></div>
+          <p>Cargando menú...</p>
+        </div>
         } @else if (menu.length > 0) {
-          <div class="menu-grid">
-            @for (producto of menu; track producto.id) {
-              <div class="menu-item" [class.sin-stock]="!tieneStock(producto)">
-                <div class="item-content">
-                  <h3>{{ producto.nombre }}</h3>
-                  <p class="price">{{ formatearPrecio(producto.precio) }}</p>
-                  @if (!tieneStock(producto)) {
-                    <p class="sin-stock-text">Sin stock</p>
-                  } @else if (producto.stock && producto.stock <= 5) {
-                    <p class="stock-bajo">Quedan {{ producto.stock }} unidades</p>
-                  }
-                </div>
-                <button 
-                  class="add-btn" 
-                  type="button" 
-                  (click)="agregarAlCarrito(producto)"
-                  [disabled]="!tieneStock(producto)"
-                  [class.disabled]="!tieneStock(producto)"
-                >
-                  <span>+</span>
-                </button>
-              </div>
-            }
+        <div class="menu-grid">
+          @for (producto of menu; track producto.id) {
+          <div class="menu-item" [class.sin-stock]="!tieneStock(producto)">
+            <div class="item-content">
+              <h3>{{ producto.nombre }}</h3>
+              <p class="price">{{ formatearPrecio(producto.precio) }}</p>
+              @if (!tieneStock(producto)) {
+              <p class="sin-stock-text">Sin stock</p>
+              } @else if (producto.stock && producto.stock <= 5) {
+              <p class="stock-bajo">Quedan {{ producto.stock }} unidades</p>
+              }
+            </div>
+            <button
+              class="add-btn"
+              type="button"
+              (click)="agregarAlCarrito(producto)"
+              [disabled]="!tieneStock(producto)"
+              [class.disabled]="!tieneStock(producto)"
+            >
+              <span>+</span>
+            </button>
           </div>
+          }
+        </div>
         } @else {
+        <div class="empty-menu">
+          <p>Este restaurante aún no tiene productos en su menú.</p>
+        </div>
         <div class="empty-menu">
           <p>Este restaurante aún no tiene productos en su menú.</p>
         </div>
@@ -77,6 +105,8 @@
       <div class="container">
         <div class="section-header">
           <h2>Reseñas</h2>
+          <button class="review-btn" type="button" (click)="toggleFormularioResenia()">
+            {{ mostrarFormularioResenia ? 'Cancelar' : 'Escribir Reseña' }}
           <button class="review-btn" type="button" (click)="toggleFormularioResenia()">
             {{ mostrarFormularioResenia ? 'Cancelar' : 'Escribir Reseña' }}
           </button>
@@ -95,7 +125,7 @@
               <button
                 type="button"
                 class="star-btn"
-                [class.selected]="estrella <= reseniaForm.value.calificacion"
+                [class.selected]="estrella <= reseniaForm.value.puntuacion"
                 (click)="establecerPuntuacion(estrella)"
               >
                 ★
@@ -106,20 +136,22 @@
 
           <!-- Comentario -->
           <div class="form-group">
-            <label for="resenia">Tu comentario:</label>
+            <label for="descripcion">Tu comentario:</label>
             <textarea
-              id="resenia"
-              formControlName="resenia"
+              id="descripcion"
+              formControlName="descripcion"
               placeholder="Cuéntanos sobre tu experiencia..."
               rows="4"
             >
             </textarea>
-            @if (reseniaForm.get('resenia')?.touched && reseniaForm.get('resenia')?.errors) {
+            @if (reseniaForm.get('descripcion')?.touched && reseniaForm.get('descripcion')?.errors)
+            {
             <div class="error-message">
-              @if (reseniaForm.get('resenia')?.errors?.['required']) { El comentario es obligatorio
-              } @if (reseniaForm.get('resenia')?.errors?.['minlength']) { El comentario debe tener
-              al menos 10 caracteres } @if (reseniaForm.get('resenia')?.errors?.['maxlength']) { El
-              comentario no puede exceder los 500 caracteres }
+              @if (reseniaForm.get('descripcion')?.errors?.['required']) { El comentario es
+              obligatorio } @if (reseniaForm.get('descripcion')?.errors?.['minlength']) { El
+              comentario debe tener al menos 10 caracteres } @if
+              (reseniaForm.get('descripcion')?.errors?.['maxlength']) { El comentario no puede
+              exceder los 500 caracteres }
             </div>
             }
           </div>
@@ -142,12 +174,10 @@
           @for (resenia of resenias; track $index) {
           <div class="review-item">
             <div class="reviewer-info">
-              <span class="reviewer-name">{{
-                resenia.nombreCliente || 'Cliente #' + resenia.idCliente
-              }}</span>
+              <span class="reviewer-name">{{ resenia.nombreCliente || 'Cliente Anónimo' }}</span>
               <div class="review-rating">
                 @for (estrella of estrellas; track estrella) {
-                <span class="star" [class.filled]="estrella <= resenia.puntuacion">★</span>
+                <span [class.filled]="estrella <= resenia.puntuacion">★</span>
                 }
                 <span class="rating-value">({{ formatearPuntuacion(resenia.puntuacion) }})</span>
               </div>
@@ -244,14 +274,31 @@
           </div>
         </div>
 
-        <!-- Selección de Dirección -->
+        <!-- Selección de Dirección del Cliente -->
         <div class="form-section">
-          <label for="direccion">Dirección de Entrega:</label>
+          <label for="direccion">Tu Dirección de Entrega:</label>
           <select id="direccion" [(ngModel)]="direccionSeleccionada" class="form-select">
-            <option value="">Selecciona una dirección</option>
+            <option value="">Selecciona tu dirección</option>
             @for (direccion of direcciones; track direccion.id) {
             <option [value]="direccion.id">
               {{ direccion.direccion }}, {{ direccion.ciudad }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <!-- Selección de Sucursal del Restaurante -->
+        <div class="form-section">
+          <label for="direccionRestaurante">Sucursal del Restaurante:</label>
+          <select
+            id="direccionRestaurante"
+            [(ngModel)]="direccionRestauranteSeleccionada"
+            class="form-select"
+          >
+            <option value="">Selecciona una sucursal</option>
+            @for (direccion of restaurante?.direcciones || []; track direccion.id) {
+            <option [value]="direccion.id">
+              {{ direccion.direccion }}, {{ direccion.ciudad }}, {{ direccion.pais }}
             </option>
             }
           </select>

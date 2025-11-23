@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 // Forma que llega desde el backend (según consola: idCliente, nombreCliente, resenia, puntuacion)
 export interface ReseniaBackendDTO {
   idCliente: number;
-  nombreCliente: string; // Ahora el backend incluye el nombre del cliente
+  nombreCliente: string;
   resenia: string;
   puntuacion: number;
 }
