@@ -84,26 +84,24 @@ export interface ProductoResumen {
 }
 
 export interface ReseniaResumen {
-  id: number;
-  calificacion: number;
-  comentario?: string;
-  fecha: string;
-  nombreCliente?: string;
+  idCliente: number;
+  nombreCliente: string;
+  resenia: string;
+  puntuacion: number;
 }
 
 export interface ReseniaCreate {
   restauranteId: number;
-  calificacion: number;
-  comentario?: string;
+  resenia: string;
+  puntuacion: number;
 }
 
 export interface ReseniaDetail {
   id: number;
-  calificacion: number;
-  comentario?: string;
-  fecha: string;
-  nombreCliente: string;
-  restauranteNombre: string;
+  idCliente: number;
+  idRestaurante: number;
+  descripcion: string;
+  puntuacion: number;
 }
 
 // Interfaces para pedidos (mapeando DTOs del backend)
@@ -184,8 +182,8 @@ export interface Tarjeta {
 
 export interface TarjetaRequest {
   tipo: string;
-  numero: string;  // 16 dígitos
+  numero: string; // 16 dígitos
   titular: string;
-  vencimiento: string;  // MM/YY
-  cvv: string;  // 3 dígitos
+  vencimiento: string; // MM/YY
+  cvv: string; // 3 dígitos
 }

@@ -5,9 +5,17 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import { DetallePedido, DireccionDTO, PedidoCreate, ProductoResumen, ReseniaCreate, ReseniaResumen, RestauranteDetail, Tarjeta } from '../../../../core/models/app.models';
+import {
+  DetallePedido,
+  DireccionDTO,
+  PedidoCreate,
+  ProductoResumen,
+  ReseniaCreate,
+  ReseniaResumen,
+  RestauranteDetail,
+  Tarjeta,
+} from '../../../../core/models/app.models';
 import { ClienteService } from '../../../../core/services/cliente.service';
-
 
 // Interface para items del carrito
 interface CarritoItem {
@@ -54,8 +62,8 @@ export class VerRestaurante implements OnInit {
 
   constructor() {
     this.reseniaForm = this.fb.group({
-      resenia: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-      calificacion: [5, [Validators.required, Validators.min(0.1), Validators.max(5)]]
+      descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      puntuacion: [5, [Validators.required, Validators.min(0.1), Validators.max(5)]],
     });
   }
 
@@ -84,7 +92,7 @@ export class VerRestaurante implements OnInit {
         console.error('Error cargando datos del restaurante:', error);
         this.loading = false;
         this.loadingMenu = false;
-      }
+      },
     });
   }
 
@@ -92,14 +100,14 @@ export class VerRestaurante implements OnInit {
     this.mostrarFormularioResenia = !this.mostrarFormularioResenia;
     if (!this.mostrarFormularioResenia) {
       this.reseniaForm.reset({
-        resenia: '',
-        puntuacion: 5
+        descripcion: '',
+        puntuacion: 5,
       });
     }
   }
 
-  establecerPuntuacion(calificacion: number) {
-    this.reseniaForm.patchValue({ calificacion });
+  establecerPuntuacion(puntuacion: number) {
+    this.reseniaForm.patchValue({ puntuacion });
   }
 
   submitResenia() {
@@ -108,28 +116,19 @@ export class VerRestaurante implements OnInit {
 
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
-        comentario: this.reseniaForm.value.resenia.trim(),
-        calificacion: this.reseniaForm.value.calificacion
+        resenia: this.reseniaForm.value.descripcion.trim(),
+        puntuacion: this.reseniaForm.value.puntuacion,
       };
 
       this.clienteService.crearResenia(reseniaData).subscribe({
         next: (nuevaResenia) => {
-
-
-          // Agregar la nueva reseña al principio de la lista
-          const reseniaResumen: ReseniaResumen = {
-            id: nuevaResenia.id,
-            calificacion: nuevaResenia.calificacion,
-            comentario: nuevaResenia.comentario,
-            fecha: nuevaResenia.fecha,
-            nombreCliente: nuevaResenia.nombreCliente
-          };
-          this.resenias.unshift(reseniaResumen);
+          // Recargar el restaurante completo para obtener las reseñas actualizadas
+          this.cargarDatosRestaurante();
 
           // Resetear formulario y ocultar
           this.reseniaForm.reset({
-            resenia: '',
-            puntuacion: 5
+            descripcion: '',
+            puntuacion: 5,
           });
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
@@ -140,23 +139,26 @@ export class VerRestaurante implements OnInit {
           console.error('Error enviando reseña:', error);
           this.submittingResenia = false;
           alert('Error al enviar la reseña. Por favor, inténtalo de nuevo.');
-        }
+        },
       });
     } else {
       // Marcar todos los campos como touched para mostrar errores
-      Object.keys(this.reseniaForm.controls).forEach(key => {
+      Object.keys(this.reseniaForm.controls).forEach((key) => {
         this.reseniaForm.get(key)?.markAsTouched();
       });
     }
   }
 
   formatearPrecio(precio: number): string {
-    return `$${precio.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `$${precio.toLocaleString('es-AR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   }
 
   calcularPromedioPuntuacion(): number {
     if (this.resenias.length === 0) return 0;
-    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.calificacion, 0);
+    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.puntuacion, 0);
     return suma / this.resenias.length;
   }
 
@@ -172,7 +174,7 @@ export class VerRestaurante implements OnInit {
       return;
     }
 
-    const itemExistente = this.carrito.find(item => item.producto.id === producto.id);
+    const itemExistente = this.carrito.find((item) => item.producto.id === producto.id);
 
     if (itemExistente) {
       // Validar que no exceda el stock disponible
@@ -187,14 +189,14 @@ export class VerRestaurante implements OnInit {
   }
 
   removerDelCarrito(productoId: number) {
-    const index = this.carrito.findIndex(item => item.producto.id === productoId);
+    const index = this.carrito.findIndex((item) => item.producto.id === productoId);
     if (index > -1) {
       this.carrito.splice(index, 1);
     }
   }
 
   aumentarCantidad(productoId: number) {
-    const item = this.carrito.find(item => item.producto.id === productoId);
+    const item = this.carrito.find((item) => item.producto.id === productoId);
     if (item) {
       // Validar que no exceda el stock
       if (item.producto.stock && item.cantidad >= item.producto.stock) {
@@ -206,7 +208,7 @@ export class VerRestaurante implements OnInit {
   }
 
   disminuirCantidad(productoId: number) {
-    const item = this.carrito.find(item => item.producto.id === productoId);
+    const item = this.carrito.find((item) => item.producto.id === productoId);
     if (item && item.cantidad > 1) {
       item.cantidad--;
     } else if (item && item.cantidad === 1) {
@@ -215,7 +217,7 @@ export class VerRestaurante implements OnInit {
   }
 
   calcularTotalCarrito(): number {
-    return this.carrito.reduce((total, item) => total + (item.producto.precio * item.cantidad), 0);
+    return this.carrito.reduce((total, item) => total + item.producto.precio * item.cantidad, 0);
   }
 
   calcularCantidadTotalItems(): number {
@@ -246,7 +248,7 @@ export class VerRestaurante implements OnInit {
       error: (error) => {
         console.error('Error cargando direcciones:', error);
         alert('Error cargando direcciones. Por favor, intenta de nuevo.');
-      }
+      },
     });
 
     this.clienteService.getMetodosPago().subscribe({
@@ -256,7 +258,7 @@ export class VerRestaurante implements OnInit {
       error: (error) => {
         console.error('Error cargando métodos de pago:', error);
         alert('Error cargando métodos de pago. Por favor, intenta de nuevo.');
-      }
+      },
     });
   }
 
@@ -272,7 +274,7 @@ export class VerRestaurante implements OnInit {
   }
 
   obtenerCantidadEnCarrito(productoId: number): number {
-    const item = this.carrito.find(item => item.producto.id === productoId);
+    const item = this.carrito.find((item) => item.producto.id === productoId);
     return item ? item.cantidad : 0;
   }
 
@@ -294,16 +296,16 @@ export class VerRestaurante implements OnInit {
     }
 
     // Preparar datos del pedido
-    const detalles: DetallePedido[] = this.carrito.map(item => ({
+    const detalles: DetallePedido[] = this.carrito.map((item) => ({
       productoId: item.producto.id,
-      cantidad: item.cantidad
+      cantidad: item.cantidad,
     }));
 
     const pedido: PedidoCreate = {
       restauranteId: this.restaurante.id,
       direccionId: this.direccionSeleccionada,
       pagoId: this.metodoPagoSeleccionado,
-      detalles: detalles
+      detalles: detalles,
     };
 
     // Enviar pedido
@@ -311,7 +313,11 @@ export class VerRestaurante implements OnInit {
     this.clienteService.crearPedido(pedido).subscribe({
       next: (pedidoCreado) => {
         // Éxito
-        alert(`¡Pedido realizado exitosamente!\nNúmero de pedido: ${pedidoCreado.id}\nTotal: ${this.formatearPrecio(this.calcularTotalCarrito())}`);
+        alert(
+          `¡Pedido realizado exitosamente!\nNúmero de pedido: ${
+            pedidoCreado.id
+          }\nTotal: ${this.formatearPrecio(this.calcularTotalCarrito())}`
+        );
         this.limpiarCarrito();
         this.cerrarModalPedido();
       },
@@ -327,7 +333,7 @@ export class VerRestaurante implements OnInit {
         } else {
           alert('Error creando el pedido. Por favor intenta de nuevo.');
         }
-      }
+      },
     });
   }
 }
