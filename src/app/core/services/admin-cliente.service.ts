@@ -5,13 +5,13 @@ import { Observable } from 'rxjs';
 export interface ClienteDTO {
   id: number;
   usuario: string;
-  nombre: string;
+  nombreYapellido: string;
   email: string;
 }
 
 export interface ClienteModificarDTO {
   usuario: string;
-  nombre: string;
+  nombreYapellido: string;
 }
 
 @Injectable({

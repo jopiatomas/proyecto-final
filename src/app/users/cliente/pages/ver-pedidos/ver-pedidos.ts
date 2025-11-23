@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
 import { ClienteService } from '../../../../core/services/cliente.service';
-import { PedidoResumenDTO, PedidoDetailDTO } from '../../../../core/models/app.models';
+import { PedidoDetailDTO, PedidoResumenDTO } from '../../../../core/models/app.models';
 
 @Component({
   selector: 'app-ver-pedidos',

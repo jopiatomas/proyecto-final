@@ -1,10 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Header } from '../../components/header/header';
+
 import { FooterCliente } from '../../components/footer/footer';
 import { ClienteService } from '../../../../core/services/cliente.service';
 import { DireccionDTO } from '../../../../core/models/app.models';
+import { Header } from '../../components/header/header';
+
 
 @Component({
   selector: 'app-direcciones',
@@ -15,7 +17,7 @@ import { DireccionDTO } from '../../../../core/models/app.models';
 export class Direcciones implements OnInit {
   private fb = inject(FormBuilder);
   private clienteService = inject(ClienteService);
-
+  
   direcciones = signal<DireccionDTO[]>([]);
   formularioDireccion!: FormGroup;
   panelAbierto = signal(false);
@@ -31,16 +33,8 @@ export class Direcciones implements OnInit {
     this.formularioDireccion = this.fb.nonNullable.group({
       direccion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
       ciudad: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      pais: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(50),
-          Validators.pattern(/^[A-Za-z\s]+$/),
-        ],
-      ],
-      codigoPostal: ['', [Validators.required, Validators.pattern(/^\d{4,10}$/)]],
+      pais: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(/^[A-Za-z\s]+$/)]],
+      codigoPostal: ['', [Validators.required, Validators.pattern(/^\d{4,10}$/)]]
     });
   }
 
@@ -53,15 +47,17 @@ export class Direcciones implements OnInit {
       },
       error: (error) => {
         this.cargando.set(false);
-        // Si el error es 400 o 404, simplemente dejar la lista vacía sin mostrar error
-        if (error.status === 400 || error.status === 404) {
+        // Si el error es 400 con mensaje de "no hay direcciones", tratarlo como lista vacía
+        if (error.status === 400 && error.error?.message?.toLowerCase().includes('no hay direcciones')) {
           this.direcciones.set([]);
-        } else if (error.status !== 0) {
-          // Solo mostrar alert para errores reales del servidor (no 0 que es error de red)
+        } else {
           console.error('Error al cargar direcciones:', error);
-          alert('Error al cargar las direcciones');
+          if (error.status !== 404 && error.status !== 0) {
+            // Solo mostrar alert para errores reales del servidor
+            alert('Error al cargar las direcciones');
+          }
         }
-      },
+      }
     });
   }
 
@@ -84,18 +80,18 @@ export class Direcciones implements OnInit {
   }
 
   eliminarDireccion(id: number) {
-    const direccion = this.direcciones().find((d) => d.id === id);
+    const direccion = this.direcciones().find(d => d.id === id);
     if (!direccion) return;
-
+    
     if (confirm('¿Estás seguro de eliminar esta dirección?')) {
       this.cargando.set(true);
-
+      
       const eliminarDTO = {
         id: direccion.id,
         direccion: direccion.direccion,
-        codigoPostal: direccion.codigoPostal,
+        codigoPostal: direccion.codigoPostal
       };
-
+      
       this.clienteService.eliminarDireccion(eliminarDTO).subscribe({
         next: () => {
           this.cargarDirecciones();
@@ -108,19 +104,15 @@ export class Direcciones implements OnInit {
           console.error('Status:', error.status);
           console.error('Mensaje:', error.error);
           this.cargando.set(false);
-
+          
           if (error.status === 401) {
             alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
             localStorage.removeItem('token');
             window.location.href = '/login';
           } else {
-            alert(
-              `Error al eliminar la dirección: ${
-                error.error?.message || error.message || 'Error desconocido'
-              }`
-            );
+            alert(`Error al eliminar la dirección: ${error.error?.message || error.message || 'Error desconocido'}`);
           }
-        },
+        }
       });
     }
   }
@@ -129,13 +121,13 @@ export class Direcciones implements OnInit {
     if (this.formularioDireccion.valid) {
       this.cargando.set(true);
       const datosDireccion = this.formularioDireccion.value;
-
+      
       if (this.editandoId()) {
         // Limpiar caracteres especiales antes de enviar
         const datosDireccionLimpia = {
           ...datosDireccion,
-          pais: datosDireccion.pais.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-          ciudad: datosDireccion.ciudad.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+          pais: datosDireccion.pais.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+          ciudad: datosDireccion.ciudad.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         };
         this.clienteService.modificarDireccion(this.editandoId()!, datosDireccionLimpia).subscribe({
           next: () => {
@@ -145,27 +137,23 @@ export class Direcciones implements OnInit {
           error: (error) => {
             console.error('Error al modificar dirección:', error);
             this.cargando.set(false);
-
+            
             if (error.status === 401) {
               alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
               localStorage.removeItem('token');
               window.location.href = '/login';
               return;
             }
-
-            alert(
-              `Error al modificar la dirección: ${
-                error.error?.message || error.message || 'Error desconocido'
-              }`
-            );
-          },
+            
+            alert(`Error al modificar la dirección: ${error.error?.message || error.message || 'Error desconocido'}`);
+          }
         });
       } else {
         // Limpiar caracteres especiales antes de enviar
         const datosDireccionLimpia = {
           ...datosDireccion,
-          pais: datosDireccion.pais.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), // Quita acentos
-          ciudad: datosDireccion.ciudad.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+          pais: datosDireccion.pais.normalize("NFD").replace(/[\u0300-\u036f]/g, ""), // Quita acentos
+          ciudad: datosDireccion.ciudad.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         };
         this.clienteService.crearDireccion(datosDireccionLimpia).subscribe({
           next: (response) => {
@@ -174,26 +162,25 @@ export class Direcciones implements OnInit {
           },
           error: (error) => {
             this.cargando.set(false);
-
+            
             if (error.status === 401) {
               alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
               localStorage.removeItem('token');
               window.location.href = '/login';
               return;
             }
-
+            
             let mensajeError = 'Error desconocido';
             if (error.error?.message) {
               mensajeError = error.error.message;
             } else if (error.error) {
-              mensajeError =
-                typeof error.error === 'string' ? error.error : JSON.stringify(error.error);
+              mensajeError = typeof error.error === 'string' ? error.error : JSON.stringify(error.error);
             } else if (error.message) {
               mensajeError = error.message;
             }
-
+            
             alert(`Error al crear la dirección: ${mensajeError}`);
-          },
+          }
         });
       }
     } else {

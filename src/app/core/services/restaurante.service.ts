@@ -1,8 +1,15 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// Interfaces para funcionalidad de restaurante
+// Interfaces para Productos
+export interface ProductoCrearDTO {
+  nombre: string;
+  caracteristicas: string;
+  precio: number;
+  stock: number;
+}
+
 export interface RestauranteProfile {
   id: number;
   nombre: string;
@@ -11,14 +18,6 @@ export interface RestauranteProfile {
   direccion?: string;
   descripcion?: string;
   categoria?: string;
-}
-
-// Interfaces para productos
-export interface ProductoCrearDTO {
-  nombre: string;
-  caracteristicas: string;
-  precio: number;
-  stock: number;
 }
 
 export interface ProductoModificarDTO {
@@ -42,18 +41,24 @@ export interface ProductoResumenDTO {
   precio: number;
 }
 
-// Interface para pedidos
+// Interfaces para Pedidos
+export interface DetallePedidoDTO {
+  productoId: number;
+  nombreProducto: string;
+  precioUnitario: number;
+  cantidad: number;
+}
+
 export interface Pedido {
   id: number;
   fecha: string;
-  total: number;
   estado: string;
-  cliente?: string;
-  productos?: any[];
-  detalles?: any[];
+  total: number;
+  nombreRestaurante?: string;
+  idCliente?: number;
+  detalles: DetallePedidoDTO[];
 }
 
-// Interface para compatibilidad con código anterior (DEPRECATED)
 export interface Restaurante {
   id: number;
   nombre: string;
@@ -70,10 +75,11 @@ export interface Restaurante {
   providedIn: 'root'
 })
 export class RestauranteService {
-  private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/restaurantes'; // Endpoints para usuarios RESTAURANTE
+  
+  private apiUrl = 'http://localhost:8080/restaurantes';
 
-  // Headers con autenticación JWT
+  constructor(private http: HttpClient) {}
+
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
@@ -82,37 +88,55 @@ export class RestauranteService {
     });
   }
 
-  // Métodos de productos
-  getAllProductos(): Observable<ProductoResumenDTO[]> {
-    return this.http.get<ProductoResumenDTO[]>(`${this.baseUrl}/productos`, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  getProductoPorNombre(nombre: string): Observable<ProductoDetailDTO> {
-    const buscarDTO = { nombre: nombre };
-    return this.http.post<ProductoDetailDTO>(`${this.baseUrl}/productos/buscar`, buscarDTO, {
+  // ===== MÉTODOS DE PRODUCTOS =====
+  
+  getAllProductos(): Observable<ProductoDetailDTO[]> {
+    return this.http.get<ProductoDetailDTO[]>(`${this.apiUrl}/productos`, {
       headers: this.getAuthHeaders()
     });
   }
 
   crearProducto(producto: ProductoCrearDTO): Observable<ProductoDetailDTO> {
-    return this.http.post<ProductoDetailDTO>(`${this.baseUrl}/productos`, producto, {
+    return this.http.post<ProductoDetailDTO>(`${this.apiUrl}/productos`, producto, {
       headers: this.getAuthHeaders()
     });
   }
 
-  modificarProducto(id: number, producto: ProductoModificarDTO): Observable<ProductoDetailDTO> {
-    return this.http.put<ProductoDetailDTO>(`${this.baseUrl}/productos/${id}`, producto, {
+  modificarProducto(idProducto: number, producto: ProductoModificarDTO): Observable<ProductoDetailDTO> {
+    return this.http.put<ProductoDetailDTO>(`${this.apiUrl}/productos/${idProducto}`, producto, {
       headers: this.getAuthHeaders()
     });
   }
 
-  eliminarProducto(id: number): Observable<string> {
-    return this.http.delete(`${this.baseUrl}/productos/${id}`, {
+  eliminarProducto(idProducto: number): Observable<string> {
+    return this.http.delete(`${this.apiUrl}/productos/${idProducto}`, {
       headers: this.getAuthHeaders(),
       responseType: 'text'
     });
+  }
+
+  getProductoPorNombre(nombre: string): Observable<ProductoDetailDTO> {
+    return this.http.get<ProductoDetailDTO>(`${this.apiUrl}/productos/${encodeURIComponent(nombre)}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // ===== MÉTODOS DE PEDIDOS =====
+
+  getPedidosEnCurso(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.apiUrl}/pedidos-en-curso`);
+  }
+
+  getHistorialPedidos(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.apiUrl}/historial-pedidos`);
+  }
+
+  cambiarEstadoPedido(idPedido: number, nuevoEstado: string): Observable<Pedido> {
+    return this.http.put<Pedido>(`${this.apiUrl}/pedidos/${idPedido}/estado`, { estado: nuevoEstado });
+  }
+
+  getPedidosCompletos(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.apiUrl}/pedidos-completo`);
   }
 
   // Métodos de direcciones
@@ -144,39 +168,15 @@ export class RestauranteService {
 
   // Método de balance
   getBalance(filtroDTO: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/balance`, filtroDTO, {
+    return this.http.post<any>(`${this.apiUrl}/balance`, filtroDTO, {
       headers: this.getAuthHeaders()
     });
   }
-
-  // Métodos de pedidos
-  getHistorialPedidos(): Observable<Pedido[]> {
-    return this.http.get<Pedido[]>(`${this.baseUrl}/pedidos`, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  getPedidosEnCurso(): Observable<Pedido[]> {
-    return this.http.get<Pedido[]>(`${this.baseUrl}/pedidos/en-curso`, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  cambiarEstadoPedido(idPedido: number, estado: string): Observable<Pedido> {
-    return this.http.put<Pedido>(`${this.baseUrl}/pedidos/${idPedido}/estado`, { estado }, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  // TODO: Implementar otros endpoints cuando sea necesario
-  // GET /restaurantes/perfil - Obtener perfil del restaurante
-  // PUT /restaurantes/perfil - Actualizar perfil del restaurante
-  // GET /restaurantes/pedidos - Ver pedidos del restaurante
 
   // Método para compatibilidad con código anterior (DEPRECATED)
-  getRestauranteById(id: number): Observable<Restaurante> {
-    return new Observable(observer => {
-      observer.error(new Error('Método deprecado. Usar ClienteService para funcionalidades de cliente.'));
-    });
-  }
+    getRestauranteById(id: number): Observable<Restaurante> {
+      return new Observable(observer => {
+        observer.error(new Error('Método deprecado. Usar ClienteService para funcionalidades de cliente.'));
+      });
+    }
 }

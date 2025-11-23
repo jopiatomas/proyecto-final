@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
 import { ClienteService } from '../../../../core/services/cliente.service';
-import { PedidoDetailDTO, PedidoResumenDTO } from '../../../../core/models/app.models';
+import { PedidoDetailDTO } from '../../../../core/models/app.models';
 
 @Component({
   selector: 'app-ver-historial-pedidos',

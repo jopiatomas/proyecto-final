@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { from, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { LoginRequest, RegisterRequest, Usuario } from '../models/app.models';
+import { LoginRequest, RegisterRequest, Usuario } from '../models/auth.models';
 
 @Injectable({
   providedIn: 'root'
@@ -78,52 +78,16 @@ export class AuthService {
   // Obtener token de localStorage
   getToken(): string | null {
     if (typeof localStorage !== 'undefined') {
-      const token = localStorage.getItem('token');
-      if (token && this.isTokenExpired(token)) {
-        console.warn('⚠️ Token expirado - realizando logout automático');
-        this.logout();
-        return null;
-      }
-      return token;
+      return localStorage.getItem('token');
     }
     return null;
-  }
-
-  // Verificar si el token está expirado
-  private isTokenExpired(token: string): boolean {
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        window.atob(base64)
-          .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      );
-      const payload = JSON.parse(jsonPayload);
-      const exp = payload.exp * 1000; // Convertir a milisegundos
-      const now = Date.now();
-      return now >= exp;
-    } catch (error) {
-      console.error('Error verificando expiración del token:', error);
-      return true; // Si hay error, considerar expirado
-    }
   }
 
   // Decodificar JWT y extraer información del usuario
   private getUserFromToken(token: string): Usuario | null {
     try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        window.atob(base64)
-          .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      );
-      
-      const payload = JSON.parse(jsonPayload);
-      console.log('Payload del token JWT:', payload);
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
       
       // Extraer rol del array roles que viene del backend
       let rol = 'CLIENTE';

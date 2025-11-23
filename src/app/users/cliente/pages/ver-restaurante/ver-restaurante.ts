@@ -5,17 +5,9 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
+import { DetallePedido, DireccionDTO, PedidoCreate, ProductoResumen, ReseniaCreate, ReseniaResumen, RestauranteDetail, Tarjeta } from '../../../../core/models/app.models';
 import { ClienteService } from '../../../../core/services/cliente.service';
-import {
-  RestauranteDetail,
-  ProductoResumen,
-  ReseniaResumen,
-  ReseniaCreate,
-  PedidoCreate,
-  DetallePedido,
-  DireccionDTO,
-  Tarjeta
-} from '../../../../core/models/app.models';
+
 
 // Interface para items del carrito
 interface CarritoItem {
@@ -116,23 +108,28 @@ export class VerRestaurante implements OnInit {
 
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
-        resenia: this.reseniaForm.value.resenia!.trim(),
-        puntuacion: Number(this.reseniaForm.value.calificacion) || 0
+        comentario: this.reseniaForm.value.resenia.trim(),
+        calificacion: this.reseniaForm.value.calificacion
       };
 
       this.clienteService.crearResenia(reseniaData).subscribe({
         next: (nuevaResenia) => {
-          console.log('✅ Reseña creada:', nuevaResenia);
 
-          // Recargar restaurante para obtener reseñas actualizadas
-          if (this.nombreRestaurante) {
-            this.cargarDatosRestaurante();
-          }
+
+          // Agregar la nueva reseña al principio de la lista
+          const reseniaResumen: ReseniaResumen = {
+            id: nuevaResenia.id,
+            calificacion: nuevaResenia.calificacion,
+            comentario: nuevaResenia.comentario,
+            fecha: nuevaResenia.fecha,
+            nombreCliente: nuevaResenia.nombreCliente
+          };
+          this.resenias.unshift(reseniaResumen);
 
           // Resetear formulario y ocultar
           this.reseniaForm.reset({
             resenia: '',
-            calificacion: 5
+            puntuacion: 5
           });
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
@@ -159,7 +156,7 @@ export class VerRestaurante implements OnInit {
 
   calcularPromedioPuntuacion(): number {
     if (this.resenias.length === 0) return 0;
-    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.puntuacion, 0);
+    const suma = this.resenias.reduce((acc, resenia) => acc + resenia.calificacion, 0);
     return suma / this.resenias.length;
   }
 

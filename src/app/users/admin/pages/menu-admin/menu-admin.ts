@@ -1,10 +1,10 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
-import { AdminClienteService, ClienteDTO, ClienteModificarDTO } from '../../../../core/services/admin-cliente.service';
 import { AdminRestauranteService, RestauranteAdminDTO, RestauranteModificarDTO, ReseniaAdminDTO } from '../../../../core/services/admin-restaurante.service';
 import { FooterAdmin } from "../../components/footer/footer";
+import { AdminClienteService, ClienteDTO, ClienteModificarDTO } from '../../../../core/services/admin-cliente.service';
 
 
 
@@ -87,7 +87,7 @@ export class MenuAdmin implements OnInit {
   enableEditCliente(): void {
     const cliente = this.selectedCliente();
     if (cliente) {
-      this.clienteForm = { usuario: cliente.usuario, nombre: cliente.nombre };
+      this.clienteForm = { usuario: cliente.usuario, nombre: cliente.nombreYapellido };
       this.editingCliente.set(true);
     }
   }
@@ -98,10 +98,10 @@ export class MenuAdmin implements OnInit {
 
     const data: ClienteModificarDTO = {
       usuario: this.clienteForm.usuario.trim(),
-      nombre: this.clienteForm.nombre.trim()
+      nombreYapellido: this.clienteForm.nombre.trim()
     };
 
-    if (!data.usuario || !data.nombre) {
+    if (!data.usuario || !data.nombreYapellido) {
       this.error.set('Completa todos los campos');
       return;
     }
@@ -109,10 +109,12 @@ export class MenuAdmin implements OnInit {
     this.loading.set(true);
     this.error.set('');
 
+    // Usamos el usuario actual en la ruta (el original), para permitir cambio de username
     this.clienteService.modificarCliente(cliente.id, data).subscribe({
       next: (clienteActualizado: ClienteDTO) => {
         this.success.set('Cliente actualizado correctamente');
         this.cargarClientes();
+        // Re-seleccionar el cliente actualizado usando el nuevo usuario
         setTimeout(() => {
           const lista = this.clientes();
             const encontrado = lista.find(c => c.usuario === data.usuario);
@@ -135,7 +137,7 @@ export class MenuAdmin implements OnInit {
     const cliente = this.selectedCliente();
     if (!cliente) return;
 
-    if (confirm(`¿Eliminar cliente "${cliente.nombre}"?`)) {
+    if (confirm(`¿Eliminar cliente "${cliente.nombreYapellido}"?`)) {
       this.loading.set(true);
       this.clienteService.eliminarCliente(cliente.id).subscribe({
         next: () => {
