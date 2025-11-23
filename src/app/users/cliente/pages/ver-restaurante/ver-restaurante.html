@@ -244,14 +244,31 @@
           </div>
         </div>
 
-        <!-- Selección de Dirección -->
+        <!-- Selección de Dirección del Cliente -->
         <div class="form-section">
-          <label for="direccion">Dirección de Entrega:</label>
+          <label for="direccion">Tu Dirección de Entrega:</label>
           <select id="direccion" [(ngModel)]="direccionSeleccionada" class="form-select">
-            <option value="">Selecciona una dirección</option>
+            <option value="">Selecciona tu dirección</option>
             @for (direccion of direcciones; track direccion.id) {
             <option [value]="direccion.id">
               {{ direccion.direccion }}, {{ direccion.ciudad }}
+            </option>
+            }
+          </select>
+        </div>
+
+        <!-- Selección de Sucursal del Restaurante -->
+        <div class="form-section">
+          <label for="direccionRestaurante">Sucursal del Restaurante:</label>
+          <select
+            id="direccionRestaurante"
+            [(ngModel)]="direccionRestauranteSeleccionada"
+            class="form-select"
+          >
+            <option value="">Selecciona una sucursal</option>
+            @for (direccion of restaurante?.direcciones || []; track direccion.id) {
+            <option [value]="direccion.id">
+              {{ direccion.direccion }}, {{ direccion.ciudad }}, {{ direccion.pais }}
             </option>
             }
           </select>

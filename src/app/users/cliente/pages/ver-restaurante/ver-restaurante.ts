@@ -57,6 +57,7 @@ export class VerRestaurante implements OnInit {
   direcciones: DireccionDTO[] = [];
   metodosPago: Tarjeta[] = [];
   direccionSeleccionada?: number;
+  direccionRestauranteSeleccionada?: number;
   metodoPagoSeleccionado?: number;
   enviandoPedido = false;
 
@@ -265,6 +266,7 @@ export class VerRestaurante implements OnInit {
   cerrarModalPedido() {
     this.mostrarModalPedido = false;
     this.direccionSeleccionada = undefined;
+    this.direccionRestauranteSeleccionada = undefined;
     this.metodoPagoSeleccionado = undefined;
     this.enviandoPedido = false;
   }
@@ -281,7 +283,12 @@ export class VerRestaurante implements OnInit {
   confirmarPedido() {
     // Validaciones
     if (!this.direccionSeleccionada) {
-      alert('Por favor selecciona una dirección');
+      alert('Por favor selecciona tu dirección de entrega');
+      return;
+    }
+
+    if (!this.direccionRestauranteSeleccionada) {
+      alert('Por favor selecciona la sucursal del restaurante');
       return;
     }
 
@@ -304,6 +311,7 @@ export class VerRestaurante implements OnInit {
     const pedido: PedidoCreate = {
       restauranteId: this.restaurante.id,
       direccionId: this.direccionSeleccionada,
+      direccionRestauranteId: this.direccionRestauranteSeleccionada,
       pagoId: this.metodoPagoSeleccionado,
       detalles: detalles,
     };

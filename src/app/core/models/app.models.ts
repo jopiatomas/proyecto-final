@@ -65,11 +65,10 @@ export interface RestauranteDetail {
 
 export interface DireccionRestaurante {
   id: number;
-  calle: string;
-  numero: string;
+  direccion: string;
   ciudad: string;
+  pais: string;
   codigoPostal: string;
-  referencia?: string;
 }
 
 export interface ProductoResumen {
@@ -108,6 +107,7 @@ export interface ReseniaDetail {
 export interface PedidoCreateDTO {
   restauranteId: number;
   direccionId: number;
+  direccionRestauranteId: number;
   pagoId: number;
   detalles: DetallePedidoDTO[];
 }
@@ -116,6 +116,7 @@ export interface PedidoCreateDTO {
 export interface PedidoCreate {
   restauranteId: number;
   direccionId: number;
+  direccionRestauranteId: number;
   pagoId: number;
   detalles: DetallePedido[];
 }
