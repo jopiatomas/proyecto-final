@@ -99,68 +99,11 @@ export class Perfil implements OnInit {
       },
       error: (error) => {
         this.loading.set(false);
+        console.error('Error al cargar perfil:', error);
         
-        // Si es 401, usar datos del token como fallback en lugar de cerrar sesión
-        if (error.status === 401) {
-          const currentUser = this.authService.currentUser();
-          if (currentUser) {
-            const datosBasicos: PerfilUsuario = {
-              id: currentUser.id,
-              nombreYapellido: currentUser.nombre,
-              usuario: currentUser.usuario,
-              email: currentUser.email
-            };
-            this.usuario.set(datosBasicos);
-            this.perfilForm.patchValue({
-              nombre: datosBasicos.nombreYapellido,
-              usuario: datosBasicos.usuario,
-              email: datosBasicos.email
-            });
-            // NO redirigir al login, permitir que el usuario vea su perfil
-            return;
-          } else {
-            // Solo si no hay token válido, entonces sí redirigir
-            localStorage.removeItem('token');
-            alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-            this.router.navigate(['/login']);
-            return;
-          }
-        }
-        
-        // Si es 403, intentar usar datos del token como fallback
-        if (error.status === 403) {
-          const currentUser = this.authService.currentUser();
-          if (currentUser) {
-            const datosBasicos: PerfilUsuario = {
-              id: currentUser.id,
-              nombreYapellido: currentUser.nombre,
-              usuario: currentUser.usuario,
-              email: currentUser.email
-            };
-            this.usuario.set(datosBasicos);
-            this.perfilForm.patchValue({
-              nombre: datosBasicos.nombreYapellido,
-              usuario: datosBasicos.usuario,
-              email: datosBasicos.email
-            });
-
-            return;
-          }
-        }
-        
-        // Si es 401, el token realmente es inválido
-        if (error.status === 401) {
-          console.error('🚫 Token inválido o expirado');
-          localStorage.removeItem('token');
-          alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-          this.router.navigate(['/login']);
-          return;
-        }
-        
-        // Para otros errores, intentar usar datos del token
+        // Intentar usar datos del token como fallback
         const currentUser = this.authService.currentUser();
         if (currentUser) {
-
           const datosBasicos: PerfilUsuario = {
             id: currentUser.id,
             nombreYapellido: currentUser.nombre,
@@ -174,7 +117,10 @@ export class Perfil implements OnInit {
             email: datosBasicos.email
           });
         } else {
-          alert('Error al cargar los datos del perfil. Por favor, recarga la página.');
+          // Si no hay token válido, redirigir al login
+          localStorage.removeItem('token');
+          alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+          this.router.navigate(['/login']);
         }
       }
     });

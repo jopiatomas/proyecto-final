@@ -15,7 +15,16 @@ export interface AuthResponse {
   token: string;
 }
 
-
+export interface Usuario {
+  id: number;
+  usuario: string;
+  nombre: string;
+  rol: 'CLIENTE' | 'RESTAURANTE' | 'ADMIN';
+  email: string;
+  telefono?: string;
+  direccion?: string;
+  exp?: number;
+}
 
 // Interfaces para perfil de usuario (ClienteDetailDto del backend)
 export interface PerfilUsuario {
@@ -71,6 +80,7 @@ export interface ProductoResumen {
   categoria?: string;
   disponible?: boolean;
   imagen?: string;
+  stock?: number;
 }
 
 export interface ReseniaResumen {

@@ -16,10 +16,12 @@ export class VerHistorialPedidos implements OnInit {
   private clienteService = inject(ClienteService);
 
   pedidos: PedidoDetailDTO[] = [];
+  pedidosFiltrados: PedidoDetailDTO[] = [];
   pedidoSeleccionado: PedidoDetailDTO | null = null;
   loading = false;
   error: string | null = null;
   mostrarMenuOpciones = false;
+  filtroActivo: string = 'TODOS';
 
   ngOnInit() {
     this.cargarPedidos();
@@ -35,6 +37,7 @@ export class VerHistorialPedidos implements OnInit {
         this.pedidos = pedidos.sort((a, b) => 
           new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
         );
+        this.aplicarFiltro();
         this.loading = false;
       },
       error: (error) => {
@@ -98,5 +101,18 @@ export class VerHistorialPedidos implements OnInit {
   puedeSerCancelado(estado: string): boolean {
     // Solo se pueden cancelar pedidos que están pendientes o en preparación
     return estado === 'PENDIENTE';
+  }
+
+  cambiarFiltro(filtro: string) {
+    this.filtroActivo = filtro;
+    this.aplicarFiltro();
+  }
+
+  aplicarFiltro() {
+    if (this.filtroActivo === 'TODOS') {
+      this.pedidosFiltrados = [...this.pedidos];
+    } else {
+      this.pedidosFiltrados = this.pedidos.filter(p => p.estado === this.filtroActivo);
+    }
   }
 }

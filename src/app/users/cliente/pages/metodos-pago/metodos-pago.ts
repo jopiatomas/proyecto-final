@@ -75,9 +75,6 @@ export class MetodosPago implements OnInit {
     this.cargando.set(true);
     this.clienteService.getMetodosPago().subscribe({
       next: (tarjetas) => {
-        console.log('Tarjetas recibidas del backend:', tarjetas);
-        console.log('Tipo de tarjetas:', typeof tarjetas);
-        console.log('Es array?:', Array.isArray(tarjetas));
         this.tarjetas.set(tarjetas);
         this.cargando.set(false);
       },

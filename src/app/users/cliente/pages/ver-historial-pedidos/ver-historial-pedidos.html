@@ -13,6 +13,52 @@
         <h2>Tus Pedidos</h2>
       </div>
 
+      <!-- Filtros -->
+      <div class="filtros-container">
+        <button 
+          class="filtro-btn" 
+          [class.active]="filtroActivo === 'TODOS'"
+          (click)="cambiarFiltro('TODOS')"
+        >
+          Todos
+        </button>
+        <button 
+          class="filtro-btn" 
+          [class.active]="filtroActivo === 'PENDIENTE'"
+          (click)="cambiarFiltro('PENDIENTE')"
+        >
+          Pendiente
+        </button>
+        <button 
+          class="filtro-btn" 
+          [class.active]="filtroActivo === 'EN_PREPARACION'"
+          (click)="cambiarFiltro('EN_PREPARACION')"
+        >
+          En Preparación
+        </button>
+        <button 
+          class="filtro-btn" 
+          [class.active]="filtroActivo === 'ENVIADO'"
+          (click)="cambiarFiltro('ENVIADO')"
+        >
+          Enviado
+        </button>
+        <button 
+          class="filtro-btn" 
+          [class.active]="filtroActivo === 'ENTREGADO'"
+          (click)="cambiarFiltro('ENTREGADO')"
+        >
+          Entregado
+        </button>
+        <button 
+          class="filtro-btn" 
+          [class.active]="filtroActivo === 'CANCELADO'"
+          (click)="cambiarFiltro('CANCELADO')"
+        >
+          Cancelado
+        </button>
+      </div>
+
       @if (loading) {
         <div class="loading-state">
         <div class="loading-spinner"></div>
@@ -26,16 +72,16 @@
         </div>
       }
 
-      @if (!loading && !error && pedidos.length === 0) {
+      @if (!loading && !error && pedidosFiltrados.length === 0) {
         <div class="empty-state">
-          <h3>No tienes pedidos</h3>
-          <p>Cuando realices tu primer pedido, aparecerá aquí.</p>
+          <h3>No hay pedidos con este filtro</h3>
+          <p>Prueba seleccionando otro estado.</p>
         </div>
       }
 
-      @if (!loading && !error && pedidos.length > 0) {
+      @if (!loading && !error && pedidosFiltrados.length > 0) {
         <div class="pedidos-grid">
-          @for (pedido of pedidos; track pedido.id) {
+          @for (pedido of pedidosFiltrados; track pedido.id) {
             <div 
               class="pedido-card"
               [class.selected]="pedidoSeleccionado?.id === pedido.id"

@@ -166,9 +166,20 @@ export class VerRestaurante implements OnInit {
 
   // Métodos del carrito
   agregarAlCarrito(producto: ProductoResumen) {
+    // Validar stock antes de agregar
+    if (!producto.stock || producto.stock === 0) {
+      alert('Este producto no tiene stock disponible');
+      return;
+    }
+
     const itemExistente = this.carrito.find(item => item.producto.id === producto.id);
 
     if (itemExistente) {
+      // Validar que no exceda el stock disponible
+      if (itemExistente.cantidad >= producto.stock) {
+        alert(`Solo hay ${producto.stock} unidades disponibles de este producto`);
+        return;
+      }
       itemExistente.cantidad++;
     } else {
       this.carrito.push({ producto, cantidad: 1 });
@@ -185,6 +196,11 @@ export class VerRestaurante implements OnInit {
   aumentarCantidad(productoId: number) {
     const item = this.carrito.find(item => item.producto.id === productoId);
     if (item) {
+      // Validar que no exceda el stock
+      if (item.producto.stock && item.cantidad >= item.producto.stock) {
+        alert(`Solo hay ${item.producto.stock} unidades disponibles de este producto`);
+        return;
+      }
       item.cantidad++;
     }
   }
@@ -249,6 +265,15 @@ export class VerRestaurante implements OnInit {
     this.direccionSeleccionada = undefined;
     this.metodoPagoSeleccionado = undefined;
     this.enviandoPedido = false;
+  }
+
+  tieneStock(producto: ProductoResumen): boolean {
+    return (producto.stock ?? 0) > 0;
+  }
+
+  obtenerCantidadEnCarrito(productoId: number): number {
+    const item = this.carrito.find(item => item.producto.id === productoId);
+    return item ? item.cantidad : 0;
   }
 
   confirmarPedido() {

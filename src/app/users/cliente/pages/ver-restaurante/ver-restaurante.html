@@ -42,12 +42,23 @@
         } @else if (menu.length > 0) {
           <div class="menu-grid">
             @for (producto of menu; track producto.id) {
-              <div class="menu-item">
+              <div class="menu-item" [class.sin-stock]="!tieneStock(producto)">
                 <div class="item-content">
                   <h3>{{ producto.nombre }}</h3>
                   <p class="price">{{ formatearPrecio(producto.precio) }}</p>
+                  @if (!tieneStock(producto)) {
+                    <p class="sin-stock-text">Sin stock</p>
+                  } @else if (producto.stock && producto.stock <= 5) {
+                    <p class="stock-bajo">Quedan {{ producto.stock }} unidades</p>
+                  }
                 </div>
-                <button class="add-btn" type="button" (click)="agregarAlCarrito(producto)">
+                <button 
+                  class="add-btn" 
+                  type="button" 
+                  (click)="agregarAlCarrito(producto)"
+                  [disabled]="!tieneStock(producto)"
+                  [class.disabled]="!tieneStock(producto)"
+                >
                   <span>+</span>
                 </button>
               </div>
