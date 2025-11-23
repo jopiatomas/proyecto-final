@@ -6,6 +6,7 @@ import { FooterRestaurante } from "../../components/footer/footer";
 
 @Component({
   selector: 'app-landing-page',
+  standalone: true,
   imports: [Header, CommonModule, FooterRestaurante],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
@@ -23,10 +24,10 @@ export class LandingPage implements OnInit {
 
   cargarPedidos() {
     this.restauranteService.getPedidosEnCurso().subscribe({
-      next: (pedidos) => {
+      next: (pedidos: Pedido[]) => {
         this.pedidos.set(pedidos);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error al cargar pedidos:', error);
       }
     });
@@ -52,7 +53,7 @@ export class LandingPage implements OnInit {
     
     if (pedido && estado) {
       this.restauranteService.cambiarEstadoPedido(pedido.id, estado).subscribe({
-        next: (pedidoActualizado) => {
+        next: (pedidoActualizado: Pedido) => {
           if (estado === 'CANCELADO' || estado === 'ENTREGADO') {
             const pedidosActualizados = this.pedidos().filter(p => p.id !== pedido.id);
             this.pedidos.set(pedidosActualizados);
@@ -66,7 +67,7 @@ export class LandingPage implements OnInit {
             this.estadoNuevo.set(null);
           }
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error al cambiar estado:', error);
         }
       });

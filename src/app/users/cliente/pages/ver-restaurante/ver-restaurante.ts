@@ -5,17 +5,9 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
+import { DetallePedido, DireccionDTO, PedidoCreate, ProductoResumen, ReseniaCreate, ReseniaResumen, RestauranteDetail, Tarjeta } from '../../../../core/models/app.models';
 import { ClienteService } from '../../../../core/services/cliente.service';
-import {
-  RestauranteDetail,
-  ProductoResumen,
-  ReseniaResumen,
-  ReseniaCreate,
-  PedidoCreate,
-  DetallePedido,
-  DireccionDTO,
-  Tarjeta
-} from '../../../../core/models/app.models';
+
 
 // Interface para items del carrito
 interface CarritoItem {
@@ -168,9 +160,12 @@ export class VerRestaurante implements OnInit {
     return suma / this.resenias.length;
   }
 
-  formatearPuntuacion(puntuacion: number): string {
-    return puntuacion.toFixed(1);
-  }
+  formatearPuntuacion(puntuacion: number | null | undefined): string {
+  const valor =
+    typeof puntuacion === 'number' && !isNaN(puntuacion) ? puntuacion : 0;
+
+  return valor.toFixed(1);
+}
 
   // Métodos del carrito
   agregarAlCarrito(producto: ProductoResumen) {

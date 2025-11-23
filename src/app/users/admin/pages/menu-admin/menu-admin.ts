@@ -21,7 +21,7 @@ export class MenuAdmin implements OnInit {
   clientes = signal<ClienteDTO[]>([]);
   selectedCliente = signal<ClienteDTO | null>(null);
   editingCliente = signal<boolean>(false);
-  clienteForm = { usuario: '', nombre: '' };
+  clienteForm = { usuario: '', nombreYapellido: '' };
 
   // Restaurantes
   restaurantes = signal<RestauranteAdminDTO[]>([]);
@@ -87,7 +87,7 @@ export class MenuAdmin implements OnInit {
   enableEditCliente(): void {
     const cliente = this.selectedCliente();
     if (cliente) {
-      this.clienteForm = { usuario: cliente.usuario, nombre: cliente.nombreYapellido };
+      this.clienteForm = { usuario: cliente.usuario, nombreYapellido: cliente.nombreYapellido };
       this.editingCliente.set(true);
     }
   }
@@ -98,7 +98,7 @@ export class MenuAdmin implements OnInit {
 
     const data: ClienteModificarDTO = {
       usuario: this.clienteForm.usuario.trim(),
-      nombreYapellido: this.clienteForm.nombre.trim()
+      nombreYapellido: this.clienteForm.nombreYapellido.trim()
     };
 
     if (!data.usuario || !data.nombreYapellido) {
@@ -108,13 +108,11 @@ export class MenuAdmin implements OnInit {
 
     this.loading.set(true);
     this.error.set('');
-
-    // Usamos el usuario actual en la ruta (el original), para permitir cambio de username
-    this.clienteService.modificarCliente(cliente.usuario, data).subscribe({
-      next: (mensaje: string) => {
-        this.success.set(mensaje || 'Cliente actualizado correctamente');
+    
+    this.clienteService.modificarCliente(cliente.id, data).subscribe({
+      next: (clienteActualizado: ClienteDTO) => {
+        this.success.set('Cliente actualizado correctamente');
         this.cargarClientes();
-        // Re-seleccionar el cliente actualizado usando el nuevo usuario
         setTimeout(() => {
           const lista = this.clientes();
             const encontrado = lista.find(c => c.usuario === data.usuario);

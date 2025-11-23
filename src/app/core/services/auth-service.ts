@@ -2,8 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { from, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { LoginRequest, RegisterRequest, Usuario } from '../../models/app.models';
-
+import { RegisterRequest, LoginRequest, Usuario } from '../models/app.models';
 @Injectable({
   providedIn: 'root'
 })
@@ -86,16 +85,7 @@ export class AuthService {
   // Decodificar JWT y extraer información del usuario
   private getUserFromToken(token: string): Usuario | null {
     try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        window.atob(base64)
-          .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      );
-      
-      const payload = JSON.parse(jsonPayload);
+      const payload = JSON.parse(atob(token.split('.')[1]));
       console.log('Payload del token JWT:', payload);
       
       // Extraer rol del array roles que viene del backend
@@ -110,8 +100,8 @@ export class AuthService {
         usuario: payload.sub,
         nombre: payload.nombre || payload.sub,
         rol: rol as 'CLIENTE' | 'RESTAURANTE' | 'ADMIN',
-        email: payload.email || '',
-        telefono: payload.telefono || ''
+        email: payload.email,
+        telefono: payload.telefono
       };
     } catch (error) {
       console.error('Error decodificando token:', error);

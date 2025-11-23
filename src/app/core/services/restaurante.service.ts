@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { ActualizarPerfilRequest, ActualizarPerfilRestauranteRequest, PerfilUsuario } from '../models/app.models';
+import { AuthService } from './auth-service';
 
 // Interfaces para funcionalidad de restaurante
 export interface RestauranteProfile {
@@ -42,6 +44,24 @@ export interface ProductoResumenDTO {
   precio: number;
 }
 
+// Interfaces para Pedidos
+export interface DetallePedidoDTO {
+  productoId: number;
+  nombreProducto: string;
+  precioUnitario: number;
+  cantidad: number;
+}
+
+export interface Pedido {
+  id: number;
+  fecha: string;
+  estado: string;
+  total: number;
+  nombreRestaurante?: string;
+  idCliente?: number;
+  detalles: DetallePedidoDTO[];
+}
+
 // Interface para compatibilidad con código anterior (DEPRECATED)
 export interface Restaurante {
   id: number;
@@ -60,6 +80,7 @@ export interface Restaurante {
 })
 export class RestauranteService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private baseUrl = 'http://localhost:8080/restaurantes'; // Endpoints para usuarios RESTAURANTE
 
   // Headers con autenticación JWT
@@ -71,9 +92,41 @@ export class RestauranteService {
     });
   }
 
+  obtenerPerfil(): Observable<PerfilUsuario> {
+  const headers = this.getHeaders();
+
+  return this.http.get<any>(`${this.baseUrl}/perfiles`, { headers })
+    .pipe(
+      map((res) => {
+        return {
+          id: res.id,
+          nombreYapellido: res.nombre,
+          usuario: this.authService.currentUser()?.usuario ?? '',
+          email: res.email
+        } as PerfilUsuario;
+      })
+    );
+}
+  
+    actualizarPerfil(datos: ActualizarPerfilRestauranteRequest) {
+  return this.http.put(`${this.baseUrl}/perfil`, datos, {
+    headers: this.getHeaders(),
+    responseType: 'text'
+  });
+}
+  
+    // Headers con autenticación JWT
+    private getHeaders(): HttpHeaders {
+      const token = localStorage.getItem('token');
+      return new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      });
+    }
+
   // Métodos de productos
-  getAllProductos(): Observable<ProductoResumenDTO[]> {
-    return this.http.get<ProductoResumenDTO[]>(`${this.baseUrl}/productos`, {
+  getAllProductos(): Observable<ProductoDetailDTO[]> {
+    return this.http.get<ProductoDetailDTO[]>(`${this.baseUrl}/productos`, {
       headers: this.getAuthHeaders()
     });
   }
@@ -138,10 +191,24 @@ export class RestauranteService {
     });
   }
 
-  // TODO: Implementar otros endpoints cuando sea necesario
-  // GET /restaurantes/perfil - Obtener perfil del restaurante
-  // PUT /restaurantes/perfil - Actualizar perfil del restaurante
-  // GET /restaurantes/pedidos - Ver pedidos del restaurante
+  // Métodos de pedidos
+  getPedidosEnCurso(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.baseUrl}/pedidos-en-curso`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getHistorialPedidos(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.baseUrl}/historial-pedidos`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  cambiarEstadoPedido(idPedido: number, nuevoEstado: string): Observable<Pedido> {
+    return this.http.put<Pedido>(`${this.baseUrl}/pedidos/${idPedido}/estado`, { estado: nuevoEstado }, {
+      headers: this.getAuthHeaders()
+    });
+  }
 
   // Método para compatibilidad con código anterior (DEPRECATED)
   getRestauranteById(id: number): Observable<Restaurante> {

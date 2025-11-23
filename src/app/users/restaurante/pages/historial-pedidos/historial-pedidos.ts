@@ -6,6 +6,7 @@ import { RestauranteService, Pedido } from '../../../../core/services/restaurant
 
 @Component({
   selector: 'app-historial-pedidos',
+  standalone: true,
   imports: [Header, CommonModule, FooterRestaurante],
   templateUrl: './historial-pedidos.html',
   styleUrl: './historial-pedidos.css',
@@ -22,10 +23,10 @@ export class HistorialPedidos implements OnInit {
 
   cargarHistorial() {
     this.restauranteService.getHistorialPedidos().subscribe({
-      next: (pedidos) => {
+      next: (pedidos: Pedido[]) => {
         this.pedidos.set(pedidos);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error al cargar historial:', error);
       }
     });
