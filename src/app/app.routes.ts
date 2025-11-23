@@ -22,11 +22,6 @@ export const routes: Routes = [
         loadComponent: () => import('./users/cliente/pages/perfil/perfil').then((m) => m.Perfil),
       },
       {
-        path: 'pedidos',
-        loadComponent: () =>
-          import('./users/cliente/pages/ver-pedidos/ver-pedidos').then((m) => m.VerPedidos),
-      },
-      {
         path: 'direcciones',
         loadComponent: () =>
           import('./users/cliente/pages/direcciones/direcciones').then((m) => m.Direcciones),
