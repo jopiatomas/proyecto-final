@@ -85,24 +85,23 @@ export interface ProductoResumen {
 
 export interface ReseniaResumen {
   idCliente: number;
-  nombreCliente: string; // Agregar este campo cuando el backend lo incluya
+  nombreCliente: string;
   resenia: string;
   puntuacion: number;
 }
 
 export interface ReseniaCreate {
   restauranteId: number;
-  puntuacion: number; // Double en backend (0.1 - 5.0)
-  resenia: string; // Obligatorio, min 10 chars, max 500
+  resenia: string;
+  puntuacion: number;
 }
 
 export interface ReseniaDetail {
   id: number;
-  puntuacion: number; // Cambió de calificacion a puntuacion
-  resenia?: string; // Cambió de comentario a resenia
-  fecha: string;
-  nombreCliente: string;
-  restauranteNombre: string;
+  idCliente: number;
+  idRestaurante: number;
+  resenia: string;
+  puntuacion: number;
 }
 
 // Interfaces para pedidos (mapeando DTOs del backend)
