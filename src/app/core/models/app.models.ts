@@ -141,6 +141,16 @@ export interface PedidoDetail {
   detalles: DetallePedido[];
 }
 
+export interface PedidoDetailDTO {
+  id: number;
+  fecha: string;
+  estado: string;
+  total: number;
+  nombreRestaurante: string;
+  idCliente: number;
+  detalles: DetallePedidoDTO[];
+}
+
 export interface DetallePedidoDTO {
   productoId: number;
   nombreProducto?: string;

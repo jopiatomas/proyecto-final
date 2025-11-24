@@ -21,7 +21,7 @@
             </span>
           </div>
           <div class="pedido-info">
-            <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+            <p><strong>Fecha:</strong> {{ pedido.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
             <p><strong>Total:</strong> ${{ pedido.total }}</p>
           </div>
         </div>
@@ -35,7 +35,7 @@
       
       <div class="detalles-contenido">
         <div class="info-grupo">
-          <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha }}</p>
+            <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
           <p><strong>Estado actual:</strong> 
             <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
               {{ pedidoSeleccionado()!.estado }}
@@ -46,7 +46,7 @@
         <div class="productos-lista">
           <h3>Productos:</h3>
           <ul>
-            <li *ngFor="let detalle of pedidoSeleccionado()!.detalles">
+            <li *ngFor="let detalle of pedidoSeleccionado()?.detalles || []">
               {{ detalle.cantidad }}x {{ detalle.nombreProducto }} - ${{ detalle.precioUnitario }}
             </li>
           </ul>
