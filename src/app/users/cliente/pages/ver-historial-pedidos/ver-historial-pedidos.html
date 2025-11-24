@@ -6,6 +6,17 @@
     <p>Revisa todos tus pedidos</p>
   </div>
 
+  @if (mensajeCancelacion) {
+  <div
+    class="alert-message"
+    [class.alert-success]="tipoMensajeCancelacion === 'success'"
+    [class.alert-error]="tipoMensajeCancelacion === 'error'"
+  >
+    <span class="alert-icon">{{ tipoMensajeCancelacion === 'success' ? '✓' : '⚠' }}</span>
+    <span class="alert-text">{{ mensajeCancelacion }}</span>
+  </div>
+  }
+
   <div class="pedidos-layout">
     <!-- Lista de pedidos -->
     <div class="pedidos-lista">
@@ -15,43 +26,50 @@
 
       <!-- Filtros -->
       <div class="filtros-container">
-        <button 
-          class="filtro-btn" 
+        <button
+          class="filtro-btn"
           [class.active]="filtroActivo === 'TODOS'"
           (click)="cambiarFiltro('TODOS')"
         >
           Todos
         </button>
-        <button 
-          class="filtro-btn" 
+        <button
+          class="filtro-btn"
           [class.active]="filtroActivo === 'PENDIENTE'"
           (click)="cambiarFiltro('PENDIENTE')"
         >
           Pendiente
         </button>
+<<<<<<< HEAD
         <button 
           class="filtro-btn" 
           [class.active]="filtroActivo === 'PREPARACION'"
           (click)="cambiarFiltro('PREPARACION')"
+=======
+        <button
+          class="filtro-btn"
+          [class.active]="filtroActivo === 'EN_PREPARACION'"
+          (click)="cambiarFiltro('EN_PREPARACION')"
+>>>>>>> Tomas
         >
           En Preparación
         </button>
-        <button 
-          class="filtro-btn" 
+        <button
+          class="filtro-btn"
           [class.active]="filtroActivo === 'ENVIADO'"
           (click)="cambiarFiltro('ENVIADO')"
         >
           Enviado
         </button>
-        <button 
-          class="filtro-btn" 
+        <button
+          class="filtro-btn"
           [class.active]="filtroActivo === 'ENTREGADO'"
           (click)="cambiarFiltro('ENTREGADO')"
         >
           Entregado
         </button>
-        <button 
-          class="filtro-btn" 
+        <button
+          class="filtro-btn"
           [class.active]="filtroActivo === 'CANCELADO'"
           (click)="cambiarFiltro('CANCELADO')"
         >
@@ -60,144 +78,165 @@
       </div>
 
       @if (loading) {
-        <div class="loading-state">
+      <div class="loading-state">
         <div class="loading-spinner"></div>
         <p>Cargando historial de pedidos...</p>
-      </div>}
-
-      @if (error && !loading) {
-        <div class="error-state">
-          <p>{{ error }}</p>
-          <button class="btn-retry" (click)="cargarPedidos()">Reintentar</button>
+      </div>
+      } @if (error && !loading) {
+      <div class="error-state">
+        <p>{{ error }}</p>
+        <button class="btn-retry" (click)="cargarPedidos()">Reintentar</button>
+      </div>
+      } @if (!loading && !error && pedidosFiltrados.length === 0) {
+      <div class="empty-state">
+        <h3>No hay pedidos con este filtro</h3>
+        <p>Prueba seleccionando otro estado.</p>
+      </div>
+      } @if (!loading && !error && pedidosFiltrados.length > 0) {
+      <div class="pedidos-grid">
+        @for (pedido of pedidosFiltrados; track pedido.id) {
+        <div
+          class="pedido-card"
+          [class.selected]="pedidoSeleccionado?.id === pedido.id"
+          (click)="seleccionarPedido(pedido.id)"
+        >
+          <div class="pedido-header">
+            <span class="pedido-id">Pedido #{{ pedido.id }}</span>
+            <span class="estado-badge" [style.background-color]="getEstadoColor(pedido.estado)">
+              {{ formatearEstado(pedido.estado) }}
+            </span>
+          </div>
+          <div class="pedido-info">
+            <p class="fecha">{{ pedido.fecha | date : 'dd/MM/yyyy HH:mm' }}</p>
+            <p class="total">{{ formatearPrecio(pedido.total) }}</p>
+          </div>
         </div>
-      }
-
-      @if (!loading && !error && pedidosFiltrados.length === 0) {
-        <div class="empty-state">
-          <h3>No hay pedidos con este filtro</h3>
-          <p>Prueba seleccionando otro estado.</p>
-        </div>
-      }
-
-      @if (!loading && !error && pedidosFiltrados.length > 0) {
-        <div class="pedidos-grid">
-          @for (pedido of pedidosFiltrados; track pedido.id) {
-            <div 
-              class="pedido-card"
-              [class.selected]="pedidoSeleccionado?.id === pedido.id"
-              (click)="seleccionarPedido(pedido.id)"
-            >
-              <div class="pedido-header">
-                <span class="pedido-id">Pedido #{{ pedido.id }}</span>
-                <span 
-                  class="estado-badge" 
-                  [style.background-color]="getEstadoColor(pedido.estado)"
-                >
-                  {{ formatearEstado(pedido.estado) }}
-                </span>
-              </div>
-              <div class="pedido-info">
-                <p class="fecha">{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-                <p class="total">{{ formatearPrecio(pedido.total) }}</p>
-              </div>
-            </div>
-          }
-        </div>
+        }
+      </div>
       }
     </div>
 
     <!-- Panel de detalle -->
     <div class="pedido-detalle">
       @if (!pedidoSeleccionado) {
-        <div class="detalle-placeholder">
-          <div class="placeholder-icon">📋</div>
-          <h3>Selecciona un pedido</h3>
-          <p>Haz clic en cualquier pedido de la lista para ver sus detalles.</p>
-        </div>
-      }
-
-      @if (pedidoSeleccionado) {
-        <div class="detalle-content">
-          <div class="detalle-header">
-            <div class="pedido-info-main">
-              <h2>Pedido #{{ pedidoSeleccionado.id }}</h2>
-              <div class="pedido-meta">
-                <span 
-                  class="estado-badge large" 
-                  [style.background-color]="getEstadoColor(pedidoSeleccionado.estado)"
-                >
-                  {{ formatearEstado(pedidoSeleccionado.estado) }}
-                </span>
-              </div>
+      <div class="detalle-placeholder">
+        <div class="placeholder-icon">📋</div>
+        <h3>Selecciona un pedido</h3>
+        <p>Haz clic en cualquier pedido de la lista para ver sus detalles.</p>
+      </div>
+      } @if (pedidoSeleccionado) {
+      <div class="detalle-content">
+        <div class="detalle-header">
+          <div class="pedido-info-main">
+            <h2>Pedido #{{ pedidoSeleccionado.id }}</h2>
+            <div class="pedido-meta">
+              <span
+                class="estado-badge large"
+                [style.background-color]="getEstadoColor(pedidoSeleccionado.estado)"
+              >
+                {{ formatearEstado(pedidoSeleccionado.estado) }}
+              </span>
             </div>
-            
-            @if (puedeSerCancelado(pedidoSeleccionado.estado)) {
-              <div class="acciones-pedido">
-                <button 
-                  class="btn-menu-opciones"
-                  (click)="toggleMenuOpciones()"
-                  [class.active]="mostrarMenuOpciones"
-                >
-                  ⋮
-                </button>
-                @if (mostrarMenuOpciones) {
-                  <div class="menu-opciones">
-                    <button 
-                      class="opcion-cancelar"
-                      (click)="cancelarPedido()"
-                    >
-                      ❌ Cancelar Pedido
-                    </button>
-                  </div>
-                }
-              </div>
+          </div>
+
+          @if (puedeSerCancelado(pedidoSeleccionado.estado)) {
+          <div class="acciones-pedido">
+            <button
+              class="btn-menu-opciones"
+              (click)="toggleMenuOpciones()"
+              [class.active]="mostrarMenuOpciones"
+            >
+              ⋮
+            </button>
+            @if (mostrarMenuOpciones) {
+            <div class="menu-opciones">
+              <button class="opcion-cancelar" (click)="cancelarPedido()">❌ Cancelar Pedido</button>
+            </div>
             }
           </div>
+          }
+        </div>
 
-          <div class="detalle-body">
-            <div class="info-section">
-              <h3>Información del Pedido</h3>
-              <div class="info-grid">
-                <div class="info-item">
-                  <label>Restaurante:</label>
-                  <span>{{ pedidoSeleccionado.nombreRestaurante }}</span>
-                </div>
-                <div class="info-item">
-                  <label>Fecha:</label>
-                  <span>{{ pedidoSeleccionado.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
-                </div>
-                <div class="info-item">
-                  <label>Estado:</label>
-                  <span>{{ formatearEstado(pedidoSeleccionado.estado) }}</span>
-                </div>
-                <div class="info-item">
-                  <label>Total:</label>
-                  <span class="total-amount">{{ formatearPrecio(pedidoSeleccionado.total) }}</span>
-                </div>
+        <div class="detalle-body">
+          <div class="info-section">
+            <h3>Información del Pedido</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>Restaurante:</label>
+                <span>{{ pedidoSeleccionado.nombreRestaurante }}</span>
               </div>
-            </div>
-
-            <div class="items-section">
-              <h3>Productos Pedidos</h3>
-              <div class="items-list">
-                @for (detalle of pedidoSeleccionado.detalles; track detalle.productoId) {
-                  <div class="item-card">
-                    <div class="item-info">
-                      <h4>{{ detalle.nombreProducto }}</h4>
-                      <p class="item-cantidad">Cantidad: {{ detalle.cantidad }}</p>
-                    </div>
-                    <div class="item-precio">
-                      {{ detalle.precioUnitario ? formatearPrecio(detalle.precioUnitario * detalle.cantidad) : 'Precio no disponible' }}
-                    </div>
-                  </div>
-                }
+              <div class="info-item">
+                <label>Fecha:</label>
+                <span>{{ pedidoSeleccionado.fecha | date : 'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <div class="info-item">
+                <label>Estado:</label>
+                <span>{{ formatearEstado(pedidoSeleccionado.estado) }}</span>
+              </div>
+              <div class="info-item">
+                <label>Total:</label>
+                <span class="total-amount">{{ formatearPrecio(pedidoSeleccionado.total) }}</span>
               </div>
             </div>
           </div>
+
+          <div class="items-section">
+            <h3>Productos Pedidos</h3>
+            <div class="items-list">
+              @for (detalle of pedidoSeleccionado.detalles; track detalle.productoId) {
+              <div class="item-card">
+                <div class="item-info">
+                  <h4>{{ detalle.nombreProducto }}</h4>
+                  <p class="item-cantidad">Cantidad: {{ detalle.cantidad }}</p>
+                </div>
+                <div class="item-precio">
+                  {{
+                    detalle.precioUnitario
+                      ? formatearPrecio(detalle.precioUnitario * detalle.cantidad)
+                      : 'Precio no disponible'
+                  }}
+                </div>
+              </div>
+              }
+            </div>
+          </div>
         </div>
+      </div>
       }
     </div>
   </div>
 </main>
+
+<!-- Modal de confirmación de cancelación -->
+@if (confirmandoCancelacion) {
+<div class="modal-overlay" (click)="cancelarConfirmacion()">
+  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Cancelar Pedido</h3>
+      <button class="close-modal-btn" (click)="cancelarConfirmacion()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas cancelar este pedido?</p>
+      @if (pedidoSeleccionado) {
+      <p class="modal-warning">
+        Pedido #{{ pedidoSeleccionado.id }} - Total: {{ formatearPrecio(pedidoSeleccionado.total) }}
+      </p>
+      }
+    </div>
+    <div class="modal-actions">
+      <button
+        class="btn-confirmar-cancelar"
+        (click)="ejecutarCancelacion()"
+        [disabled]="cancelando"
+      >
+        @if (cancelando) { Cancelando... } @else { Sí, Cancelar Pedido }
+      </button>
+      <button class="btn-cancelar-modal" (click)="cancelarConfirmacion()" [disabled]="cancelando">
+        No, Volver
+      </button>
+    </div>
+  </div>
+</div>
+}
 
 <app-footer-cliente></app-footer-cliente>

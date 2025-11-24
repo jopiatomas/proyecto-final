@@ -13,27 +13,25 @@ import { AuthService } from '../../../../core/services/auth-service';
 export class Header implements OnInit {
   isLandingPage = false;
   backRoute = '/cliente';
+  confirmandoCerrarSesion = false;
 
-  constructor(
-    private router: Router,
-    public authService: AuthService
-  ) {}
+  constructor(private router: Router, public authService: AuthService) {}
 
   ngOnInit() {
     // Detectar cambios de ruta
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.updateButtonState(event.url);
       });
-    
+
     // Estado inicial
     this.updateButtonState(this.router.url);
   }
 
   private updateButtonState(url: string) {
     this.isLandingPage = url === '/cliente';
-    
+
     // Determinar ruta de vuelta según la página actual
     if (url.includes('/cliente/pedidos') || url.includes('/cliente/historial')) {
       this.backRoute = '/cliente';
@@ -55,6 +53,14 @@ export class Header implements OnInit {
   }
 
   logout() {
+    this.confirmandoCerrarSesion = true;
+  }
+
+  confirmarCerrarSesion() {
     this.authService.logout();
+  }
+
+  cancelarCerrarSesion() {
+    this.confirmandoCerrarSesion = false;
   }
 }

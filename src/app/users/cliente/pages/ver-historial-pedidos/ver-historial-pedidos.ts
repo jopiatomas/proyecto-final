@@ -21,6 +21,10 @@ export class VerHistorialPedidos implements OnInit {
   error: string | null = null;
   mostrarMenuOpciones = false;
   filtroActivo: string = 'TODOS';
+  confirmandoCancelacion = false;
+  cancelando = false;
+  mensajeCancelacion = '';
+  tipoMensajeCancelacion: 'success' | 'error' = 'success';
 
   ngOnInit() {
     this.cargarPedidos();
@@ -58,29 +62,49 @@ export class VerHistorialPedidos implements OnInit {
 
   cancelarPedido() {
     if (!this.pedidoSeleccionado) return;
+    this.mostrarMenuOpciones = false;
+    this.confirmandoCancelacion = true;
+  }
 
-    if (confirm('¿Estás seguro de que quieres cancelar este pedido?')) {
-      this.clienteService.cancelarPedido(this.pedidoSeleccionado.id).subscribe({
-        next: (mensaje) => {
-          alert(mensaje || 'Pedido cancelado exitosamente');
-          this.cargarPedidos(); // Recargar la lista
-          this.pedidoSeleccionado = null; // Limpiar selección
-          this.mostrarMenuOpciones = false;
-        },
-        error: (error) => {
-          console.error('Error cancelando pedido:', error);
+  ejecutarCancelacion() {
+    if (!this.pedidoSeleccionado) return;
 
-          // Mostrar mensaje específico del backend
-          const mensajeError = error.error || 'Error al cancelar el pedido';
-          alert(mensajeError);
+    this.cancelando = true;
+    this.clienteService.cancelarPedido(this.pedidoSeleccionado.id).subscribe({
+      next: (mensaje) => {
+        this.cancelando = false;
+        this.confirmandoCancelacion = false;
+        this.mensajeCancelacion = mensaje || 'Pedido cancelado exitosamente';
+        this.tipoMensajeCancelacion = 'success';
 
-          // Recargar la lista para actualizar estados
-          this.cargarPedidos();
-          this.pedidoSeleccionado = null;
-          this.mostrarMenuOpciones = false;
-        },
-      });
-    }
+        this.cargarPedidos();
+        this.pedidoSeleccionado = null;
+
+        setTimeout(() => {
+          this.mensajeCancelacion = '';
+        }, 5000);
+      },
+      error: (error) => {
+        this.cancelando = false;
+        this.confirmandoCancelacion = false;
+        console.error('Error cancelando pedido:', error);
+
+        const mensajeError = error.error || 'Error al cancelar el pedido';
+        this.mensajeCancelacion = mensajeError;
+        this.tipoMensajeCancelacion = 'error';
+
+        this.cargarPedidos();
+        this.pedidoSeleccionado = null;
+
+        setTimeout(() => {
+          this.mensajeCancelacion = '';
+        }, 5000);
+      },
+    });
+  }
+
+  cancelarConfirmacion() {
+    this.confirmandoCancelacion = false;
   }
 
   formatearPrecio(precio: number): string {

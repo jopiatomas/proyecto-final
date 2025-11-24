@@ -15,6 +15,7 @@ export class Header {
 
   dropdownOpen = signal<boolean>(false);
   activeTab = signal<'welcome' | 'clientes' | 'restaurantes' | null>(null);
+  confirmandoCerrarSesion = false;
 
   @Output() tabSelected = new EventEmitter<'welcome' | 'clientes' | 'restaurantes'>();
 
@@ -44,6 +45,15 @@ export class Header {
   }
 
   cerrarSesion(): void {
+    this.dropdownOpen.set(false);
+    this.confirmandoCerrarSesion = true;
+  }
+
+  confirmarCerrarSesion(): void {
     this.authService.logout();
+  }
+
+  cancelarCerrarSesion(): void {
+    this.confirmandoCerrarSesion = false;
   }
 }

@@ -3,17 +3,30 @@
 <div class="content">
   <div class="container">
     <h1>Pedidos del Restaurante</h1>
-    
+
+    @if (mensajeCambioEstado) {
+    <div
+      class="alert-message"
+      [class.alert-success]="tipoMensajeCambioEstado === 'success'"
+      [class.alert-error]="tipoMensajeCambioEstado === 'error'"
+    >
+      <span class="alert-icon">{{ tipoMensajeCambioEstado === 'success' ? '✓' : '⚠' }}</span>
+      <span class="alert-text">{{ mensajeCambioEstado }}</span>
+    </div>
+    }
+
     <div class="contenido-principal">
       <div class="pedidos-lista">
         <div *ngIf="pedidos().length === 0" class="mensaje-vacio">
           <p>Aún no hay pedidos</p>
         </div>
-        
-        <div *ngFor="let pedido of pedidos()" 
-             class="pedido-card"
-             [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
-             (click)="verDetalle(pedido)">
+
+        <div
+          *ngFor="let pedido of pedidos()"
+          class="pedido-card"
+          [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
+          (click)="verDetalle(pedido)"
+        >
           <div class="pedido-header">
             <h3>Pedido #{{ pedido.id }}</h3>
             <span class="estado" [class]="pedido.estado.toLowerCase()">
@@ -28,33 +41,30 @@
       </div>
 
       <div *ngIf="pedidoSeleccionado()" class="detalles-pedido">
-      <div class="detalles-header">
-        <h2>Detalles del Pedido #{{ pedidoSeleccionado()!.id }}</h2>
-        <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
-      </div>
-      
-      <div class="detalles-contenido">
-        <div class="info-grupo">
-          <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha }}</p>
-          <p><strong>Estado actual:</strong> 
-            <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
-              {{ pedidoSeleccionado()!.estado }}
-            </span>
-          </p>
+        <div class="detalles-header">
+          <h2>Detalles del Pedido #{{ pedidoSeleccionado()!.id }}</h2>
+          <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
         </div>
 
-        <div class="productos-lista">
-          <h3>Productos:</h3>
-          <ul>
-            <li *ngFor="let detalle of pedidoSeleccionado()!.detalles">
-              {{ detalle.cantidad }}x {{ detalle.nombreProducto }} - ${{ detalle.precioUnitario }}
-            </li>
-          </ul>
-        </div>
+        <div class="detalles-contenido">
+          <div class="info-grupo">
+            <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha }}</p>
+            <p>
+              <strong>Estado actual:</strong>
+              <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
+                {{ pedidoSeleccionado()!.estado }}
+              </span>
+            </p>
+          </div>
 
-        <div class="total">
-          <h3>Total: ${{ pedidoSeleccionado()!.total }}</h3>
-        </div>
+          <div class="productos-lista">
+            <h3>Productos:</h3>
+            <ul>
+              <li *ngFor="let detalle of pedidoSeleccionado()!.detalles">
+                {{ detalle.cantidad }}x {{ detalle.nombreProducto }} - ${{ detalle.precioUnitario }}
+              </li>
+            </ul>
+          </div>
 
         <div class="acciones">
           <h3>Cambiar estado:</h3>
@@ -83,11 +93,72 @@
                   (click)="confirmarCambio()">
                 Confirmar cambio
           </button>
+          <div class="total">
+            <h3>Total: ${{ pedidoSeleccionado()!.total }}</h3>
+          </div>
+
+          <div class="acciones">
+            <h3>Cambiar estado:</h3>
+            <button
+              (click)="seleccionarEstado('PREPARACION')"
+              [class.seleccionado-estado]="estadoNuevo() === 'PREPARACION'"
+              [disabled]="pedidoSeleccionado()!.estado === 'PREPARACION'"
+            >
+              En preparación
+            </button>
+            <button
+              (click)="seleccionarEstado('ENVIADO')"
+              [class.seleccionado-estado]="estadoNuevo() === 'ENVIADO'"
+              [disabled]="pedidoSeleccionado()!.estado === 'ENVIADO'"
+            >
+              Enviado
+            </button>
+            <button
+              (click)="seleccionarEstado('CANCELADO')"
+              [class.seleccionado-estado]="estadoNuevo() === 'CANCELADO'"
+            >
+              Cancelado
+            </button>
+
+            <button *ngIf="estadoNuevo()" class="btn-confirmar" (click)="confirmarCambio()">
+              Confirmar cambio
+            </button>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Modal de confirmación de cambio de estado -->
+@if (confirmandoCambioEstado) {
+<div class="modal-overlay" (click)="cancelarCambioEstado()">
+  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Confirmar Cambio de Estado</h3>
+      <button class="close-modal-btn" (click)="cancelarCambioEstado()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas cambiar el estado de este pedido?</p>
+      <p class="modal-warning">
+        Pedido #{{ pedidoSeleccionado()!.id }} - Estado: {{ pedidoSeleccionado()!.estado }} →
+        {{ estadoNuevo() }}
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirmar" (click)="ejecutarCambioEstado()" [disabled]="cambiandoEstado">
+        @if (cambiandoEstado) { Procesando... } @else { Confirmar }
+      </button>
+      <button
+        class="btn-cancelar-modal"
+        (click)="cancelarCambioEstado()"
+        [disabled]="cambiandoEstado"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+}
 
 <app-footer-restaurante></app-footer-restaurante>

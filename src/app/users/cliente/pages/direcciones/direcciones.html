@@ -4,6 +4,18 @@
   <div class="container">
     <h2>Gestión de Direcciones</h2>
 
+    <!-- Mensaje de éxito o error -->
+    @if (mensajeDireccion && tipoMensajeDireccion) {
+    <div
+      class="alert-message"
+      [class.alert-success]="tipoMensajeDireccion === 'success'"
+      [class.alert-error]="tipoMensajeDireccion === 'error'"
+    >
+      <span class="alert-icon">{{ tipoMensajeDireccion === 'success' ? '✓' : '⚠' }}</span>
+      <span class="alert-text">{{ mensajeDireccion }}</span>
+    </div>
+    }
+
     <div class="direcciones-section">
       <div class="direcciones-main">
         <div class="actions-bar">
@@ -57,6 +69,10 @@
                 id="direccion"
                 formControlName="direccion"
                 placeholder="Ej: Av. Corrientes 1234"
+<<<<<<< HEAD
+=======
+                maxlength="100"
+>>>>>>> Tomas
               />
               @if (formularioDireccion.get('direccion')?.invalid &&
               formularioDireccion.get('direccion')?.touched) {
@@ -72,19 +88,65 @@
                   id="ciudad"
                   formControlName="ciudad"
                   placeholder="Ej: Buenos Aires"
+<<<<<<< HEAD
                 />
                 @if (formularioDireccion.get('ciudad')?.invalid &&
                 formularioDireccion.get('ciudad')?.touched) {
                 <small class="error">Ciudad requerida (solo letras)</small>
+=======
+                  maxlength="50"
+                />
+                @if (formularioDireccion.get('ciudad')?.invalid &&
+                formularioDireccion.get('ciudad')?.touched) {
+                <small class="error">
+                  @if (formularioDireccion.get('ciudad')?.hasError('required')) { Ciudad requerida }
+                  @else if (formularioDireccion.get('ciudad')?.hasError('pattern')) { La ciudad solo
+                  puede contener letras } @else { Mínimo 2 caracteres }
+                </small>
+>>>>>>> Tomas
                 }
               </div>
 
               <div class="form-group">
                 <label for="pais">País *</label>
+<<<<<<< HEAD
                 <input type="text" id="pais" formControlName="pais" placeholder="Ej: Argentina" />
                 @if (formularioDireccion.get('pais')?.invalid &&
                 formularioDireccion.get('pais')?.touched) {
                 <small class="error">País requerido (solo letras)</small>
+=======
+                <select id="pais" formControlName="pais" class="form-select">
+                  <option value="">Selecciona un país</option>
+                  <option value="Argentina">Argentina</option>
+                  <option value="Bolivia">Bolivia</option>
+                  <option value="Brasil">Brasil</option>
+                  <option value="Chile">Chile</option>
+                  <option value="Colombia">Colombia</option>
+                  <option value="Costa Rica">Costa Rica</option>
+                  <option value="Cuba">Cuba</option>
+                  <option value="Ecuador">Ecuador</option>
+                  <option value="El Salvador">El Salvador</option>
+                  <option value="España">España</option>
+                  <option value="Guatemala">Guatemala</option>
+                  <option value="Honduras">Honduras</option>
+                  <option value="México">México</option>
+                  <option value="Nicaragua">Nicaragua</option>
+                  <option value="Panamá">Panamá</option>
+                  <option value="Paraguay">Paraguay</option>
+                  <option value="Perú">Perú</option>
+                  <option value="Puerto Rico">Puerto Rico</option>
+                  <option value="República Dominicana">República Dominicana</option>
+                  <option value="Uruguay">Uruguay</option>
+                  <option value="Venezuela">Venezuela</option>
+                </select>
+                @if (formularioDireccion.get('pais')?.invalid &&
+                formularioDireccion.get('pais')?.touched) {
+                <small class="error">
+                  @if (formularioDireccion.get('pais')?.hasError('required')) { País requerido }
+                  @else if (formularioDireccion.get('pais')?.hasError('pattern')) { El país solo
+                  puede contener letras } @else { Mínimo 2 caracteres }
+                </small>
+>>>>>>> Tomas
                 }
               </div>
             </div>
@@ -96,6 +158,12 @@
                 id="codigoPostal"
                 formControlName="codigoPostal"
                 placeholder="Ej: 1425"
+<<<<<<< HEAD
+=======
+                maxlength="10"
+                pattern="[0-9]*"
+                inputmode="numeric"
+>>>>>>> Tomas
               />
               @if (formularioDireccion.get('codigoPostal')?.invalid &&
               formularioDireccion.get('codigoPostal')?.touched) {
@@ -125,5 +193,25 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de confirmación -->
+@if (confirmandoEliminacion()) {
+<div class="modal-overlay" (click)="cancelarEliminacion()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Confirmar eliminación</h3>
+      <button class="close-btn" (click)="cancelarEliminacion()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas eliminar esta dirección?</p>
+      <p class="modal-warning">Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirmar" (click)="confirmarEliminacion()">Eliminar</button>
+      <button class="btn-cancelar-modal" (click)="cancelarEliminacion()">Cancelar</button>
+    </div>
+  </div>
+</div>
+}
 
 <app-footer-cliente></app-footer-cliente>

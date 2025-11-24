@@ -2,7 +2,7 @@ import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
 import { RestauranteService, Pedido } from '../../../../core/services/restaurante.service';
-import { FooterRestaurante } from "../../components/footer/footer";
+import { FooterRestaurante } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-landing-page',
@@ -15,6 +15,10 @@ export class LandingPage implements OnInit {
   pedidos = signal<Pedido[]>([]);
   pedidoSeleccionado = signal<Pedido | null>(null);
   estadoNuevo = signal<string | null>(null);
+  confirmandoCambioEstado = false;
+  cambiandoEstado = false;
+  mensajeCambioEstado = '';
+  tipoMensajeCambioEstado: 'success' | 'error' = 'success';
 
   constructor(private restauranteService: RestauranteService) {}
 
@@ -29,7 +33,7 @@ export class LandingPage implements OnInit {
       },
       error: (error: any) => {
         console.error('Error al cargar pedidos:', error);
-      }
+      },
     });
   }
 
@@ -48,29 +52,57 @@ export class LandingPage implements OnInit {
   }
 
   confirmarCambio() {
+    this.confirmandoCambioEstado = true;
+  }
+
+  ejecutarCambioEstado() {
     const pedido = this.pedidoSeleccionado();
     const estado = this.estadoNuevo();
-    
+
     if (pedido && estado) {
+      this.cambiandoEstado = true;
       this.restauranteService.cambiarEstadoPedido(pedido.id, estado).subscribe({
         next: (pedidoActualizado: Pedido) => {
+        next: (pedidoActualizado) => {
+          this.cambiandoEstado = false;
+          this.confirmandoCambioEstado = false;
+          this.mensajeCambioEstado = 'Estado actualizado exitosamente';
+          this.tipoMensajeCambioEstado = 'success';
+
           if (estado === 'CANCELADO' || estado === 'ENTREGADO') {
-            const pedidosActualizados = this.pedidos().filter(p => p.id !== pedido.id);
+            const pedidosActualizados = this.pedidos().filter((p) => p.id !== pedido.id);
             this.pedidos.set(pedidosActualizados);
             this.cerrarDetalle();
           } else {
-            const pedidosActualizados = this.pedidos().map(p => 
+            const pedidosActualizados = this.pedidos().map((p) =>
               p.id === pedido.id ? pedidoActualizado : p
             );
             this.pedidos.set(pedidosActualizados);
             this.pedidoSeleccionado.set(pedidoActualizado);
             this.estadoNuevo.set(null);
           }
+
+          setTimeout(() => {
+            this.mensajeCambioEstado = '';
+          }, 5000);
         },
         error: (error: any) => {
+        error: (error) => {
+          this.cambiandoEstado = false;
+          this.confirmandoCambioEstado = false;
+          this.mensajeCambioEstado = 'Error al cambiar estado del pedido';
+          this.tipoMensajeCambioEstado = 'error';
           console.error('Error al cambiar estado:', error);
-        }
+
+          setTimeout(() => {
+            this.mensajeCambioEstado = '';
+          }, 5000);
+        },
       });
     }
+  }
+
+  cancelarCambioEstado() {
+    this.confirmandoCambioEstado = false;
   }
 }

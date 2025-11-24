@@ -10,9 +10,18 @@ import { filter } from 'rxjs';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
+<<<<<<< HEAD
 export class Header implements OnInit {
   esPaginaPrincipal = false;
   rutaRetorno = '/restaurante';
+=======
+export class Header {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  dropdownOpen = signal<boolean>(false);
+  confirmandoCerrarSesion = false;
+>>>>>>> Tomas
 
   constructor(
     private router: Router,
@@ -45,11 +54,24 @@ export class Header implements OnInit {
     }
   }
 
+<<<<<<< HEAD
   volver() {
     this.router.navigate([this.rutaRetorno]);
   }
 
   cerrarSesion() {
+=======
+  cerrarSesion(): void {
+    this.dropdownOpen.set(false);
+    this.confirmandoCerrarSesion = true;
+  }
+
+  confirmarCerrarSesion(): void {
+>>>>>>> Tomas
     this.authService.logout();
+  }
+
+  cancelarCerrarSesion(): void {
+    this.confirmandoCerrarSesion = false;
   }
 }
