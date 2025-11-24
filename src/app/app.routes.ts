@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { restauranteAprobadoGuard } from './core/guards/restaurante-aprobado.guard';
+import { clienteGuard } from './core/guards/cliente.guard';
+import { restauranteGuard } from './core/guards/restaurante.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -13,6 +16,7 @@ export const routes: Routes = [
   },
   {
     path: 'cliente',
+    canActivate: [clienteGuard],
     children: [
       {
         path: '',
@@ -56,6 +60,7 @@ export const routes: Routes = [
   },
   {
     path: 'restaurante',
+    canActivate: [restauranteGuard],
     children: [
       {
         path: '',
@@ -110,6 +115,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
+    canActivate: [adminGuard],
     children: [
       {
         path: '',
