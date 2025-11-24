@@ -34,6 +34,7 @@ export class VerRestaurante implements OnInit {
   loading = true;
   loadingMenu = true;
   nombreRestaurante = '';
+  esFavorito = false;
 
   // Formulario para nueva reseña
   reseniaForm: FormGroup;
@@ -81,12 +82,65 @@ export class VerRestaurante implements OnInit {
         this.resenias = restaurante.reseniasRestaurante || [];
         this.loading = false;
         this.loadingMenu = false;
+        // Verificar favorito después de cargar el restaurante
+        this.verificarSiEsFavorito();
       },
       error: (error) => {
         this.loading = false;
         this.loadingMenu = false;
       }
     });
+  }
+
+  verificarSiEsFavorito() {
+    this.clienteService.getRestaurantesFavoritos().subscribe({
+      next: (favoritos) => {
+        if (this.restaurante) {
+          this.esFavorito = favoritos.some(f => f.id === this.restaurante!.id);
+        }
+      },
+      error: (error) => {
+        // Si da error 400/404, no hay favoritos. Si es 401, sesión expirada
+        if (error.status === 401) {
+          this.authService.logout();
+        } else {
+          this.esFavorito = false;
+        }
+      }
+    });
+  }
+
+  toggleFavorito(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    
+    if (!this.restaurante) return;
+
+    if (this.esFavorito) {
+      this.clienteService.eliminarRestauranteFavorito(this.restaurante.id).subscribe({
+        next: () => {
+          this.esFavorito = false;
+        },
+        error: (error) => {
+          if (error.status === 401) {
+            alert('Sesión expirada. Redirigiendo al login...');
+            this.authService.logout();
+          }
+        }
+      });
+    } else {
+      this.clienteService.agregarRestauranteFavorito(this.restaurante.id).subscribe({
+        next: () => {
+          this.esFavorito = true;
+        },
+        error: (error) => {
+          if (error.status === 401) {
+            alert('Sesión expirada. Redirigiendo al login...');
+            this.authService.logout();
+          }
+        }
+      });
+    }
   }
 
   toggleFormularioResenia() {
