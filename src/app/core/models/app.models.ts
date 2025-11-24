@@ -40,6 +40,12 @@ export interface ActualizarPerfilRequest {
   contraseniaActual: string;
 }
 
+export interface ActualizarPerfilRestauranteRequest {
+  nombreRestaurante: string;
+  email: string;
+  contraseniaActual: string;
+}
+
 // Interfaces para restaurantes (desde perspectiva de cliente)
 export interface RestauranteResumen {
   id: number;
@@ -99,7 +105,7 @@ export interface ReseniaDetail {
   id: number;
   idCliente: number;
   idRestaurante: number;
-  descripcion: string;
+  resenia: string;
   puntuacion: number;
 }
 

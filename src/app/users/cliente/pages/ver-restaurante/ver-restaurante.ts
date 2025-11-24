@@ -16,6 +16,7 @@ import {
   Tarjeta,
 } from '../../../../core/models/app.models';
 import { ClienteService } from '../../../../core/services/cliente.service';
+import { AuthService } from '../../../../core/services/auth-service';
 
 // Interface para items del carrito
 interface CarritoItem {
@@ -32,6 +33,7 @@ interface CarritoItem {
 export class VerRestaurante implements OnInit {
   private route = inject(ActivatedRoute);
   private clienteService = inject(ClienteService);
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
 
   restaurante: RestauranteDetail | null = null;
@@ -45,6 +47,8 @@ export class VerRestaurante implements OnInit {
   reseniaForm: FormGroup;
   submittingResenia = false;
   mostrarFormularioResenia = false;
+  mensajeResenia = '';
+  tipoMensajeResenia: 'success' | 'error' | '' = '';
 
   // Array para mostrar estrellas
   estrellas = [1, 2, 3, 4, 5];
@@ -63,7 +67,7 @@ export class VerRestaurante implements OnInit {
 
   constructor() {
     this.reseniaForm = this.fb.group({
-      descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      resenia: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
       puntuacion: [5, [Validators.required, Validators.min(0.1), Validators.max(5)]],
     });
   }
@@ -75,7 +79,6 @@ export class VerRestaurante implements OnInit {
       this.cargarDatosRestaurante();
     } else {
       this.loading = false;
-      console.error('No se proporcionó usuario de restaurante');
     }
   }
 
@@ -90,7 +93,6 @@ export class VerRestaurante implements OnInit {
         this.loadingMenu = false;
       },
       error: (error) => {
-        console.error('Error cargando datos del restaurante:', error);
         this.loading = false;
         this.loadingMenu = false;
       },
@@ -99,9 +101,11 @@ export class VerRestaurante implements OnInit {
 
   toggleFormularioResenia() {
     this.mostrarFormularioResenia = !this.mostrarFormularioResenia;
+    this.mensajeResenia = '';
+    this.tipoMensajeResenia = '';
     if (!this.mostrarFormularioResenia) {
       this.reseniaForm.reset({
-        descripcion: '',
+        resenia: '',
         puntuacion: 5,
       });
     }
@@ -117,29 +121,58 @@ export class VerRestaurante implements OnInit {
 
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
-        resenia: this.reseniaForm.value.descripcion.trim(),
+        resenia: this.reseniaForm.value.resenia.trim(),
         puntuacion: this.reseniaForm.value.puntuacion,
       };
 
       this.clienteService.crearResenia(reseniaData).subscribe({
         next: (nuevaResenia) => {
-          // Recargar el restaurante completo para obtener las reseñas actualizadas
-          this.cargarDatosRestaurante();
+          // Agregar la nueva reseña al principio de la lista
+          const currentUser = this.authService.currentUser();
+          const reseniaResumen: ReseniaResumen = {
+            idCliente: nuevaResenia.idCliente,
+            nombreCliente: currentUser?.usuario || '',
+            resenia: nuevaResenia.resenia,
+            puntuacion: nuevaResenia.puntuacion,
+          };
+          this.resenias.unshift(reseniaResumen);
 
           // Resetear formulario y ocultar
           this.reseniaForm.reset({
-            descripcion: '',
+            resenia: '',
             puntuacion: 5,
           });
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
 
-          alert('¡Reseña enviada exitosamente!');
+          // Mostrar mensaje de éxito
+          this.mensajeResenia = '¡Reseña enviada exitosamente!';
+          this.tipoMensajeResenia = 'success';
+          setTimeout(() => {
+            this.mensajeResenia = '';
+            this.tipoMensajeResenia = '';
+          }, 5000);
         },
         error: (error) => {
-          console.error('Error enviando reseña:', error);
           this.submittingResenia = false;
-          alert('Error al enviar la reseña. Por favor, inténtalo de nuevo.');
+
+          // Extraer mensaje de error del backend
+          let mensajeError = 'Error al enviar la reseña. Por favor, inténtalo de nuevo.';
+
+          if (error.error && typeof error.error === 'string') {
+            mensajeError = error.error;
+          } else if (error.error && error.error.message) {
+            mensajeError = error.error.message;
+          } else if (error.message) {
+            mensajeError = error.message;
+          }
+
+          this.mensajeResenia = mensajeError;
+          this.tipoMensajeResenia = 'error';
+          setTimeout(() => {
+            this.mensajeResenia = '';
+            this.tipoMensajeResenia = '';
+          }, 5000);
         },
       });
     } else {
@@ -247,7 +280,6 @@ export class VerRestaurante implements OnInit {
         this.direcciones = direcciones;
       },
       error: (error) => {
-        console.error('Error cargando direcciones:', error);
         alert('Error cargando direcciones. Por favor, intenta de nuevo.');
       },
     });
@@ -257,7 +289,6 @@ export class VerRestaurante implements OnInit {
         this.metodosPago = metodos;
       },
       error: (error) => {
-        console.error('Error cargando métodos de pago:', error);
         alert('Error cargando métodos de pago. Por favor, intenta de nuevo.');
       },
     });
@@ -330,12 +361,11 @@ export class VerRestaurante implements OnInit {
         this.cerrarModalPedido();
       },
       error: (error) => {
-        console.error('Error creando pedido:', error);
         this.enviandoPedido = false;
 
         // Manejo de errores más específico
         if (error.status === 400) {
-          alert('Error en los datos del pedido. Por favor verifica la información.');
+          alert(error.error || 'Error en los datos del pedido. Por favor verifica la información.');
         } else if (error.status === 401) {
           alert('Error de autenticación. Por favor inicia sesión nuevamente.');
         } else {

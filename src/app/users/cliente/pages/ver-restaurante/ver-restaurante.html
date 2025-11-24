@@ -82,6 +82,18 @@
           </button>
         </div>
 
+        <!-- Mensaje de éxito o error -->
+        @if (mensajeResenia && tipoMensajeResenia) {
+        <div
+          class="alert-message"
+          [class.alert-success]="tipoMensajeResenia === 'success'"
+          [class.alert-error]="tipoMensajeResenia === 'error'"
+        >
+          <span class="alert-icon">{{ tipoMensajeResenia === 'success' ? '✓' : '⚠' }}</span>
+          <span class="alert-text">{{ mensajeResenia }}</span>
+        </div>
+        }
+
         <!-- Formulario para Nueva Reseña -->
         @if (mostrarFormularioResenia) {
         <form [formGroup]="reseniaForm" (ngSubmit)="submitResenia()" class="review-form">
@@ -106,22 +118,20 @@
 
           <!-- Comentario -->
           <div class="form-group">
-            <label for="descripcion">Tu comentario:</label>
+            <label for="resenia">Tu comentario:</label>
             <textarea
-              id="descripcion"
-              formControlName="descripcion"
+              id="resenia"
+              formControlName="resenia"
               placeholder="Cuéntanos sobre tu experiencia..."
               rows="4"
             >
             </textarea>
-            @if (reseniaForm.get('descripcion')?.touched && reseniaForm.get('descripcion')?.errors)
-            {
+            @if (reseniaForm.get('resenia')?.touched && reseniaForm.get('resenia')?.errors) {
             <div class="error-message">
-              @if (reseniaForm.get('descripcion')?.errors?.['required']) { El comentario es
-              obligatorio } @if (reseniaForm.get('descripcion')?.errors?.['minlength']) { El
-              comentario debe tener al menos 10 caracteres } @if
-              (reseniaForm.get('descripcion')?.errors?.['maxlength']) { El comentario no puede
-              exceder los 500 caracteres }
+              @if (reseniaForm.get('resenia')?.errors?.['required']) { El comentario es obligatorio
+              } @if (reseniaForm.get('resenia')?.errors?.['minlength']) { El comentario debe tener
+              al menos 10 caracteres } @if (reseniaForm.get('resenia')?.errors?.['maxlength']) { El
+              comentario no puede exceder los 500 caracteres }
             </div>
             }
           </div>
@@ -144,10 +154,12 @@
           @for (resenia of resenias; track $index) {
           <div class="review-item">
             <div class="reviewer-info">
-              <span class="reviewer-name">{{ resenia.nombreCliente || 'Cliente Anónimo' }}</span>
+              <span class="reviewer-name">{{
+                resenia.nombreCliente || 'Cliente #' + resenia.idCliente
+              }}</span>
               <div class="review-rating">
                 @for (estrella of estrellas; track estrella) {
-                <span [class.filled]="estrella <= resenia.puntuacion">★</span>
+                <span class="star" [class.filled]="estrella <= resenia.puntuacion">★</span>
                 }
                 <span class="rating-value">({{ formatearPuntuacion(resenia.puntuacion) }})</span>
               </div>
@@ -244,31 +256,14 @@
           </div>
         </div>
 
-        <!-- Selección de Dirección del Cliente -->
+        <!-- Selección de Dirección -->
         <div class="form-section">
-          <label for="direccion">Tu Dirección de Entrega:</label>
+          <label for="direccion">Dirección de Entrega:</label>
           <select id="direccion" [(ngModel)]="direccionSeleccionada" class="form-select">
-            <option value="">Selecciona tu dirección</option>
+            <option value="">Selecciona una dirección</option>
             @for (direccion of direcciones; track direccion.id) {
             <option [value]="direccion.id">
               {{ direccion.direccion }}, {{ direccion.ciudad }}
-            </option>
-            }
-          </select>
-        </div>
-
-        <!-- Selección de Sucursal del Restaurante -->
-        <div class="form-section">
-          <label for="direccionRestaurante">Sucursal del Restaurante:</label>
-          <select
-            id="direccionRestaurante"
-            [(ngModel)]="direccionRestauranteSeleccionada"
-            class="form-select"
-          >
-            <option value="">Selecciona una sucursal</option>
-            @for (direccion of restaurante?.direcciones || []; track direccion.id) {
-            <option [value]="direccion.id">
-              {{ direccion.direccion }}, {{ direccion.ciudad }}, {{ direccion.pais }}
             </option>
             }
           </select>
