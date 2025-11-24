@@ -24,7 +24,7 @@ export class RegistroForm {
   ) {
     this.registroForm = this.fb.group({
       nombre: ['', [
-        Validators.required, 
+        Validators.required,
         Validators.minLength(3),
         Validators.maxLength(25)
       ]],
@@ -35,12 +35,17 @@ export class RegistroForm {
         Validators.pattern(/^[a-zA-Z0-9]+$/)
       ]],
       contrasenia: ['', [
-        Validators.required, 
-        Validators.minLength(6), 
+        Validators.required,
+        Validators.minLength(6),
         Validators.maxLength(100),
         Validators.pattern(/^[a-zA-Z0-9._]+$/)
       ]],
-      rol: ['CLIENTE', Validators.required]
+      rol: ['CLIENTE', Validators.required],
+      email: ['', [
+        Validators.required,
+        Validators.email,
+        Validators.maxLength(50)
+      ]]
     });
   }
 
@@ -53,11 +58,12 @@ export class RegistroForm {
       // Preparar datos según el rol seleccionado
       const rol = this.registroForm.value.rol;
       const nombreIngresado = this.registroForm.value.nombre;
-      
+
       const registerData: any = {
         usuario: this.registroForm.value.usuario,
         contrasenia: this.registroForm.value.contrasenia,
-        rol: rol
+        rol: rol,
+        email: this.registroForm.value.email
       };
 
       // El backend espera campos diferentes según el rol
@@ -78,7 +84,7 @@ export class RegistroForm {
           this.loading.set(false);
           this.successMessage.set('¡Registro exitoso! Redirigiendo al login...');
           console.log('Registro exitoso:', response);
-          
+
           // Redirigir al login después de 1.5 segundos
           setTimeout(() => {
             this.router.navigate(['/login']);
@@ -87,7 +93,7 @@ export class RegistroForm {
         error: (error: any) => {
           this.loading.set(false);
           console.error('Error en registro:', error);
-          
+
           // Manejar diferentes tipos de errores
           if (error.status === 0) {
             this.errorMessage.set('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');

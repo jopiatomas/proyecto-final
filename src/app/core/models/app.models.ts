@@ -194,3 +194,16 @@ export interface TarjetaRequest {
   vencimiento: string; // MM/YY
   cvv: string; // 3 dígitos
 }
+
+// Interfaces para sistema de aprobación de restaurantes
+export interface RestaurantePendienteDTO {
+  id: number;
+  usuario: string;
+  nombre: string;
+  estado: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO';
+  motivoRechazo?: string;
+}
+
+export interface RechazarRestauranteDTO {
+  motivoRechazo: string;
+}

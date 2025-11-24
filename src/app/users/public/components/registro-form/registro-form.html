@@ -9,13 +9,13 @@
     @if (successMessage()) {
       <div class="alert-success">{{ successMessage() }}</div>
     }
-    
+
     <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="nombre">Nombre</label>
-        <input 
-          type="text" 
-          id="nombre" 
+        <input
+          type="text"
+          id="nombre"
           class="form-input"
           formControlName="nombre"
           [placeholder]="registroForm.get('rol')?.value === 'RESTAURANTE' ? 'Nombre del restaurante' : 'Nombre y apellido'"
@@ -38,9 +38,9 @@
 
       <div class="form-group">
         <label for="usuario">Usuario</label>
-        <input 
-          type="text" 
-          id="usuario" 
+        <input
+          type="text"
+          id="usuario"
           class="form-input"
           formControlName="usuario"
           placeholder="Usuario"
@@ -66,9 +66,9 @@
 
       <div class="form-group">
         <label for="email">Email</label>
-        <input 
-          type="email" 
-          id="email" 
+        <input
+          type="email"
+          id="email"
           class="form-input"
           formControlName="email"
           placeholder="tu@email.com"
@@ -91,9 +91,9 @@
 
       <div class="form-group">
         <label for="contrasenia">Contraseña</label>
-        <input 
-          type="password" 
-          id="contrasenia" 
+        <input
+          type="password"
+          id="contrasenia"
           class="form-input"
           formControlName="contrasenia"
           placeholder="6-100 caracteres"
@@ -125,8 +125,8 @@
         </select>
       </div>
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         class="btn btn-primary"
         [disabled]="registroForm.invalid || loading()"
       >

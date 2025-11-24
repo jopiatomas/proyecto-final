@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { restauranteAprobadoGuard } from './core/guards/restaurante-aprobado.guard';
 
 export const routes: Routes = [
   {
@@ -59,11 +61,13 @@ export const routes: Routes = [
         path: '',
         loadComponent: () =>
           import('./users/restaurante/pages/landing-page/landing-page').then((m) => m.LandingPage),
+        canActivate: [restauranteAprobadoGuard],
       },
       {
         path: 'menu',
         loadComponent: () =>
           import('./users/restaurante/pages/gestion-menu/gestion-menu').then((m) => m.GestionMenu),
+        canActivate: [restauranteAprobadoGuard],
       },
       {
         path: 'historial',
@@ -71,26 +75,36 @@ export const routes: Routes = [
           import('./users/restaurante/pages/historial-pedidos/historial-pedidos').then(
             (m) => m.HistorialPedidos
           ),
+        canActivate: [restauranteAprobadoGuard],
       },
       {
         path: 'perfil',
         loadComponent: () =>
           import('./users/restaurante/pages/ver-perfil/perfil').then((m) => m.Perfil),
+        canActivate: [restauranteAprobadoGuard],
       },
       {
         path: 'direcciones',
         loadComponent: () =>
           import('./users/restaurante/pages/direcciones/direcciones').then((m) => m.Direcciones),
+        canActivate: [restauranteAprobadoGuard],
       },
       {
         path: 'balance',
         loadComponent: () =>
           import('./users/restaurante/pages/balance/balance').then((m) => m.Balance),
+        canActivate: [restauranteAprobadoGuard],
       },
       {
         path: 'resenias',
         loadComponent: () =>
           import('./users/restaurante/pages/ver-resenias/ver-resenias').then((m) => m.VerResenias),
+        canActivate: [restauranteAprobadoGuard],
+      },
+      {
+        path: 'mi-estado',
+        loadComponent: () =>
+          import('./users/restaurante/pages/mi-estado/mi-estado').then((m) => m.MiEstado),
       },
     ],
   },

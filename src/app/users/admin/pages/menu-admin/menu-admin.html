@@ -104,6 +104,135 @@
 		</div>
 	}
 
+		@if (activeView() === 'peticiones') {
+		<div class="content-layout">
+			<div class="list-panel">
+					<h2>Restaurantes Pendientes ({{ restaurantesPendientes().length }})</h2>
+
+				@if (loading() && !selectedPendiente()) {
+					<div class="loading"><div class="spinner"></div></div>
+				}
+
+				@if (!loading() && restaurantesPendientes().length === 0) {
+					<p class="empty">No hay restaurantes pendientes de aprobación</p>
+				}
+
+				<div class="items-list">
+					@for (pendiente of restaurantesPendientes(); track pendiente.id) {
+						<div
+							class="list-item"
+							[class.selected]="selectedPendiente()?.id === pendiente.id"
+							(click)="selectPendiente(pendiente)">
+						<div class="item-header">
+							<strong>{{ pendiente.nombre }}</strong>
+							<span class="badge badge-warning">{{ pendiente.estado }}</span>
+						</div>
+							<p class="item-detail">Usuario: {{ pendiente.usuario }}</p>
+						</div>
+					}
+				</div>
+
+					<h2 style="margin-top: 1.5rem;">Restaurantes Rechazados ({{ restaurantesRechazados().length }})</h2>
+
+					@if (loading() && !selectedRechazado()) {
+						<div class="loading"><div class="spinner"></div></div>
+					}
+
+					@if (!loading() && restaurantesRechazados().length === 0) {
+						<p class="empty">No hay restaurantes rechazados</p>
+					}
+
+					<div class="items-list">
+						@for (rech of restaurantesRechazados(); track rech.id) {
+							<div
+								class="list-item"
+								[class.selected]="selectedRechazado()?.id === rech.id"
+								(click)="selectRechazado(rech)">
+								<div class="item-header">
+									<strong>{{ rech.nombre }}</strong>
+									<span class="badge badge-danger">{{ rech.estado }}</span>
+								</div>
+								<p class="item-detail">Usuario: {{ rech.usuario }}</p>
+							</div>
+						}
+					</div>
+			</div>
+
+				@if (selectedPendiente()) {
+				<div class="detail-panel">
+					<div class="panel-header">
+						<h3>{{ selectedPendiente()!.nombre }}</h3>
+						<button class="close-btn" (click)="clearSelection()">×</button>
+					</div>
+
+					<div class="detail-content">
+						<div class="detail-item">
+							<label>ID:</label>
+							<span>{{ selectedPendiente()!.id }}</span>
+						</div>
+						<div class="detail-item">
+							<label>Usuario:</label>
+							<span>{{ selectedPendiente()!.usuario }}</span>
+						</div>
+						<div class="detail-item">
+							<label>Nombre:</label>
+							<span>{{ selectedPendiente()!.nombre }}</span>
+						</div>
+
+						<div class="detail-item">
+							<label>Estado:</label>
+							<span class="badge badge-warning">{{ selectedPendiente()!.estado }}</span>
+						</div>
+
+
+						<div class="actions">
+							<button class="btn btn-primary" (click)="aprobarRestaurante()" [disabled]="loading()">
+								✓ Aprobar Restaurante
+							</button>
+							<button class="btn btn-danger" (click)="abrirModalRechazo()" [disabled]="loading()">
+								✗ Rechazar
+							</button>
+						</div>
+					</div>
+				</div>
+			}
+
+				@if (selectedRechazado()) {
+					<div class="detail-panel">
+						<div class="panel-header">
+							<h3>{{ selectedRechazado()!.nombre }}</h3>
+							<button class="close-btn" (click)="clearSelection()">×</button>
+						</div>
+
+						<div class="detail-content">
+							<div class="detail-item">
+								<label>ID:</label>
+								<span>{{ selectedRechazado()!.id }}</span>
+							</div>
+							<div class="detail-item">
+								<label>Usuario:</label>
+								<span>{{ selectedRechazado()!.usuario }}</span>
+							</div>
+							<div class="detail-item">
+								<label>Nombre:</label>
+								<span>{{ selectedRechazado()!.nombre }}</span>
+							</div>
+							<div class="detail-item">
+								<label>Estado:</label>
+								<span class="badge badge-danger">{{ selectedRechazado()!.estado }}</span>
+							</div>
+							@if (selectedRechazado()!.motivoRechazo) {
+								<div class="detail-item">
+									<label>Motivo:</label>
+									<span>{{ selectedRechazado()!.motivoRechazo }}</span>
+								</div>
+							}
+						</div>
+					</div>
+				}
+		</div>
+	}
+
 	@if (activeView() === 'restaurantes') {
 		<div class="content-layout">
 			<div class="list-panel">
@@ -221,6 +350,39 @@
 					}
 				</div>
 			}
+		</div>
+	}
+
+	@if (showModalRechazo()) {
+		<div class="modal-overlay" (click)="cerrarModalRechazo()">
+			<div class="modal-content" (click)="$event.stopPropagation()">
+				<div class="modal-header">
+					<h3>Rechazar Restaurante</h3>
+					<button class="close-btn" (click)="cerrarModalRechazo()">×</button>
+				</div>
+				<div class="modal-body">
+					<p>Especifica el motivo del rechazo para <strong>{{ selectedPendiente()?.nombre }}</strong>:</p>
+					<form (ngSubmit)="confirmarRechazo()">
+						<div class="form-group">
+							<label>Motivo de Rechazo:</label>
+							<textarea
+								class="form-textarea"
+								[(ngModel)]="motivoRechazo"
+								name="motivoRechazo"
+								rows="4"
+								placeholder="Explica el motivo del rechazo..."
+								required
+								[value]="motivoRechazo()"></textarea>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" (click)="cerrarModalRechazo()">Cancelar</button>
+							<button type="submit" class="btn btn-danger" [disabled]="loading() || !motivoRechazo().trim()">
+								Confirmar Rechazo
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
 		</div>
 	}
 </div>

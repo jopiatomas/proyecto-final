@@ -19,7 +19,7 @@
             </span>
           </div>
           <div class="pedido-info">
-            <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+            <p><strong>Fecha:</strong> {{ pedido.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
             <p><strong>Total:</strong> ${{ pedido.total }}</p>
           </div>
         </div>
@@ -33,7 +33,7 @@
 
         <div class="detalles-contenido">
           <div class="info-grupo">
-            <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha }}</p>
+            <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
             <p>
               <strong>Estado:</strong>
               <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">

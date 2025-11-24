@@ -33,7 +33,8 @@ header {
   gap: 48px;
 }
 
-.tabs a {
+.tabs a,
+.tab-btn {
   color: var(--col-2);
   text-decoration: none;
   border-bottom: 2px solid transparent;
@@ -42,16 +43,51 @@ header {
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   padding: 4px 0;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.tabs a:hover {
+.tabs a:hover,
+.tab-btn:hover {
   color: white;
   border-bottom: 2px solid white;
 }
 
-.tabs a.active {
+.tabs a.active,
+.tab-btn.active {
   color: white;
   border-bottom: 2px solid white;
+}
+
+.tab-btn .badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0.2rem 0.5rem;
+  background: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
 }
 
 .perfil {

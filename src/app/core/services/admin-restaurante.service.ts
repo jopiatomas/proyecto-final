@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { RestaurantePendienteDTO, RechazarRestauranteDTO } from '../models/app.models';
 
 export interface RestauranteAdminDTO {
   id: number;
@@ -32,30 +33,42 @@ export class AdminRestauranteService {
   constructor(private http: HttpClient) {}
 
   getAllRestaurantes(): Observable<RestauranteAdminDTO[]> {
-    return this.http.get<RestauranteAdminDTO[]>(`${this.apiUrl}/restaurantes`, { headers: this.getAuthHeaders() });
+    return this.http.get<RestauranteAdminDTO[]>(`${this.apiUrl}/restaurantes`);
   }
 
   modificarRestaurante(usuarioActual: string, data: RestauranteModificarDTO): Observable<string> {
-    return this.http.put(`${this.apiUrl}/restaurantes/${encodeURIComponent(usuarioActual)}`, data, { headers: this.getAuthHeaders(), responseType: 'text' });
+    return this.http.put(`${this.apiUrl}/restaurantes/${encodeURIComponent(usuarioActual)}`, data, { responseType: 'text' });
   }
 
   eliminarRestaurante(id: number): Observable<string> {
-    return this.http.delete(`${this.apiUrl}/restaurantes/${id}`, { responseType: 'text', headers: this.getAuthHeaders() });
+    return this.http.delete(`${this.apiUrl}/restaurantes/${id}`, { responseType: 'text' });
   }
 
   getReseniasRestaurante(idRestaurante: number): Observable<ReseniaAdminDTO[]> {
-    return this.http.get<ReseniaAdminDTO[]>(`${this.apiUrl}/ver-resenias-restaurante/${idRestaurante}`, { headers: this.getAuthHeaders() });
+    return this.http.get<ReseniaAdminDTO[]>(`${this.apiUrl}/ver-resenias-restaurante/${idRestaurante}`);
   }
 
   eliminarResenia(idResenia: number): Observable<string> {
-    return this.http.delete(`${this.apiUrl}/eliminar-resenia/${idResenia}`, { responseType: 'text', headers: this.getAuthHeaders() });
+    return this.http.delete(`${this.apiUrl}/eliminar-resenia/${idResenia}`, { responseType: 'text' });
   }
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
+  getPendientes(): Observable<RestaurantePendienteDTO[]> {
+    return this.http.get<RestaurantePendienteDTO[]>(`${this.apiUrl}/restaurantes/pendientes`);
+  }
+
+  countPendientes(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/restaurantes/pendientes/count`);
+  }
+
+  getRechazados(): Observable<RestaurantePendienteDTO[]> {
+    return this.http.get<RestaurantePendienteDTO[]>(`${this.apiUrl}/restaurantes/rechazados`);
+  }
+
+  aprobarRestaurante(id: number): Observable<string> {
+    return this.http.put(`${this.apiUrl}/restaurantes/${id}/aprobar`, {}, { responseType: 'text' });
+  }
+
+  rechazarRestaurante(id: number, data: RechazarRestauranteDTO): Observable<string> {
+    return this.http.put(`${this.apiUrl}/restaurantes/${id}/rechazar`, data, { responseType: 'text' });
   }
 }
