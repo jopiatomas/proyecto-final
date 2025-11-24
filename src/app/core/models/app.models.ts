@@ -9,6 +9,8 @@ export interface RegisterRequest {
   nombre: string;
   email: string;
   rol: string;
+  horaApertura?: string; // HH:mm format for RESTAURANTE
+  horaCierre?: string;   // HH:mm format for RESTAURANTE
 }
 
 export interface AuthResponse {
@@ -57,6 +59,8 @@ export interface RestauranteResumen {
   telefono?: string;
   email?: string;
   calificacion?: number;
+  horaApertura?: string; // HH:mm format
+  horaCierre?: string;   // HH:mm format
 }
 
 export interface RestauranteDetail {
@@ -67,6 +71,8 @@ export interface RestauranteDetail {
   menu: ProductoResumen[];
   reseniasRestaurante: ReseniaResumen[];
   direcciones: DireccionRestaurante[];
+  horaApertura?: string; // HH:mm format
+  horaCierre?: string;   // HH:mm format
 }
 
 export interface DireccionRestaurante {

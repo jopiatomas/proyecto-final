@@ -45,8 +45,31 @@ export class RegistroForm {
         Validators.required,
         Validators.email,
         Validators.maxLength(50)
-      ]]
+      ]],
+      horaApertura: [''],
+      horaCierre: ['']
     });
+
+    // Actualizar validaciones cuando cambia el rol
+    this.registroForm.get('rol')?.valueChanges.subscribe(rol => {
+      const horaAperturaControl = this.registroForm.get('horaApertura');
+      const horaCierreControl = this.registroForm.get('horaCierre');
+
+      if (rol === 'RESTAURANTE') {
+        horaAperturaControl?.setValidators([Validators.required, Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)]);
+        horaCierreControl?.setValidators([Validators.required, Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)]);
+      } else {
+        horaAperturaControl?.clearValidators();
+        horaCierreControl?.clearValidators();
+      }
+
+      horaAperturaControl?.updateValueAndValidity();
+      horaCierreControl?.updateValueAndValidity();
+    });
+  }
+
+  get isRestaurante(): boolean {
+    return this.registroForm.get('rol')?.value === 'RESTAURANTE';
   }
 
   onSubmit(): void {
@@ -71,6 +94,8 @@ export class RegistroForm {
         registerData.nombreYapellido = nombreIngresado;
       } else if (rol === 'RESTAURANTE') {
         registerData.nombreRestaurante = nombreIngresado;
+        registerData.horaApertura = this.registroForm.value.horaApertura;
+        registerData.horaCierre = this.registroForm.value.horaCierre;
       }
 
       console.log('===== DEBUG REGISTRO =====');

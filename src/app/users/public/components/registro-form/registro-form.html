@@ -125,6 +125,55 @@
         </select>
       </div>
 
+      @if (isRestaurante) {
+        <div class="horarios-section">
+          <h3>Horarios de atención</h3>
+          <div class="horarios-grid">
+            <div class="form-group">
+              <label for="horaApertura">Horario de apertura</label>
+              <input
+                type="time"
+                id="horaApertura"
+                class="form-input"
+                formControlName="horaApertura"
+                placeholder="09:00"
+              >
+              @if (registroForm.get('horaApertura')?.invalid && registroForm.get('horaApertura')?.touched) {
+                <div class="form-error">
+                  @if (registroForm.get('horaApertura')?.errors?.['required']) {
+                    El horario de apertura es requerido
+                  }
+                  @if (registroForm.get('horaApertura')?.errors?.['pattern']) {
+                    Formato inválido (HH:mm)
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="horaCierre">Horario de cierre</label>
+              <input
+                type="time"
+                id="horaCierre"
+                class="form-input"
+                formControlName="horaCierre"
+                placeholder="22:00"
+              >
+              @if (registroForm.get('horaCierre')?.invalid && registroForm.get('horaCierre')?.touched) {
+                <div class="form-error">
+                  @if (registroForm.get('horaCierre')?.errors?.['required']) {
+                    El horario de cierre es requerido
+                  }
+                  @if (registroForm.get('horaCierre')?.errors?.['pattern']) {
+                    Formato inválido (HH:mm)
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
       <button
         type="submit"
         class="btn btn-primary"

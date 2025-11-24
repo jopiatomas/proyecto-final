@@ -3,11 +3,11 @@
   <div class="welcome-section">
     <h2>¡Bienvenido a Quickish!</h2>
     <p>Hola. ¿Qué vas a pedir hoy?</p>
-    
+
     <div class="search-section">
-      <input 
-        type="text" 
-        placeholder="Buscar restaurantes..." 
+      <input
+        type="text"
+        placeholder="Buscar restaurantes..."
         class="search-input"
         [(ngModel)]="terminoBusqueda">
     </div>
@@ -15,7 +15,7 @@
 
   <div class="restaurants-section">
     <h2>Restaurantes Disponibles</h2>
-    
+
     @if (loading) {
       <div class="loading">
         <p>Cargando restaurantes...</p>
@@ -23,9 +23,27 @@
     } @else {
       <div class="restaurants-grid">
         @for (restaurante of restaurantesFiltrados; track restaurante.id) {
-          <div class="restaurant-card" (click)="verRestaurante(restaurante)">
+          <div class="restaurant-card"
+               [class.cerrado]="!isRestauranteAbierto(restaurante)"
+               (click)="verRestaurante(restaurante)">
             <h3>{{ restaurante.nombre }}</h3>
             <p class="categoria">Restaurante</p>
+
+            @if (restaurante.horaApertura && restaurante.horaCierre) {
+              <div class="horario-info">
+                <span class="horario-text">
+                  ⏰ {{ formatearHorario(restaurante.horaApertura) }} - {{ formatearHorario(restaurante.horaCierre) }}
+                </span>
+              </div>
+            }
+
+            <div class="status-badge">
+              @if (isRestauranteAbierto(restaurante)) {
+                <span class="badge-abierto">🟢 Abierto</span>
+              } @else {
+                <span class="badge-cerrado">🔴 Cerrado</span>
+              }
+            </div>
           </div>
         } @empty {
           <div class="no-restaurants">

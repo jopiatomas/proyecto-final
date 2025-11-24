@@ -6,6 +6,7 @@ import { FooterCliente } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { ClienteService } from '../../../../core/services/cliente.service';
 import { RestauranteResumen } from '../../../../core/models/app.models';
+import { isRestauranteAbierto, formatearHorario } from '../../../../core/utils/horario.utils';
 
 @Component({
   selector: 'app-landing-page',
@@ -51,7 +52,21 @@ export class LandingPage implements OnInit {
   }
 
   verRestaurante(restaurante: RestauranteResumen) {
+    // Verificar si el restaurante está abierto
+    if (!this.isRestauranteAbierto(restaurante)) {
+      alert('Este restaurante está cerrado en este momento.');
+      return;
+    }
+
     // Navegamos usando el usuario del restaurante como parámetro
     this.router.navigate(['/cliente/restaurante', encodeURIComponent(restaurante.usuario)]);
+  }
+
+  isRestauranteAbierto(restaurante: RestauranteResumen): boolean {
+    return isRestauranteAbierto(restaurante.horaApertura, restaurante.horaCierre);
+  }
+
+  formatearHorario(horario?: string): string {
+    return formatearHorario(horario);
   }
 }
