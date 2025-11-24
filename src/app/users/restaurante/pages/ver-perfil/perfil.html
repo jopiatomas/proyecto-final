@@ -3,108 +3,142 @@
   <div class="perfil-container">
     <h2>Mi Perfil</h2>
     @if (authService.currentUser(); as usuario) {
-      <p>Bienvenido, <strong>{{ usuario.nombre }}</strong></p>
+    <p>
+      Bienvenido, <strong>{{ usuario.nombre }}</strong>
+    </p>
     }
 
-    @if (cargando()) {
-      <div class="loading-section">
-        <div class="loading-spinner"></div>
-        <p>Cargando datos del perfil...</p>
-      </div>
+    <!-- Mensaje de éxito o error -->
+    @if (mensajePerfil && tipoMensaje) {
+    <div
+      class="alert-message"
+      [class.alert-success]="tipoMensaje === 'success'"
+      [class.alert-error]="tipoMensaje === 'error'"
+    >
+      <span class="alert-icon">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
+      <span class="alert-text">{{ mensajePerfil }}</span>
+    </div>
+    } @if (cargando()) {
+    <div class="loading-section">
+      <div class="loading-spinner"></div>
+      <p>Cargando datos del perfil...</p>
+    </div>
     } @else {
-      <div class="perfil-content">
-        <form class="perfil-form" [formGroup]="formularioPerfil" (ngSubmit)="alEnviar()">
-          <h3>Información del Restaurante</h3>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label>Nombre del Restaurante *</label>
-              <input 
-                type="text" 
-                formControlName="nombre" 
-                class="form-input"
-                placeholder="Ingresa el nombre del restaurante"
-              />
-              @if (formularioPerfil.get('nombre')?.invalid && formularioPerfil.get('nombre')?.touched) {
-                <small style="color: red;">Nombre requerido (mínimo 3 caracteres)</small>
-              }
-            </div>
+    <div class="perfil-content">
+      <form class="perfil-form" [formGroup]="formularioPerfil" (ngSubmit)="alEnviar()">
+        <h3>Información del Restaurante</h3>
 
-            <div class="form-group">
-              <label>Usuario *</label>
-              <input 
-                type="text" 
-                formControlName="usuario" 
-                class="form-input"
-                placeholder="Nombre de usuario"
-              />
-              @if (formularioPerfil.get('usuario')?.invalid && formularioPerfil.get('usuario')?.touched) {
-                <small style="color: red;">Usuario requerido (solo letras y números)</small>
-              }
-            </div>
-          </div>
-
+        <div class="form-row">
           <div class="form-group">
-            <label>Email *</label>
-            <input 
-              type="email" 
-              formControlName="email" 
+            <label>Nombre del Restaurante *</label>
+            <input
+              type="text"
+              formControlName="nombre"
               class="form-input"
-              placeholder="tu@email.com"
+              placeholder="Ingresa el nombre del restaurante"
+              maxlength="100"
             />
-            @if (formularioPerfil.get('email')?.invalid && formularioPerfil.get('email')?.touched) {
-              <small style="color: red;">Email requerido y válido</small>
+            @if (formularioPerfil.get('nombre')?.invalid && formularioPerfil.get('nombre')?.touched)
+            {
+            <small style="color: red">Nombre requerido (mínimo 3 caracteres)</small>
             }
           </div>
 
           <div class="form-group">
-            <label>Contraseña Actual *</label>
-            <input 
-              type="password" 
-              formControlName="contrasenia" 
+            <label>Usuario *</label>
+            <input
+              type="text"
+              formControlName="usuario"
               class="form-input"
-              placeholder="Ingresa tu contraseña actual para verificar identidad"
+              placeholder="Nombre de usuario"
+              maxlength="18"
             />
-            @if (formularioPerfil.get('contrasenia')?.invalid && formularioPerfil.get('contrasenia')?.touched) {
-              <small style="color: red;">Contraseña requerida (mínimo 6 caracteres)</small>
+            @if (formularioPerfil.get('usuario')?.invalid &&
+            formularioPerfil.get('usuario')?.touched) {
+            <small style="color: red">Usuario requerido (solo letras y números)</small>
             }
           </div>
+        </div>
 
-          <div class="form-actions">
-            <button 
-              type="submit" 
-              class="btn-primary"
-              [disabled]="cargando()"
-            >
-              @if (cargando()) {
-                Guardando...
-              } @else {
-                Guardar Cambios
-              }
-            </button>
-          </div>
-        </form>
+        <div class="form-group">
+          <label>Email *</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="form-input"
+            placeholder="tu@email.com"
+            maxlength="100"
+          />
+          @if (formularioPerfil.get('email')?.invalid && formularioPerfil.get('email')?.touched) {
+          <small style="color: red">Email requerido y válido</small>
+          }
+        </div>
 
-        <div class="quick-links">
-          <h3>Accesos Rápidos</h3>
-          <button class="link-card" (click)="navegarA('/restaurante/balance')">
-            <div>
-              <h4>Balance</h4>
-              <p>Ver ingresos y estadísticas</p>
-            </div>
-            <span class="flecha">→</span>
-          </button>
-          <button class="link-card" (click)="navegarA('/restaurante/direcciones')">
-            <div>
-              <h4>Direcciones</h4>
-              <p>Gestiona la ubicación del restaurante</p>
-            </div>
-            <span class="flecha">→</span>
+        <div class="form-group">
+          <label>Contraseña Actual *</label>
+          <input
+            type="password"
+            formControlName="contrasenia"
+            class="form-input"
+            placeholder="Ingresa tu contraseña actual para verificar identidad"
+          />
+          @if (formularioPerfil.get('contrasenia')?.invalid &&
+          formularioPerfil.get('contrasenia')?.touched) {
+          <small style="color: red">Contraseña requerida (mínimo 6 caracteres)</small>
+          }
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" [disabled]="cargando()">
+            @if (cargando()) { Guardando... } @else { Guardar Cambios }
           </button>
         </div>
+      </form>
+
+      <div class="quick-links">
+        <h3>Accesos Rápidos</h3>
+        <button class="link-card" (click)="navegarA('/restaurante/balance')">
+          <div>
+            <h4>Balance</h4>
+            <p>Ver ingresos y estadísticas</p>
+          </div>
+          <span class="flecha">→</span>
+        </button>
+        <button class="link-card" (click)="navegarA('/restaurante/direcciones')">
+          <div>
+            <h4>Direcciones</h4>
+            <p>Gestiona la ubicación del restaurante</p>
+          </div>
+          <span class="flecha">→</span>
+        </button>
       </div>
+    </div>
     }
   </div>
 </div>
+
+<!-- Modal de confirmación de actualización de perfil -->
+@if (confirmandoActualizacion) {
+<div class="modal-overlay" (click)="cancelarActualizacion()">
+  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Confirmar Actualización</h3>
+      <button class="close-modal-btn" (click)="cancelarActualizacion()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas actualizar los datos de tu perfil?</p>
+      <p class="modal-warning">Los cambios se guardarán permanentemente.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirmar" (click)="actualizarPerfil()" [disabled]="cargando()">
+        @if (cargando()) { Guardando... } @else { Confirmar }
+      </button>
+      <button class="btn-cancelar-modal" (click)="cancelarActualizacion()" [disabled]="cargando()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+}
 
 <app-footer-restaurante></app-footer-restaurante>

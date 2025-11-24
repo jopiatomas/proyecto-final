@@ -1,56 +1,47 @@
 <div class="login-box">
+  <h2>Iniciar sesión</h2>
 
-    <h2>Iniciar sesión</h2>
+  @if (errorMessage()) {
+  <div class="alert-error">{{ errorMessage() }}</div>
+  }
 
-    @if (errorMessage()) {
-      <div class="alert-error">{{ errorMessage() }}</div>
-    }
-
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="usuario">Usuario</label>
-        <input 
-          type="text" 
-          id="usuario" 
-          class="form-input"
-          formControlName="usuario"
-          placeholder="tuUsuario"
-        >
-        @if (loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched) {
-          <div class="form-error">El usuario es requerido</div>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="contrasenia">Contraseña</label>
-        <input 
-          type="password" 
-          id="contrasenia" 
-          class="form-input"
-          formControlName="contrasenia"
-          placeholder="********"
-        >
-        @if (loginForm.get('contrasenia')?.invalid && loginForm.get('contrasenia')?.touched) {
-          <div class="form-error">La contraseña es requerida</div>
-        }
-      </div>
-
-      <button 
-        type="submit" 
-        class="btn btn-primary"
-        [disabled]="loginForm.invalid || loading()"
-        >
-          @if (loading()) {
-            <span class="loading"></span>
-            Ingresando...
-          } @else {
-            Acceder
-          }
-      </button>
-    </form>
-
-    <div class="signup-link">
-      ¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="usuario">Usuario</label>
+      <input
+        type="text"
+        id="usuario"
+        class="form-input"
+        formControlName="usuario"
+        placeholder="tuUsuario"
+        maxlength="18"
+      />
+      @if (loginForm.get('usuario')?.invalid && loginForm.get('usuario')?.touched) {
+      <div class="form-error">El usuario es requerido</div>
+      }
     </div>
 
+    <div class="form-group">
+      <label for="contrasenia">Contraseña</label>
+      <input
+        type="password"
+        id="contrasenia"
+        class="form-input"
+        formControlName="contrasenia"
+        placeholder="********"
+        maxlength="100"
+      />
+      @if (loginForm.get('contrasenia')?.invalid && loginForm.get('contrasenia')?.touched) {
+      <div class="form-error">La contraseña es requerida</div>
+      }
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading()">
+      @if (loading()) {
+      <span class="loading"></span>
+      Ingresando... } @else { Acceder }
+    </button>
+  </form>
+
+  <div class="signup-link">¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a></div>
 </div>

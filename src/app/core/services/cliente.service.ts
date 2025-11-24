@@ -8,7 +8,7 @@ import {
   ProductoResumen,
   ReseniaCreate,
   ReseniaDetail,
-  PedidoCreateDTO,
+  PedidoCreate,
   PedidoDetailDTO,
   PedidoResumenDTO,
   DireccionDTO,
@@ -70,7 +70,7 @@ export class ClienteService {
   }
 
   // POST /clientes/pedir - Crear nuevo pedido
-  crearPedido(pedido: PedidoCreateDTO): Observable<PedidoDetailDTO> {
+  crearPedido(pedido: PedidoCreate): Observable<PedidoDetailDTO> {
     return this.http.post<PedidoDetailDTO>(`${this.baseUrl}/pedir`, pedido, {
       headers: this.getAuthHeaders(),
     });

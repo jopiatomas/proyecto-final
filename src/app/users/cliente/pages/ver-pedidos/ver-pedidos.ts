@@ -20,6 +20,9 @@ export class VerPedidos implements OnInit {
   loadingDetalle = false;
   error: string | null = null;
   mostrarMenuOpciones = false;
+  confirmandoCancelacion = false;
+  mensajePedido = '';
+  tipoMensajePedido: 'success' | 'error' | '' = '';
 
   ngOnInit() {
     this.cargarPedidos();
@@ -28,13 +31,13 @@ export class VerPedidos implements OnInit {
   cargarPedidos() {
     this.loading = true;
     this.error = null;
-    
+
     this.clienteService.getPedidosActivos().subscribe({
       next: (pedidos) => {
         // Filtrar solo pedidos con estados activos
         const estadosActivos = ['PREPARACION', 'ENVIADO', 'PENDIENTE'];
         this.pedidos = pedidos
-          .filter(pedido => estadosActivos.includes(pedido.estado))
+          .filter((pedido) => estadosActivos.includes(pedido.estado))
           .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()); // Más nuevos arriba
         this.loading = false;
       },
@@ -42,14 +45,14 @@ export class VerPedidos implements OnInit {
         console.error('Error cargando pedidos:', error);
         this.error = 'Error cargando los pedidos. Intenta nuevamente.';
         this.loading = false;
-      }
+      },
     });
   }
 
   seleccionarPedido(pedidoId: number) {
     this.loadingDetalle = true;
     this.mostrarMenuOpciones = false;
-    
+
     this.clienteService.getPedidoDetalle(pedidoId).subscribe({
       next: (detalle) => {
         this.pedidoSeleccionado = detalle;
@@ -58,7 +61,7 @@ export class VerPedidos implements OnInit {
       error: (error) => {
         console.error('Error cargando detalle del pedido:', error);
         this.loadingDetalle = false;
-      }
+      },
     });
   }
 
@@ -68,42 +71,72 @@ export class VerPedidos implements OnInit {
 
   cancelarPedido() {
     if (!this.pedidoSeleccionado) return;
+    this.confirmandoCancelacion = true;
+  }
 
-    if (confirm('¿Estás seguro de que quieres cancelar este pedido?')) {
-      this.clienteService.cancelarPedido(this.pedidoSeleccionado.id).subscribe({
-        next: () => {
-          alert('Pedido cancelado exitosamente');
-          this.cargarPedidos(); // Recargar la lista
-          this.pedidoSeleccionado = null; // Limpiar selección
-          this.mostrarMenuOpciones = false;
-        },
-        error: (error) => {
-          console.error('Error cancelando pedido:', error);
-          alert('Error al cancelar el pedido. Intenta nuevamente.');
-        }
-      });
-    }
+  confirmarCancelacion() {
+    if (!this.pedidoSeleccionado) return;
+
+    this.confirmandoCancelacion = false;
+    this.clienteService.cancelarPedido(this.pedidoSeleccionado.id).subscribe({
+      next: () => {
+        this.mensajePedido = 'Pedido cancelado exitosamente';
+        this.tipoMensajePedido = 'success';
+        setTimeout(() => {
+          this.mensajePedido = '';
+          this.tipoMensajePedido = '';
+        }, 5000);
+        this.cargarPedidos();
+        this.pedidoSeleccionado = null;
+        this.mostrarMenuOpciones = false;
+      },
+      error: (error) => {
+        this.mensajePedido = `Error al cancelar el pedido: ${
+          error.error?.message || error.message || 'Error desconocido'
+        }`;
+        this.tipoMensajePedido = 'error';
+        setTimeout(() => {
+          this.mensajePedido = '';
+          this.tipoMensajePedido = '';
+        }, 5000);
+      },
+    });
+  }
+
+  cancelarCancelacion() {
+    this.confirmandoCancelacion = false;
   }
 
   formatearPrecio(precio: number): string {
-    return `$${precio.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `$${precio.toLocaleString('es-AR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   }
 
   getEstadoColor(estado: string): string {
     switch (estado) {
-      case 'PENDIENTE': return '#ffc107';
-      case 'ENVIADO': return '#17a2b8';
-      case 'EN_PREPARACION': return '#fd7e14';
-      case 'ENTREGADO': return '#28a745';
-      case 'CANCELADO': return '#dc3545';
-      default: return '#6c757d';
+      case 'PENDIENTE':
+        return '#ffc107';
+      case 'ENVIADO':
+        return '#17a2b8';
+      case 'EN_PREPARACION':
+        return '#fd7e14';
+      case 'ENTREGADO':
+        return '#28a745';
+      case 'CANCELADO':
+        return '#dc3545';
+      default:
+        return '#6c757d';
     }
   }
 
   formatearEstado(estado: string): string {
     switch (estado) {
-      case 'EN_PREPARACION': return 'En Preparación';
-      default: return estado.charAt(0) + estado.slice(1).toLowerCase();
+      case 'EN_PREPARACION':
+        return 'En Preparación';
+      default:
+        return estado.charAt(0) + estado.slice(1).toLowerCase();
     }
   }
 

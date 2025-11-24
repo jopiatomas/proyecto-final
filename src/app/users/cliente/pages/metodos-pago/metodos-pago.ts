@@ -21,6 +21,10 @@ export class MetodosPago implements OnInit {
   formularioTarjeta!: FormGroup;
   panelAbierto = signal(false);
   cargando = signal(false);
+  confirmandoEliminacion = signal(false);
+  idTarjetaParaEliminar = signal<number | null>(null);
+  mensajeError = '';
+  tipoMensaje: 'success' | 'error' | '' = '';
 
   ngOnInit() {
     this.inicializarFormulario();
@@ -60,11 +64,11 @@ export class MetodosPago implements OnInit {
     const mesActual = ahora.getMonth() + 1; // getMonth() retorna 0-11
     const anioActual = ahora.getFullYear();
 
-    // Fecha mínima permitida: 01/26
+    // Fecha mínima permitida: 01/28
     const mesMinimo = 1;
-    const anioMinimo = 2026;
+    const anioMinimo = 2028;
 
-    // Verificar que no sea anterior a 01/26
+    // Verificar que no sea anterior a 01/28
     if (anioNum < anioMinimo || (anioNum === anioMinimo && mesNum < mesMinimo)) {
       return { vencimientoAntiguo: true };
     }
@@ -75,6 +79,16 @@ export class MetodosPago implements OnInit {
     }
 
     return null;
+  }
+
+  formatearVencimiento(event: any) {
+    let valor = event.target.value.replace(/\D/g, ''); // Eliminar todo excepto números
+
+    if (valor.length >= 2) {
+      valor = valor.substring(0, 2) + '/' + valor.substring(2, 4);
+    }
+
+    this.formularioTarjeta.patchValue({ vencimiento: valor }, { emitEvent: false });
   }
 
   cargarTarjetas() {
@@ -105,22 +119,43 @@ export class MetodosPago implements OnInit {
   }
 
   eliminarTarjeta(id: number) {
-    if (confirm('¿Estás seguro de eliminar esta tarjeta?')) {
-      this.cargando.set(true);
-      this.clienteService.eliminarMetodoPago(id).subscribe({
-        next: () => {
-          this.cargarTarjetas();
-        },
-        error: (error) => {
-          this.cargando.set(false);
-          alert(
-            `Error al eliminar la tarjeta: ${
-              error.error?.message || error.message || 'Error desconocido'
-            }`
-          );
-        },
-      });
-    }
+    this.idTarjetaParaEliminar.set(id);
+    this.confirmandoEliminacion.set(true);
+  }
+
+  confirmarEliminacion() {
+    const id = this.idTarjetaParaEliminar();
+    if (!id) return;
+
+    this.cargando.set(true);
+    this.confirmandoEliminacion.set(false);
+    this.clienteService.eliminarMetodoPago(id).subscribe({
+      next: () => {
+        this.cargarTarjetas();
+        this.mensajeError = 'Tarjeta eliminada exitosamente';
+        this.tipoMensaje = 'success';
+        setTimeout(() => {
+          this.mensajeError = '';
+          this.tipoMensaje = '';
+        }, 5000);
+      },
+      error: (error) => {
+        this.cargando.set(false);
+        this.mensajeError = `Error al eliminar la tarjeta: ${
+          error.error?.message || error.message || 'Error desconocido'
+        }`;
+        this.tipoMensaje = 'error';
+        setTimeout(() => {
+          this.mensajeError = '';
+          this.tipoMensaje = '';
+        }, 5000);
+      },
+    });
+  }
+
+  cancelarEliminacion() {
+    this.confirmandoEliminacion.set(false);
+    this.idTarjetaParaEliminar.set(null);
   }
 
   guardarTarjeta() {

@@ -66,15 +66,7 @@ export interface RestauranteDetail {
   email: string;
   menu: ProductoResumen[];
   reseniasRestaurante: ReseniaResumen[];
-  direcciones: DireccionRestaurante[];
-}
-
-export interface DireccionRestaurante {
-  id: number;
-  direccion: string;
-  ciudad: string;
-  pais: string;
-  codigoPostal: string;
+  direcciones: DireccionDTO[];
 }
 
 export interface ProductoResumen {
@@ -109,27 +101,13 @@ export interface ReseniaDetail {
   puntuacion: number;
 }
 
-// Interfaces para pedidos (mapeando DTOs del backend)
-export interface PedidoCreateDTO {
-  restauranteId: number;
-  direccionId: number;
-  direccionRestauranteId: number;
-  pagoId: number;
-  detalles: DetallePedidoDTO[];
-}
-
-// Interfaces adicionales para pedidos (nuevas)
+// Interfaces para pedidos
 export interface PedidoCreate {
   restauranteId: number;
   direccionId: number;
   direccionRestauranteId: number;
   pagoId: number;
-  detalles: DetallePedido[];
-}
-
-export interface DetallePedido {
-  productoId: number;
-  cantidad: number;
+  detalles: DetallePedidoDTO[];
 }
 
 export interface PedidoDetail {
@@ -138,7 +116,7 @@ export interface PedidoDetail {
   estado: string;
   total: number;
   fecha: string;
-  detalles: DetallePedido[];
+  detalles: DetallePedidoDTO[];
 }
 
 export interface DetallePedidoDTO {

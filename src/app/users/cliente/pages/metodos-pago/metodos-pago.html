@@ -4,6 +4,18 @@
   <div class="container">
     <h2>Gestión de Métodos de Pago</h2>
 
+    <!-- Mensaje de éxito o error -->
+    @if (mensajeError && tipoMensaje) {
+    <div
+      class="alert-message"
+      [class.alert-success]="tipoMensaje === 'success'"
+      [class.alert-error]="tipoMensaje === 'error'"
+    >
+      <span class="alert-icon">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
+      <span class="alert-text">{{ mensajeError }}</span>
+    </div>
+    }
+
     <div class="tarjetas-section">
       <div class="tarjetas-main">
         <div class="actions-bar">
@@ -69,6 +81,8 @@
                 formControlName="numero"
                 placeholder="1234567890123456"
                 maxlength="16"
+                pattern="[0-9]*"
+                inputmode="numeric"
               />
               @if (formularioTarjeta.get('numero')?.invalid &&
               formularioTarjeta.get('numero')?.touched) {
@@ -98,18 +112,18 @@
                   type="text"
                   id="vencimiento"
                   formControlName="vencimiento"
-                  placeholder="12/25"
+                  placeholder="01/28"
                   maxlength="5"
+                  pattern="[0-9/]*"
+                  (input)="formatearVencimiento($event)"
                 />
                 @if (formularioTarjeta.get('vencimiento')?.hasError('pattern') &&
                 formularioTarjeta.get('vencimiento')?.touched) {
                 <small class="error">Formato: MM/YY</small>
-                }
-                @if (formularioTarjeta.get('vencimiento')?.hasError('vencimientoAntiguo') &&
+                } @if (formularioTarjeta.get('vencimiento')?.hasError('vencimientoAntiguo') &&
                 formularioTarjeta.get('vencimiento')?.touched) {
-                <small class="error">La tarjeta debe vencer a partir de 01/26</small>
-                }
-                @if (formularioTarjeta.get('vencimiento')?.hasError('vencida') &&
+                <small class="error">La tarjeta debe vencer a partir de 01/28</small>
+                } @if (formularioTarjeta.get('vencimiento')?.hasError('vencida') &&
                 formularioTarjeta.get('vencimiento')?.touched) {
                 <small class="error">La tarjeta está vencida</small>
                 }
@@ -117,7 +131,15 @@
 
               <div class="form-group">
                 <label for="cvv">CVV *</label>
-                <input type="text" id="cvv" formControlName="cvv" placeholder="123" maxlength="3" />
+                <input
+                  type="text"
+                  id="cvv"
+                  formControlName="cvv"
+                  placeholder="123"
+                  maxlength="3"
+                  pattern="[0-9]*"
+                  inputmode="numeric"
+                />
                 @if (formularioTarjeta.get('cvv')?.invalid && formularioTarjeta.get('cvv')?.touched)
                 {
                 <small class="error">3 dígitos</small>
@@ -142,5 +164,25 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de confirmación -->
+@if (confirmandoEliminacion()) {
+<div class="modal-overlay" (click)="cancelarEliminacion()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Confirmar eliminación</h3>
+      <button class="close-btn" (click)="cancelarEliminacion()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas eliminar esta tarjeta?</p>
+      <p class="modal-warning">Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirmar" (click)="confirmarEliminacion()">Eliminar</button>
+      <button class="btn-cancelar-modal" (click)="cancelarEliminacion()">Cancelar</button>
+    </div>
+  </div>
+</div>
+}
 
 <app-footer-cliente></app-footer-cliente>

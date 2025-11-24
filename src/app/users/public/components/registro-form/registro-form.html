@@ -1,146 +1,109 @@
 <div class="registro-box">
+  <h2>Crear cuenta</h2>
 
-    <h2>Crear cuenta</h2>
+  @if (errorMessage()) {
+  <div class="alert-error">{{ errorMessage() }}</div>
+  } @if (successMessage()) {
+  <div class="alert-success">{{ successMessage() }}</div>
+  }
 
-    @if (errorMessage()) {
-      <div class="alert-error">{{ errorMessage() }}</div>
-    }
-
-    @if (successMessage()) {
-      <div class="alert-success">{{ successMessage() }}</div>
-    }
-    
-    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="nombre">Nombre</label>
-        <input 
-          type="text" 
-          id="nombre" 
-          class="form-input"
-          formControlName="nombre"
-          [placeholder]="registroForm.get('rol')?.value === 'RESTAURANTE' ? 'Nombre del restaurante' : 'Nombre y apellido'"
-          maxlength="25"
-        >
-        @if (registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched) {
-          <div class="form-error">
-            @if (registroForm.get('nombre')?.errors?.['required']) {
-              El nombre es requerido
-            }
-            @if (registroForm.get('nombre')?.errors?.['minlength']) {
-              Mínimo 3 caracteres
-            }
-            @if (registroForm.get('nombre')?.errors?.['maxlength']) {
-              Máximo 25 caracteres
-            }
-          </div>
-        }
+  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="nombre">Nombre</label>
+      <input
+        type="text"
+        id="nombre"
+        class="form-input"
+        formControlName="nombre"
+        [placeholder]="
+          registroForm.get('rol')?.value === 'RESTAURANTE'
+            ? 'Nombre del restaurante'
+            : 'Nombre y apellido'
+        "
+        maxlength="30"
+      />
+      @if (registroForm.get('nombre')?.invalid && registroForm.get('nombre')?.touched) {
+      <div class="form-error">
+        @if (registroForm.get('nombre')?.errors?.['required']) { El nombre es requerido } @if
+        (registroForm.get('nombre')?.errors?.['minlength']) { Mínimo 3 caracteres } @if
+        (registroForm.get('nombre')?.errors?.['maxlength']) { Máximo 30 caracteres }
       </div>
-
-      <div class="form-group">
-        <label for="usuario">Usuario</label>
-        <input 
-          type="text" 
-          id="usuario" 
-          class="form-input"
-          formControlName="usuario"
-          placeholder="Usuario"
-          maxlength="18"
-        >
-        @if (registroForm.get('usuario')?.invalid && registroForm.get('usuario')?.touched) {
-          <div class="form-error">
-            @if (registroForm.get('usuario')?.errors?.['required']) {
-              El usuario es requerido
-            }
-            @if (registroForm.get('usuario')?.errors?.['minlength']) {
-              Mínimo 3 caracteres
-            }
-            @if (registroForm.get('usuario')?.errors?.['maxlength']) {
-              Máximo 18 caracteres
-            }
-            @if (registroForm.get('usuario')?.errors?.['pattern']) {
-              Solo letras y números
-            }
-          </div>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input 
-          type="email" 
-          id="email" 
-          class="form-input"
-          formControlName="email"
-          placeholder="tu@email.com"
-          maxlength="100"
-        >
-        @if (registroForm.get('email')?.invalid && registroForm.get('email')?.touched) {
-          <div class="form-error">
-            @if (registroForm.get('email')?.errors?.['required']) {
-              El email es requerido
-            }
-            @if (registroForm.get('email')?.errors?.['email']) {
-              Formato de email inválido
-            }
-            @if (registroForm.get('email')?.errors?.['maxlength']) {
-              Máximo 100 caracteres
-            }
-          </div>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="contrasenia">Contraseña</label>
-        <input 
-          type="password" 
-          id="contrasenia" 
-          class="form-input"
-          formControlName="contrasenia"
-          placeholder="6-100 caracteres"
-          maxlength="100"
-        >
-        @if (registroForm.get('contrasenia')?.invalid && registroForm.get('contrasenia')?.touched) {
-          <div class="form-error">
-            @if (registroForm.get('contrasenia')?.errors?.['required']) {
-              La contraseña es requerida
-            }
-            @if (registroForm.get('contrasenia')?.errors?.['minlength']) {
-              Mínimo 6 caracteres
-            }
-            @if (registroForm.get('contrasenia')?.errors?.['maxlength']) {
-              Máximo 100 caracteres
-            }
-            @if (registroForm.get('contrasenia')?.errors?.['pattern']) {
-              Solo letras, números, _ o .
-            }
-          </div>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="rol">Tipo de cuenta</label>
-        <select id="rol" class="form-input" formControlName="rol">
-          <option value="CLIENTE">Cliente</option>
-          <option value="RESTAURANTE">Restaurante</option>
-        </select>
-      </div>
-
-      <button 
-        type="submit" 
-        class="btn btn-primary"
-        [disabled]="registroForm.invalid || loading()"
-      >
-        @if (loading()) {
-          <span class="loading"></span>
-          Registrando...
-        } @else {
-          Registrarse
-        }
-      </button>
-    </form>
-
-    <div class="signup-link">
-      ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+      }
     </div>
 
+    <div class="form-group">
+      <label for="usuario">Usuario</label>
+      <input
+        type="text"
+        id="usuario"
+        class="form-input"
+        formControlName="usuario"
+        placeholder="Usuario"
+        maxlength="18"
+      />
+      @if (registroForm.get('usuario')?.invalid && registroForm.get('usuario')?.touched) {
+      <div class="form-error">
+        @if (registroForm.get('usuario')?.errors?.['required']) { El usuario es requerido } @if
+        (registroForm.get('usuario')?.errors?.['minlength']) { Mínimo 3 caracteres } @if
+        (registroForm.get('usuario')?.errors?.['maxlength']) { Máximo 18 caracteres } @if
+        (registroForm.get('usuario')?.errors?.['pattern']) { Solo letras y números }
+      </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        class="form-input"
+        formControlName="email"
+        placeholder="tu@email.com"
+        maxlength="100"
+      />
+      @if (registroForm.get('email')?.invalid && registroForm.get('email')?.touched) {
+      <div class="form-error">
+        @if (registroForm.get('email')?.errors?.['required']) { El email es requerido } @if
+        (registroForm.get('email')?.errors?.['email']) { Formato de email inválido } @if
+        (registroForm.get('email')?.errors?.['maxlength']) { Máximo 100 caracteres }
+      </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="contrasenia">Contraseña</label>
+      <input
+        type="password"
+        id="contrasenia"
+        class="form-input"
+        formControlName="contrasenia"
+        placeholder="6-100 caracteres"
+        maxlength="100"
+      />
+      @if (registroForm.get('contrasenia')?.invalid && registroForm.get('contrasenia')?.touched) {
+      <div class="form-error">
+        @if (registroForm.get('contrasenia')?.errors?.['required']) { La contraseña es requerida }
+        @if (registroForm.get('contrasenia')?.errors?.['minlength']) { Mínimo 6 caracteres } @if
+        (registroForm.get('contrasenia')?.errors?.['maxlength']) { Máximo 100 caracteres } @if
+        (registroForm.get('contrasenia')?.errors?.['pattern']) { Solo letras, números, _ o . }
+      </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="rol">Tipo de cuenta</label>
+      <select id="rol" class="form-input" formControlName="rol">
+        <option value="CLIENTE">Cliente</option>
+        <option value="RESTAURANTE">Restaurante</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="registroForm.invalid || loading()">
+      @if (loading()) {
+      <span class="loading"></span>
+      Registrando... } @else { Registrarse }
+    </button>
+  </form>
+
+  <div class="signup-link">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></div>
 </div>

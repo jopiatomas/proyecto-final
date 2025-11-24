@@ -8,6 +8,18 @@
       <p>Cargando información del restaurante...</p>
     </div>
     } @else if (restaurante) {
+    <!-- Mensaje de éxito o error -->
+    @if (mensajePedido && tipoMensajePedido) {
+    <div
+      class="alert-message"
+      [class.alert-success]="tipoMensajePedido === 'success'"
+      [class.alert-error]="tipoMensajePedido === 'error'"
+    >
+      <span class="alert-icon">{{ tipoMensajePedido === 'success' ? '✓' : '⚠' }}</span>
+      <span class="alert-text">{{ mensajePedido }}</span>
+    </div>
+    }
+
     <!-- Header del Restaurante -->
     <section class="restaurant-header">
       <h2>{{ restaurante.nombre }}</h2>
@@ -124,6 +136,7 @@
               formControlName="resenia"
               placeholder="Cuéntanos sobre tu experiencia..."
               rows="4"
+              maxlength="500"
             >
             </textarea>
             @if (reseniaForm.get('resenia')?.touched && reseniaForm.get('resenia')?.errors) {
@@ -237,6 +250,14 @@
         <button class="close-modal-btn" (click)="cerrarModalPedido()">×</button>
       </div>
 
+      <!-- Mensaje de error en modal -->
+      @if (mensajePedido && tipoMensajePedido === 'error') {
+      <div class="alert-message alert-error" style="margin: 1rem 1.5rem 0">
+        <span class="alert-icon">⚠</span>
+        <span class="alert-text">{{ mensajePedido }}</span>
+      </div>
+      }
+
       <div class="modal-body">
         <!-- Resumen del Pedido -->
         <div class="order-summary">
@@ -269,6 +290,19 @@
           </select>
         </div>
 
+        <!-- Selección de Sucursal del Restaurante -->
+        <div class="form-section">
+          <label for="sucursal">Sucursal del Restaurante:</label>
+          <select id="sucursal" [(ngModel)]="direccionRestauranteSeleccionada" class="form-select">
+            <option value="">Selecciona una sucursal</option>
+            @for (sucursal of restaurante?.direcciones; track sucursal.id) {
+            <option [value]="sucursal.id">
+              {{ sucursal.direccion }}, {{ sucursal.ciudad }}, {{ sucursal.pais }}
+            </option>
+            }
+          </select>
+        </div>
+
         <!-- Selección de Método de Pago -->
         <div class="form-section">
           <label for="metodoPago">Método de Pago:</label>
@@ -295,5 +329,61 @@
   </div>
   }
 </main>
+
+<!-- Modal de confirmación de reseña -->
+@if (confirmandoResenia) {
+<div class="modal-overlay" (click)="cancelarConfirmacionResenia()">
+  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Confirmar Reseña</h3>
+      <button class="close-modal-btn" (click)="cancelarConfirmacionResenia()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas enviar esta reseña?</p>
+      <p class="modal-warning">Puntuación: {{ reseniaForm.value.puntuacion }} estrellas</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirmar" (click)="enviarResenia()" [disabled]="submittingResenia">
+        @if (submittingResenia) { Enviando... } @else { Enviar }
+      </button>
+      <button
+        class="btn-cancelar-modal"
+        (click)="cancelarConfirmacionResenia()"
+        [disabled]="submittingResenia"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Modal de confirmación final -->
+@if (confirmandoPedido) {
+<div class="modal-overlay" (click)="cancelarConfirmacionPedido()">
+  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Confirmar Pedido</h3>
+      <button class="close-modal-btn" (click)="cancelarConfirmacionPedido()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas realizar este pedido?</p>
+      <p class="modal-warning">Total a pagar: {{ formatearPrecio(calcularTotalCarrito()) }}</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirmar" (click)="realizarPedido()" [disabled]="enviandoPedido">
+        @if (enviandoPedido) { Procesando... } @else { Confirmar }
+      </button>
+      <button
+        class="btn-cancelar-modal"
+        (click)="cancelarConfirmacionPedido()"
+        [disabled]="enviandoPedido"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+}
 
 <app-footer-cliente></app-footer-cliente>

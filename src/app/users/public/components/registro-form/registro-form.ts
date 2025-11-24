@@ -10,41 +10,34 @@ import { AuthService } from '../../../../core/services/auth-service';
   styleUrl: './registro-form.css',
 })
 export class RegistroForm {
-
   registroForm: FormGroup;
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private authService: AuthService
-  ) {
+  constructor(private fb: FormBuilder, private router: Router, private authService: AuthService) {
     this.registroForm = this.fb.group({
-      nombre: ['', [
-        Validators.required, 
-        Validators.minLength(3),
-        Validators.maxLength(25)
-      ]],
-      usuario: ['', [
-        Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(18),
-        Validators.pattern(/^[a-zA-Z0-9]+$/)
-      ]],
-      email: ['', [
-        Validators.required,
-        Validators.email,
-        Validators.maxLength(100)
-      ]],
-      contrasenia: ['', [
-        Validators.required, 
-        Validators.minLength(6), 
-        Validators.maxLength(100),
-        Validators.pattern(/^[a-zA-Z0-9._]+$/)
-      ]],
-      rol: ['CLIENTE', Validators.required]
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
+      usuario: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(18),
+          Validators.pattern(/^[a-zA-Z0-9]+$/),
+        ],
+      ],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      contrasenia: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(100),
+          Validators.pattern(/^[a-zA-Z0-9._]+$/),
+        ],
+      ],
+      rol: ['CLIENTE', Validators.required],
     });
   }
 
@@ -57,12 +50,12 @@ export class RegistroForm {
       // Preparar datos según el rol seleccionado
       const rol = this.registroForm.value.rol;
       const nombreIngresado = this.registroForm.value.nombre;
-      
+
       const registerData: any = {
         usuario: this.registroForm.value.usuario,
         contrasenia: this.registroForm.value.contrasenia,
         email: this.registroForm.value.email,
-        rol: rol
+        rol: rol,
       };
 
       // El backend espera campos diferentes según el rol
@@ -72,15 +65,12 @@ export class RegistroForm {
         registerData.nombreRestaurante = nombreIngresado;
       }
 
-
-
       // Llamar al servicio de autenticación
       this.authService.register(registerData).subscribe({
         next: (response) => {
           this.loading.set(false);
           this.successMessage.set('¡Registro exitoso! Redirigiendo al login...');
 
-          
           // Redirigir al login después de 1.5 segundos
           setTimeout(() => {
             this.router.navigate(['/login']);
@@ -89,10 +79,12 @@ export class RegistroForm {
         error: (error) => {
           this.loading.set(false);
           console.error('Error en registro:', error);
-          
+
           // Manejar diferentes tipos de errores
           if (error.status === 0) {
-            this.errorMessage.set('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
+            this.errorMessage.set(
+              'No se pudo conectar con el servidor. Verifica que el backend esté corriendo.'
+            );
           } else if (error.status === 400) {
             // Mostrar mensaje específico del backend si está disponible
             const mensajeBackend = error.error?.error || error.error;
@@ -102,7 +94,7 @@ export class RegistroForm {
           } else {
             this.errorMessage.set('Error al registrarse. Intenta nuevamente.');
           }
-        }
+        },
       });
     }
   }

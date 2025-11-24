@@ -23,6 +23,9 @@ export class Perfil implements OnInit {
   perfilForm!: FormGroup;
   usuario = signal<PerfilUsuario | null>(null);
   loading = signal(false);
+  mostrarModalConfirmacion = signal(false);
+  mensajeError = '';
+  tipoMensaje: 'success' | 'error' | '' = '';
 
   ngOnInit() {
     this.initForm();
@@ -31,7 +34,7 @@ export class Perfil implements OnInit {
 
   initForm() {
     this.perfilForm = this.fb.nonNullable.group({
-      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
       usuario: [
         { value: '', disabled: true },
         [
@@ -118,16 +121,25 @@ export class Perfil implements OnInit {
 
   onSubmit() {
     if (this.perfilForm.valid) {
-      const confirmacion = confirm('¿Estás seguro de que deseas actualizar tu perfil?');
-
-      if (confirmacion) {
-        this.actualizarPerfil();
-      }
+      this.mostrarModalConfirmacion.set(true);
     } else {
-      alert(
-        'Por favor, completa todos los campos correctamente. La contraseña es requerida para confirmar los cambios.'
-      );
+      this.mensajeError =
+        'Por favor, completa todos los campos correctamente. La contraseña es requerida para confirmar los cambios.';
+      this.tipoMensaje = 'error';
+      setTimeout(() => {
+        this.mensajeError = '';
+        this.tipoMensaje = '';
+      }, 5000);
     }
+  }
+
+  confirmarActualizacion() {
+    this.mostrarModalConfirmacion.set(false);
+    this.actualizarPerfil();
+  }
+
+  cancelarActualizacion() {
+    this.mostrarModalConfirmacion.set(false);
   }
 
   actualizarPerfil() {

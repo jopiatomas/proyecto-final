@@ -12,8 +12,9 @@ import { AuthService } from '../../../../core/services/auth-service';
 export class Header {
   private authService = inject(AuthService);
   private router = inject(Router);
-  
+
   dropdownOpen = signal<boolean>(false);
+  confirmandoCerrarSesion = false;
 
   toggleDropdown(): void {
     this.dropdownOpen.set(!this.dropdownOpen());
@@ -28,6 +29,15 @@ export class Header {
   }
 
   cerrarSesion(): void {
+    this.dropdownOpen.set(false);
+    this.confirmandoCerrarSesion = true;
+  }
+
+  confirmarCerrarSesion(): void {
     this.authService.logout();
+  }
+
+  cancelarCerrarSesion(): void {
+    this.confirmandoCerrarSesion = false;
   }
 }
