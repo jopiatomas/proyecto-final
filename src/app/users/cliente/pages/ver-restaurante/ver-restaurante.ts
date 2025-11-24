@@ -8,6 +8,7 @@ import { FooterCliente } from '../../components/footer/footer';
 import { DetallePedido, DireccionDTO, PedidoCreate, ProductoResumen, ReseniaCreate, ReseniaResumen, RestauranteDetail, Tarjeta } from '../../../../core/models/app.models';
 import { ClienteService } from '../../../../core/services/cliente.service';
 import { AuthService } from '../../../../core/services/auth-service';
+import { isRestauranteAbierto, formatearHorario } from '../../../../core/utils/horario.utils';
 
 
 // Interface para items del carrito
@@ -221,6 +222,12 @@ export class VerRestaurante implements OnInit {
 
   // Métodos del carrito
   agregarAlCarrito(producto: ProductoResumen) {
+    // Validar que el restaurante esté abierto
+    if (!this.isRestauranteAbierto()) {
+      alert('El restaurante está cerrado en este momento. No se pueden agregar productos al carrito.');
+      return;
+    }
+
     // Validar stock antes de agregar
     if (!producto.stock || producto.stock === 0) {
       alert('Este producto no tiene stock disponible');
@@ -281,9 +288,24 @@ export class VerRestaurante implements OnInit {
     this.carrito = [];
   }
 
+  isRestauranteAbierto(): boolean {
+    if (!this.restaurante) return true;
+    return isRestauranteAbierto(this.restaurante.horaApertura, this.restaurante.horaCierre);
+  }
+
+  formatearHorario(horario?: string): string {
+    return formatearHorario(horario);
+  }
+
   procesarPedido() {
     if (this.carrito.length === 0) {
       alert('El carrito está vacío');
+      return;
+    }
+
+    // Verificar si el restaurante está abierto
+    if (!this.isRestauranteAbierto()) {
+      alert('El restaurante está cerrado en este momento. No se pueden realizar pedidos.');
       return;
     }
 

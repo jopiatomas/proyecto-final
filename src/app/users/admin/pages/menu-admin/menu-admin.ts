@@ -1,10 +1,11 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
+import { AdminClienteService, ClienteDTO, ClienteModificarDTO } from '../../../../core/services/admin-cliente.service';
 import { AdminRestauranteService, RestauranteAdminDTO, RestauranteModificarDTO, ReseniaAdminDTO } from '../../../../core/services/admin-restaurante.service';
 import { FooterAdmin } from "../../components/footer/footer";
-import { AdminClienteService, ClienteDTO, ClienteModificarDTO } from '../../../../core/services/admin-cliente.service';
+import { RestaurantePendienteDTO, RechazarRestauranteDTO } from '../../../../core/models/app.models';
 
 
 
@@ -15,7 +16,9 @@ import { AdminClienteService, ClienteDTO, ClienteModificarDTO } from '../../../.
   styleUrl: './menu-admin.css',
 })
 export class MenuAdmin implements OnInit {
-  activeView = signal<'welcome' | 'clientes' | 'restaurantes'>('welcome');
+  @ViewChild(Header) header!: Header;
+
+  activeView = signal<'welcome' | 'clientes' | 'restaurantes' | 'peticiones'>('welcome');
 
   // Clientes
   clientes = signal<ClienteDTO[]>([]);
@@ -33,6 +36,16 @@ export class MenuAdmin implements OnInit {
   resenias = signal<ReseniaAdminDTO[]>([]);
   showResenias = signal<boolean>(false);
 
+  // Pendientes
+  restaurantesPendientes = signal<RestaurantePendienteDTO[]>([]);
+  selectedPendiente = signal<RestaurantePendienteDTO | null>(null);
+  showModalRechazo = signal<boolean>(false);
+  motivoRechazo = signal<string>('');
+  countPendientes = signal<number>(0);
+  // Rechazados
+  restaurantesRechazados = signal<RestaurantePendienteDTO[]>([]);
+  selectedRechazado = signal<RestaurantePendienteDTO | null>(null);
+
   // Estado
   loading = signal<boolean>(false);
   error = signal<string>('');
@@ -45,9 +58,10 @@ export class MenuAdmin implements OnInit {
 
   ngOnInit(): void {
     // Iniciar en vista de bienvenida
+    this.cargarContadorPendientes();
   }
 
-  onTabSelected(tab: 'welcome' | 'clientes' | 'restaurantes'): void {
+  onTabSelected(tab: 'welcome' | 'clientes' | 'restaurantes' | 'peticiones'): void {
     this.activeView.set(tab);
     this.clearSelection();
 
@@ -55,6 +69,9 @@ export class MenuAdmin implements OnInit {
       this.cargarClientes();
     } else if (tab === 'restaurantes') {
       this.cargarRestaurantes();
+    } else if (tab === 'peticiones') {
+      this.cargarPendientes();
+      this.cargarRechazados();
     } else if (tab === 'welcome') {
       // Solo mostrar pantalla inicial
     }
@@ -108,7 +125,7 @@ export class MenuAdmin implements OnInit {
 
     this.loading.set(true);
     this.error.set('');
-    
+
     this.clienteService.modificarCliente(cliente.id, data).subscribe({
       next: (clienteActualizado: ClienteDTO) => {
         this.success.set('Cliente actualizado correctamente');
@@ -288,11 +305,136 @@ export class MenuAdmin implements OnInit {
     }
   }
 
+  // ===== PENDIENTES =====
+
+  cargarContadorPendientes(): void {
+    this.restauranteService.countPendientes().subscribe({
+      next: (count: number) => {
+        this.countPendientes.set(count);
+      },
+      error: () => {
+        // Silencioso, el contador simplemente no se muestra
+      }
+    });
+  }
+
+  cargarPendientes(): void {
+    this.loading.set(true);
+    this.error.set('');
+
+    this.restauranteService.getPendientes().subscribe({
+      next: (data: RestaurantePendienteDTO[]) => {
+        this.restaurantesPendientes.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Error al cargar restaurantes pendientes');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  selectPendiente(pendiente: RestaurantePendienteDTO): void {
+    this.selectedPendiente.set(pendiente);
+    this.selectedRechazado.set(null);
+  }
+
+  cargarRechazados(): void {
+    this.loading.set(true);
+    this.error.set('');
+
+    this.restauranteService.getRechazados().subscribe({
+      next: (data: RestaurantePendienteDTO[]) => {
+        this.restaurantesRechazados.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Error al cargar restaurantes rechazados');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  selectRechazado(item: RestaurantePendienteDTO): void {
+    this.selectedRechazado.set(item);
+    this.selectedPendiente.set(null);
+  }
+
+  aprobarRestaurante(): void {
+    const pendiente = this.selectedPendiente();
+    if (!pendiente) return;
+
+    if (confirm(`¿Aprobar restaurante "${pendiente.nombre}"?`)) {
+      this.loading.set(true);
+      this.restauranteService.aprobarRestaurante(pendiente.id).subscribe({
+        next: (mensaje: string) => {
+          this.success.set(mensaje || 'Restaurante aprobado correctamente');
+          this.cargarPendientes();
+          this.cargarRechazados();
+          this.cargarContadorPendientes();
+          this.selectedPendiente.set(null);
+          this.loading.set(false);
+          setTimeout(() => this.success.set(''), 3000);
+        },
+        error: () => {
+          this.error.set('Error al aprobar restaurante');
+          this.loading.set(false);
+        }
+      });
+    }
+  }
+
+  abrirModalRechazo(): void {
+    this.motivoRechazo.set('');
+    this.showModalRechazo.set(true);
+  }
+
+  cerrarModalRechazo(): void {
+    this.showModalRechazo.set(false);
+    this.motivoRechazo.set('');
+  }
+
+  confirmarRechazo(): void {
+    const pendiente = this.selectedPendiente();
+    const motivo = this.motivoRechazo().trim();
+
+    if (!pendiente) return;
+
+    if (!motivo) {
+      this.error.set('Debes especificar un motivo de rechazo');
+      return;
+    }
+
+    const data: RechazarRestauranteDTO = { motivoRechazo: motivo };
+
+    this.loading.set(true);
+    this.showModalRechazo.set(false);
+
+    this.restauranteService.rechazarRestaurante(pendiente.id, data).subscribe({
+      next: (mensaje: string) => {
+        this.success.set(mensaje || 'Restaurante rechazado');
+        this.cargarPendientes();
+        this.cargarRechazados();
+        this.cargarContadorPendientes();
+        this.selectedPendiente.set(null);
+        this.motivoRechazo.set('');
+        this.loading.set(false);
+        setTimeout(() => this.success.set(''), 3000);
+      },
+      error: () => {
+        this.error.set('Error al rechazar restaurante');
+        this.loading.set(false);
+      }
+    });
+  }
+
   // ===== UTILIDADES =====
 
   clearSelection(): void {
     this.selectedCliente.set(null);
     this.selectedRestaurante.set(null);
+    this.selectedPendiente.set(null);
+    this.selectedRechazado.set(null);
     this.editingCliente.set(false);
     this.editingRestaurante.set(false);
     this.showResenias.set(false);

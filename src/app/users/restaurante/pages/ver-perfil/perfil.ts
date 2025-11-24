@@ -21,7 +21,7 @@ export class Perfil implements OnInit {
   private router = inject(Router);
   public authService = inject(AuthService);
   private restauranteService = inject(RestauranteService);
-  
+
   perfilForm!: FormGroup;
   usuario = signal<PerfilUsuario | null>(null);
   loading = signal(false);
@@ -34,20 +34,28 @@ export class Perfil implements OnInit {
   initForm() {
     this.perfilForm = this.fb.nonNullable.group({
       nombre: ['', [
-        Validators.required, 
-        Validators.minLength(3), 
+        Validators.required,
+        Validators.minLength(3),
         Validators.maxLength(50)
       ]],
       usuario: [{value: '', disabled: true}, [
-        Validators.required, 
-        Validators.minLength(3), 
+        Validators.required,
+        Validators.minLength(3),
         Validators.maxLength(18),
         Validators.pattern(/^[a-zA-Z0-9]+$/)
       ]],
       email: ['', [
-        Validators.required, 
+        Validators.required,
         Validators.email,
         Validators.maxLength(100)
+      ]],
+      horaApertura: ['', [
+        Validators.required,
+        Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
+      ]],
+      horaCierre: ['', [
+        Validators.required,
+        Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
       ]],
       contrasenia: ['', [
         Validators.required,
@@ -82,13 +90,15 @@ export class Perfil implements OnInit {
   }
 
   this.restauranteService.obtenerPerfil().subscribe({
-    next: (datosUsuario) => {
+    next: (datosUsuario: any) => {
       this.usuario.set(datosUsuario);
 
       this.perfilForm.patchValue({
         nombre: datosUsuario.nombreYapellido,
         usuario: datosUsuario.usuario,
-        email: datosUsuario.email
+        email: datosUsuario.email,
+        horaApertura: datosUsuario.horaApertura || '',
+        horaCierre: datosUsuario.horaCierre || ''
       });
 
 
@@ -126,7 +136,7 @@ export class Perfil implements OnInit {
   alEnviar() {
     if (this.perfilForm.valid) {
       const confirmacion = confirm('¿Estás seguro de que deseas actualizar tu perfil?');
-      
+
       if (confirmacion) {
         this.actualizarPerfil();
       }
@@ -140,11 +150,15 @@ export class Perfil implements OnInit {
   const datosActualizados = {
   nombreRestaurante: this.perfilForm.value.nombre,
   email: this.perfilForm.value.email,
+  horaApertura: this.perfilForm.value.horaApertura,
+  horaCierre: this.perfilForm.value.horaCierre,
   contraseniaActual: this.perfilForm.value.contrasenia
 };
 
-  alert('Enviando al backend:\n\n' + JSON.stringify(datosActualizados, null, 2));
-    
+  console.log('Datos a enviar:', datosActualizados);
+  console.log('Hora apertura:', this.perfilForm.value.horaApertura);
+  console.log('Hora cierre:', this.perfilForm.value.horaCierre);
+
   this.restauranteService.actualizarPerfil(datosActualizados as ActualizarPerfilRestauranteRequest).subscribe({
     next: (mensaje: string) => {
       this.loading.set(false);
@@ -153,7 +167,7 @@ export class Perfil implements OnInit {
     },
     error: (error: any) => {
       this.loading.set(false);
-      
+
       let mensaje = 'Error al actualizar el perfil.';
       if (error.error && error.error.message) {
         mensaje = error.error.message;
@@ -162,7 +176,7 @@ export class Perfil implements OnInit {
       } else if (error.status === 403) {
         mensaje = 'No tienes permisos para actualizar este perfil.';
       }
-      
+
       alert(mensaje + ' Inténtalo de nuevo.');
     }
   });

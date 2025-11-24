@@ -15,13 +15,13 @@
       <div class="perfil-content">
         <form class="perfil-form" [formGroup]="perfilForm" (ngSubmit)="alEnviar()">
           <h3>Información del Restaurante</h3>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label>Nombre del Restaurante *</label>
-              <input 
-                type="text" 
-                formControlName="nombre" 
+              <input
+                type="text"
+                formControlName="nombre"
                 class="form-input"
                 placeholder="Ingresa el nombre del restaurante"
               />
@@ -32,9 +32,9 @@
 
             <div class="form-group">
               <label>Usuario *</label>
-              <input 
-                type="text" 
-                formControlName="usuario" 
+              <input
+                type="text"
+                formControlName="usuario"
                 class="form-input"
                 placeholder="Nombre de usuario"
               />
@@ -46,9 +46,9 @@
 
           <div class="form-group">
             <label>Email *</label>
-            <input 
-              type="email" 
-              formControlName="email" 
+            <input
+              type="email"
+              formControlName="email"
               class="form-input"
               placeholder="tu@email.com"
             />
@@ -57,11 +57,41 @@
             }
           </div>
 
+          <h3>Horarios de Atención</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Hora de Apertura *</label>
+              <input
+                type="time"
+                formControlName="horaApertura"
+                class="form-input"
+                placeholder="09:00"
+              />
+              @if (perfilForm.get('horaApertura')?.invalid && perfilForm.get('horaApertura')?.touched) {
+                <small style="color: red;">Hora de apertura requerida (formato HH:mm)</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Hora de Cierre *</label>
+              <input
+                type="time"
+                formControlName="horaCierre"
+                class="form-input"
+                placeholder="22:00"
+              />
+              @if (perfilForm.get('horaCierre')?.invalid && perfilForm.get('horaCierre')?.touched) {
+                <small style="color: red;">Hora de cierre requerida (formato HH:mm)</small>
+              }
+            </div>
+          </div>
+
           <div class="form-group">
             <label>Contraseña Actual *</label>
-            <input 
-              type="password" 
-              formControlName="contrasenia" 
+            <input
+              type="password"
+              formControlName="contrasenia"
               class="form-input"
               placeholder="Ingresa tu contraseña actual para verificar identidad"
             />
@@ -71,8 +101,8 @@
           </div>
 
           <div class="form-actions">
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               class="btn-primary"
               [disabled]="loading()"
             >

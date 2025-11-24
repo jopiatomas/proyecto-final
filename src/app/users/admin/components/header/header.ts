@@ -14,17 +14,22 @@ export class Header {
   private router = inject(Router);
 
   dropdownOpen = signal<boolean>(false);
-  activeTab = signal<'welcome' | 'clientes' | 'restaurantes' | null>(null);
+  activeTab = signal<'welcome' | 'clientes' | 'restaurantes' | 'peticiones' | null>(null);
+  countPendientes = signal<number>(0);
 
-  @Output() tabSelected = new EventEmitter<'welcome' | 'clientes' | 'restaurantes'>();
+  @Output() tabSelected = new EventEmitter<'welcome' | 'clientes' | 'restaurantes' | 'peticiones'>();
 
   toggleDropdown(): void {
     this.dropdownOpen.set(!this.dropdownOpen());
   }
 
-  selectTab(tab: 'welcome' | 'clientes' | 'restaurantes'): void {
+  selectTab(tab: 'welcome' | 'clientes' | 'restaurantes' | 'peticiones'): void {
     this.activeTab.set(tab);
     this.tabSelected.emit(tab);
+  }
+
+  setCountPendientes(count: number): void {
+    this.countPendientes.set(count);
   }
 
   goHome(event?: Event): void {

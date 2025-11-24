@@ -1,0 +1,78 @@
+<app-header></app-header>
+
+<div class="estado-container">
+	<div class="estado-card">
+		@if (loading()) {
+			<div class="loading">
+				<div class="spinner"></div>
+				<p>Cargando estado...</p>
+			</div>
+		}
+
+		@if (error() && !loading()) {
+			<div class="error-message">
+				<span class="error-icon">⚠️</span>
+				<p>{{ error() }}</p>
+				<button class="btn-retry" (click)="cargarEstado()">Reintentar</button>
+			</div>
+		}
+
+		@if (estado() && !loading() && !error()) {
+			<div class="estado-content">
+				<div class="estado-header" [ngClass]="getEstadoClass()">
+					<span class="estado-icon">{{ getEstadoIcon() }}</span>
+					<h1>{{ getEstadoTexto() }}</h1>
+				</div>
+
+				<div class="estado-body">
+					<p class="estado-descripcion">{{ getEstadoDescripcion() }}</p>
+
+					<div class="estado-detalles">
+						@if (estado()!.fechaRegistro) {
+							<div class="detalle-item">
+								<label>Fecha de Registro:</label>
+								<span>{{ estado()!.fechaRegistro | date: 'medium' }}</span>
+							</div>
+						}
+
+						@if (estado()!.estado === 'APROBADO' && estado()!.fechaAprobacion) {
+							<div class="detalle-item">
+								<label>Fecha de Aprobación:</label>
+								<span>{{ estado()!.fechaAprobacion | date: 'medium' }}</span>
+							</div>
+						}
+
+						@if (estado()!.estado === 'RECHAZADO' && estado()!.motivoRechazo) {
+							<div class="detalle-item rechazo">
+								<label>Motivo del Rechazo:</label>
+								<div class="motivo-box">
+									<p>{{ estado()!.motivoRechazo }}</p>
+								</div>
+							</div>
+						}
+					</div>
+
+					@if (estado()!.estado === 'PENDIENTE') {
+						<div class="info-adicional">
+							<p>⏱️ Tu solicitud está en proceso de revisión. Recibirás una notificación cuando el administrador tome una decisión.</p>
+						</div>
+					}
+
+					@if (estado()!.estado === 'APROBADO') {
+						<div class="info-adicional aprobado">
+							<p>🎉 ¡Felicitaciones! Ya puedes gestionar tu menú y recibir pedidos.</p>
+						</div>
+					}
+
+					@if (estado()!.estado === 'RECHAZADO') {
+						<div class="info-adicional rechazado">
+							<p>📧 Si tienes dudas sobre el rechazo, por favor contacta al soporte.</p>
+						</div>
+					}
+				</div>
+			</div>
+		}
+	</div>
+</div>
+
+<app-footer></app-footer>

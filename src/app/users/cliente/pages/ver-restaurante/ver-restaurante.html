@@ -25,7 +25,26 @@
     
     <!-- Header del Restaurante -->
     <section class="restaurant-header">
-      <h2>{{ restaurante.nombre }}</h2>
+      <div class="header-content">
+        <h2>{{ restaurante.nombre }}</h2>
+        <div class="status-badges">
+          @if (isRestauranteAbierto()) {
+            <span class="badge badge-abierto">🟢 ABIERTO</span>
+          } @else {
+            <span class="badge badge-cerrado">🔴 CERRADO</span>
+          }
+        </div>
+      </div>
+
+      @if (restaurante.horaApertura && restaurante.horaCierre) {
+        <div class="horario-info">
+          <span class="horario-label">⏰ Horario:</span>
+          <span class="horario-text">
+            {{ formatearHorario(restaurante.horaApertura) }} - {{ formatearHorario(restaurante.horaCierre) }}
+          </span>
+        </div>
+      }
+
       @if (resenias.length > 0) {
       <div class="rating-info">
         <span class="stars">
@@ -39,8 +58,14 @@
         </span>
       </div>
       }
+
+      @if (!isRestauranteAbierto()) {
+        <div class="alert-cerrado">
+          <p>⚠️ El restaurante está cerrado en este momento. No es posible realizar pedidos.</p>
+        </div>
+      }
     </section>
-    
+
 
     <!-- Menú del Restaurante -->
     <section class="menu-section">
@@ -72,8 +97,9 @@
               class="add-btn"
               type="button"
               (click)="agregarAlCarrito(producto)"
-              [disabled]="!tieneStock(producto)"
-              [class.disabled]="!tieneStock(producto)"
+              [disabled]="!tieneStock(producto) || !isRestauranteAbierto()"
+              [class.disabled]="!tieneStock(producto) || !isRestauranteAbierto()"
+              [attr.title]="!isRestauranteAbierto() ? 'Restaurante cerrado' : (!tieneStock(producto) ? 'Sin stock' : 'Agregar al carrito')"
             >
               <span>+</span>
             </button>

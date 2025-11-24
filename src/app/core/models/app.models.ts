@@ -9,6 +9,8 @@ export interface RegisterRequest {
   nombre: string;
   email: string;
   rol: string;
+  horaApertura?: string; // HH:mm format for RESTAURANTE
+  horaCierre?: string;   // HH:mm format for RESTAURANTE
 }
 
 export interface AuthResponse {
@@ -43,6 +45,8 @@ export interface ActualizarPerfilRequest {
 export interface ActualizarPerfilRestauranteRequest {
   nombreRestaurante: string;
   email: string;
+  horaApertura?: string;
+  horaCierre?: string;
   contraseniaActual: string;
 }
 
@@ -62,6 +66,8 @@ export interface RestauranteResumen {
   telefono?: string;
   email?: string;
   calificacion?: number;
+  horaApertura?: string; // HH:mm format
+  horaCierre?: string;   // HH:mm format
 }
 
 export interface RestauranteDetail {
@@ -72,6 +78,8 @@ export interface RestauranteDetail {
   menu: ProductoResumen[];
   reseniasRestaurante: ReseniaResumen[];
   direcciones: DireccionRestaurante[];
+  horaApertura?: string; // HH:mm format
+  horaCierre?: string;   // HH:mm format
 }
 
 export interface DireccionRestaurante {
@@ -198,4 +206,17 @@ export interface TarjetaRequest {
   titular: string;
   vencimiento: string; // MM/YY
   cvv: string; // 3 dígitos
+}
+
+// Interfaces para sistema de aprobación de restaurantes
+export interface RestaurantePendienteDTO {
+  id: number;
+  usuario: string;
+  nombre: string;
+  estado: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO';
+  motivoRechazo?: string;
+}
+
+export interface RechazarRestauranteDTO {
+  motivoRechazo: string;
 }

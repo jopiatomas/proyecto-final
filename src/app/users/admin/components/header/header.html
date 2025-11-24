@@ -17,6 +17,15 @@
         (click)="selectTab('restaurantes')">
         Restaurantes
       </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'peticiones'"
+        (click)="selectTab('peticiones')">
+        📝 Peticiones
+        @if (countPendientes() > 0) {
+          <span class="badge-count">{{ countPendientes() }}</span>
+        }
+      </button>
     </nav>
 
     <div class="perfil-container">
