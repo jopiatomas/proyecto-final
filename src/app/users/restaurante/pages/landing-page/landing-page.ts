@@ -1,8 +1,9 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from '../../components/header/header';
-import { RestauranteService, Pedido } from '../../../../core/services/restaurante.service';
+import { RestauranteService } from '../../../../core/services/restaurante.service';
 import { FooterRestaurante } from "../../components/footer/footer";
+import { PedidoDetailDTO } from '../../../../core/models/app.models';
 
 @Component({
   selector: 'app-landing-page',
@@ -12,8 +13,8 @@ import { FooterRestaurante } from "../../components/footer/footer";
   styleUrl: './landing-page.css',
 })
 export class LandingPage implements OnInit {
-  pedidos = signal<Pedido[]>([]);
-  pedidoSeleccionado = signal<Pedido | null>(null);
+  pedidos = signal<PedidoDetailDTO[]>([]);
+  pedidoSeleccionado = signal<PedidoDetailDTO | null>(null);
   estadoNuevo = signal<string | null>(null);
 
   constructor(private restauranteService: RestauranteService) {}
@@ -24,7 +25,7 @@ export class LandingPage implements OnInit {
 
   cargarPedidos() {
     this.restauranteService.getPedidosEnCurso().subscribe({
-      next: (pedidos: Pedido[]) => {
+      next: (pedidos: PedidoDetailDTO[]) => {
         this.pedidos.set(pedidos);
       },
       error: (error: any) => {
@@ -33,7 +34,7 @@ export class LandingPage implements OnInit {
     });
   }
 
-  verDetalle(pedido: Pedido) {
+  verDetalle(pedido: PedidoDetailDTO) {
     this.pedidoSeleccionado.set(pedido);
     this.estadoNuevo.set(null);
   }
@@ -53,7 +54,7 @@ export class LandingPage implements OnInit {
     
     if (pedido && estado) {
       this.restauranteService.cambiarEstadoPedido(pedido.id, estado).subscribe({
-        next: (pedidoActualizado: Pedido) => {
+        next: (pedidoActualizado: PedidoDetailDTO) => {
           if (estado === 'CANCELADO' || estado === 'ENTREGADO') {
             const pedidosActualizados = this.pedidos().filter(p => p.id !== pedido.id);
             this.pedidos.set(pedidosActualizados);

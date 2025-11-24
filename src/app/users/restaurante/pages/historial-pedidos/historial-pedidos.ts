@@ -13,7 +13,7 @@ import { RestauranteService, Pedido } from '../../../../core/services/restaurant
 })
 export class HistorialPedidos implements OnInit {
   private restauranteService = inject(RestauranteService);
-  
+
   pedidos = signal<Pedido[]>([]);
   pedidoSeleccionado = signal<Pedido | null>(null);
 

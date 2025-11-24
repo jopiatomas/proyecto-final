@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { ActualizarPerfilRequest, ActualizarPerfilRestauranteRequest, PerfilUsuario } from '../models/app.models';
+import { ActualizarPerfilRequest, ActualizarPerfilRestauranteRequest, PedidoDetailDTO, PerfilUsuario } from '../models/app.models';
 import { AuthService } from './auth-service';
 
 // Interfaces para Productos
@@ -172,16 +172,16 @@ export class RestauranteService {
     });
   }
 
-  getPedidosEnCurso(): Observable<Pedido[]> {
-    return this.http.get<Pedido[]>(`${this.baseUrl}/pedidos-en-curso`);
+  getPedidosEnCurso(): Observable<PedidoDetailDTO[]> {
+    return this.http.get<PedidoDetailDTO[]>(`${this.baseUrl}/pedidos-en-curso`);
   }
 
   getHistorialPedidos(): Observable<Pedido[]> {
     return this.http.get<Pedido[]>(`${this.baseUrl}/historial-pedidos`);
   }
 
-  cambiarEstadoPedido(idPedido: number, nuevoEstado: string): Observable<Pedido> {
-    return this.http.put<Pedido>(`${this.baseUrl}/pedidos/${idPedido}/estado`, { estado: nuevoEstado });
+  cambiarEstadoPedido(idPedido: number, nuevoEstado: string): Observable<PedidoDetailDTO> {
+    return this.http.put<PedidoDetailDTO>(`${this.baseUrl}/pedidos/${idPedido}/estado`, { estado: nuevoEstado });
   }
 
   getPedidosCompletos(): Observable<Pedido[]> {
