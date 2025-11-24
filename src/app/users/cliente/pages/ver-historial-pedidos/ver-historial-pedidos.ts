@@ -92,24 +92,18 @@ export class VerHistorialPedidos implements OnInit {
 
   getEstadoColor(estado: string): string {
     switch (estado) {
-      case 'PENDIENTE':
-        return '#ffc107';
-      case 'ENVIADO':
-        return '#17a2b8';
-      case 'EN_PREPARACION':
-        return '#fd7e14';
       case 'ENTREGADO':
         return '#28a745';
       case 'CANCELADO':
         return '#dc3545';
       default:
-        return '#6c757d';
+        return '#7b2cbf';
     }
   }
 
   formatearEstado(estado: string): string {
     switch (estado) {
-      case 'EN_PREPARACION':
+      case 'PREPARACION':
         return 'En Preparación';
       default:
         return estado.charAt(0) + estado.slice(1).toLowerCase();

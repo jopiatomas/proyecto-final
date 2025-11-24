@@ -146,14 +146,12 @@
 }
 
 .pedido-card:hover {
-  background: #e9ecef;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: var(--col-1);
 }
 
 .pedido-card.selected {
-  border-color: #007bff;
-  background: #e3f2fd;
+  border-color: var(--col-1);
+  background: #f5e8fd;
 }
 
 .pedido-header {

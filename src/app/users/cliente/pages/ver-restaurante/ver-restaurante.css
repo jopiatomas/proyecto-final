@@ -57,6 +57,7 @@
   border-radius: 15px;
   display: inline-block;
   margin: 0 auto;
+  margin-bottom: 10px;
   font-size: 2.85rem;
   font-weight: 700;
 }
@@ -99,8 +100,7 @@
 }
 
 .section-header {
-  display: flex;
-  justify-content: space-between;
+  display: block;
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
@@ -109,12 +109,16 @@
 
 .section-header h2 {
   margin: 0;
+  margin-bottom: 10px;
 }
 
 .section-header p {
   color: #666;
   margin: 0.5rem 0 0 0;
   font-size: 1.1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Menu Grid */
