@@ -69,6 +69,10 @@ export class VerRestaurante implements OnInit {
   mensajePedido = '';
   tipoMensajePedido: 'success' | 'error' | '' = '';
 
+  // Mensajes de stock
+  mensajeStock = '';
+  tipoMensajeStock: 'success' | 'error' | '' = '';
+
   constructor() {
     this.reseniaForm = this.fb.group({
       resenia: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
@@ -219,7 +223,7 @@ export class VerRestaurante implements OnInit {
   agregarAlCarrito(producto: ProductoResumen) {
     // Validar stock antes de agregar
     if (!producto.stock || producto.stock === 0) {
-      alert('Este producto no tiene stock disponible');
+      this.mostrarMensajeStock('Este producto no tiene stock disponible', 'error');
       return;
     }
 
@@ -228,7 +232,7 @@ export class VerRestaurante implements OnInit {
     if (itemExistente) {
       // Validar que no exceda el stock disponible
       if (itemExistente.cantidad >= producto.stock) {
-        alert(`Solo hay ${producto.stock} unidades disponibles de este producto`);
+        this.mostrarMensajeStock(`Solo hay ${producto.stock} unidades disponibles de este producto`, 'error');
         return;
       }
       itemExistente.cantidad++;
@@ -249,7 +253,7 @@ export class VerRestaurante implements OnInit {
     if (item) {
       // Validar que no exceda el stock
       if (item.producto.stock && item.cantidad >= item.producto.stock) {
-        alert(`Solo hay ${item.producto.stock} unidades disponibles de este producto`);
+        this.mostrarMensajeStock(`Solo hay ${item.producto.stock} unidades disponibles de este producto`, 'error');
         return;
       }
       item.cantidad++;
@@ -426,5 +430,14 @@ export class VerRestaurante implements OnInit {
 
   cancelarConfirmacionPedido() {
     this.confirmandoPedido = false;
+  }
+
+  mostrarMensajeStock(mensaje: string, tipo: 'success' | 'error') {
+    this.mensajeStock = mensaje;
+    this.tipoMensajeStock = tipo;
+    setTimeout(() => {
+      this.mensajeStock = '';
+      this.tipoMensajeStock = '';
+    }, 5000);
   }
 }

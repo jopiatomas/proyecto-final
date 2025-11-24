@@ -11,7 +11,8 @@
 }
 
 .container h2 {
-  color: var(--col-1);
+  color: #333;
+  margin-bottom: 30px;
   text-align: center;
   margin-bottom: 2rem;
   font-size: 2.5rem;
@@ -361,8 +362,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-message {
@@ -406,7 +411,7 @@
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .container h2 {
     font-size: 2rem;
   }
@@ -416,25 +421,25 @@
   .container {
     padding: 0 0.5rem;
   }
-  
+
   .detalle-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .detalle-titulo {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .producto-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .producto-precios {
     align-items: flex-start;
   }

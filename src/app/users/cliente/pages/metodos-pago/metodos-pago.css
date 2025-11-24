@@ -321,6 +321,7 @@ h3 {
   margin-top: 0;
   color: var(--text-primary);
   font-size: 1.3rem;
+  font-family: 'Poppins', sans-serif;
 }
 
 .form-row {
@@ -339,6 +340,7 @@ h3 {
   font-weight: 600;
   color: var(--text-primary);
   font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
 }
 
 .error-text {

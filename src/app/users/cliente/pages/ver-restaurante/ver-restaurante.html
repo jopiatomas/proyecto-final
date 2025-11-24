@@ -8,7 +8,7 @@
       <p>Cargando información del restaurante...</p>
     </div>
     } @else if (restaurante) {
-    <!-- Mensaje de éxito o error -->
+    <!-- Mensaje de éxito o error del pedido -->
     @if (mensajePedido && tipoMensajePedido) {
     <div
       class="alert-message"
@@ -17,6 +17,18 @@
     >
       <span class="alert-icon">{{ tipoMensajePedido === 'success' ? '✓' : '⚠' }}</span>
       <span class="alert-text">{{ mensajePedido }}</span>
+    </div>
+    }
+
+    <!-- Mensaje de stock -->
+    @if (mensajeStock && tipoMensajeStock) {
+    <div
+      class="alert-message"
+      [class.alert-success]="tipoMensajeStock === 'success'"
+      [class.alert-error]="tipoMensajeStock === 'error'"
+    >
+      <span class="alert-icon">{{ tipoMensajeStock === 'success' ? '✓' : '⚠' }}</span>
+      <span class="alert-text">{{ mensajeStock }}</span>
     </div>
     }
 
