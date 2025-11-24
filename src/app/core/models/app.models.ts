@@ -45,6 +45,8 @@ export interface ActualizarPerfilRequest {
 export interface ActualizarPerfilRestauranteRequest {
   nombreRestaurante: string;
   email: string;
+  horaApertura?: string;
+  horaCierre?: string;
   contraseniaActual: string;
 }
 
