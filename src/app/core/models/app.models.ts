@@ -46,6 +46,11 @@ export interface ActualizarPerfilRestauranteRequest {
   contraseniaActual: string;
 }
 
+export interface RestauranteResumidoDTO {
+  id: number;
+  nombre: string;
+}
+
 // Interfaces para restaurantes (desde perspectiva de cliente)
 export interface RestauranteResumen {
   id: number;

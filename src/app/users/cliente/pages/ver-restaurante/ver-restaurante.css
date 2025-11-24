@@ -43,6 +43,42 @@
   }
 }
 
+.btn-favorito-restaurante {
+  position: absolute;
+  left: 20px;
+  top: 90px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-favorito-restaurante svg {
+  width: 24px;
+  height: 24px;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.btn-favorito-restaurante.active svg {
+  fill: #7b2cbf;
+  color: #7b2cbf;
+}
+.btn-favorito-restaurante.active {
+    border-color: #7b2cbf;
+
+}
+
+
 /* Restaurant Header */
 .restaurant-header {
   background: transparent;

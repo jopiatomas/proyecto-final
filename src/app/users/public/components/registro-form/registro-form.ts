@@ -24,7 +24,7 @@ export class RegistroForm {
   ) {
     this.registroForm = this.fb.group({
       nombre: ['', [
-        Validators.required, 
+        Validators.required,
         Validators.minLength(3),
         Validators.maxLength(25)
       ]],
@@ -35,12 +35,17 @@ export class RegistroForm {
         Validators.pattern(/^[a-zA-Z0-9]+$/)
       ]],
       contrasenia: ['', [
-        Validators.required, 
-        Validators.minLength(6), 
+        Validators.required,
+        Validators.minLength(6),
         Validators.maxLength(100),
         Validators.pattern(/^[a-zA-Z0-9._]+$/)
       ]],
-      rol: ['CLIENTE', Validators.required]
+      rol: ['CLIENTE', Validators.required],
+      email: ['', [
+        Validators.required,
+        Validators.email,
+        Validators.maxLength(50)
+      ]]
     });
   }
 
@@ -53,11 +58,12 @@ export class RegistroForm {
       // Preparar datos según el rol seleccionado
       const rol = this.registroForm.value.rol;
       const nombreIngresado = this.registroForm.value.nombre;
-      
+
       const registerData: any = {
         usuario: this.registroForm.value.usuario,
         contrasenia: this.registroForm.value.contrasenia,
-        rol: rol
+        rol: rol,
+        email: this.registroForm.value.email
       };
 
       // El backend espera campos diferentes según el rol
