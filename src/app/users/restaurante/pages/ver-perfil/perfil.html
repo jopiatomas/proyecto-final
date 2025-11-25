@@ -6,6 +6,18 @@
       <p>Bienvenido, <strong>{{ usuario.nombre }}</strong></p>
     }
 
+    <!-- Mensaje de éxito o error -->
+    @if (mensajePerfil && tipoMensaje) {
+    <div
+      class="alert-message"
+      [class.alert-success]="tipoMensaje === 'success'"
+      [class.alert-error]="tipoMensaje === 'error'"
+    >
+      <span class="alert-icon">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
+      <span class="alert-text">{{ mensajePerfil }}</span>
+    </div>
+    }
+
     @if (loading()) {
       <div class="loading-section">
         <div class="loading-spinner"></div>
@@ -135,6 +147,30 @@
       </div>
     }
   </div>
+
+  <!-- Modal de confirmación de actualización de perfil -->
+  @if (confirmandoActualizacion) {
+  <div class="modal-overlay" (click)="cancelarActualizacion()">
+    <div class="modal-content-confirm" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Confirmar Actualización</h3>
+        <button class="close-modal-btn" (click)="cancelarActualizacion()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro de que deseas actualizar los datos del perfil del restaurante?</p>
+        <p class="modal-warning">Los cambios se guardarán permanentemente.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-confirmar" (click)="actualizarPerfil()" [disabled]="loading()">
+          @if (loading()) { Guardando... } @else { Confirmar }
+        </button>
+        <button class="btn-cancelar-modal" (click)="cancelarActualizacion()" [disabled]="loading()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+  }
 </div>
 
 <app-footer-restaurante></app-footer-restaurante>

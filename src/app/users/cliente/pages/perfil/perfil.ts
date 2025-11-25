@@ -24,10 +24,18 @@ export class Perfil implements OnInit {
   perfilForm!: FormGroup;
   usuario = signal<PerfilUsuario | null>(null);
   loading = signal(false);
+  mensajePerfil = '';
+  tipoMensaje: 'success' | 'error' | '' = '';
+  confirmandoActualizacion = false;
+
+  cambiarContraseniaForm!: FormGroup;
+mostrarModalContrasenia = false;
+cambiandoContrasenia = false;
 
   ngOnInit() {
     this.initForm();
     this.cargarDatosUsuario();
+    this.initCambiarContraseniaForm();
   }
 
   initForm() {
@@ -52,6 +60,14 @@ export class Perfil implements OnInit {
         Validators.required,
         Validators.minLength(6)
       ]]
+    });
+  }
+
+  initCambiarContraseniaForm() {
+    this.cambiarContraseniaForm = this.fb.group({
+      contraseniaActual: ['', [Validators.required, Validators.minLength(6)]],
+      contraseniaNueva: ['', [Validators.required, Validators.minLength(6)]],
+      confirmarContrasenia: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
@@ -176,7 +192,66 @@ export class Perfil implements OnInit {
     });
   }
 
+  cancelarActualizacion() {
+    this.confirmandoActualizacion = false;
+  }
+
   navegarA(ruta: string) {
     this.router.navigate([ruta]);
+  }
+
+  abrirModalContrasenia() {
+    this.mostrarModalContrasenia = true;
+    this.cambiarContraseniaForm.reset();
+  }
+
+  cerrarModalContrasenia() {
+    this.mostrarModalContrasenia = false;
+    this.cambiarContraseniaForm.reset();
+  }
+
+  cambiarContrasenia() {
+    if (this.cambiarContraseniaForm.invalid) {
+      alert('Por favor, completa todos los campos correctamente.');
+      return;
+    }
+
+    const { contraseniaActual, contraseniaNueva, confirmarContrasenia } = this.cambiarContraseniaForm.value;
+
+    if (contraseniaNueva !== confirmarContrasenia) {
+      alert('Las contraseñas nuevas no coinciden.');
+      return;
+    }
+
+    if (contraseniaActual === contraseniaNueva) {
+      alert('La nueva contraseña debe ser diferente a la actual.');
+      return;
+    }
+
+    this.cambiandoContrasenia = true;
+    this.perfilService.cambiarContrasenia({
+      contraseniaActual,
+      contraseniaNueva,
+      confirmarContrasenia
+    }).subscribe({
+      next: (mensaje: string) => {
+        this.cambiandoContrasenia = false;
+        alert(mensaje || '¡Contraseña cambiada exitosamente!');
+        this.cerrarModalContrasenia();
+      },
+      error: (error: any) => {
+        this.cambiandoContrasenia = false;
+        console.error('Error al cambiar contraseña:', error);
+        let mensaje = 'Error al cambiar la contraseña.';
+        if (error.error && error.error.message) {
+          mensaje = error.error.message;
+        } else if (error.status === 400) {
+          mensaje = 'La contraseña actual es incorrecta.';
+        } else if (error.status === 403) {
+          mensaje = 'No tienes permisos para realizar esta acción.';
+        }
+        alert(mensaje);
+      }
+    });
   }
 }

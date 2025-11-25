@@ -23,18 +23,39 @@ export class Direcciones implements OnInit {
   panelAbierto = signal(false);
   editandoId = signal<number | null>(null);
   cargando = signal(false);
+  confirmandoEliminacion = signal(false);
+  idDireccionParaEliminar = signal<number | null>(null);
+  mensajeDireccion = '';
+  tipoMensajeDireccion: 'success' | 'error' | '' = '';
+
 
   ngOnInit() {
     this.inicializarFormulario();
     this.cargarDirecciones();
   }
 
-  inicializarFormulario() {
+   inicializarFormulario() {
     this.formularioDireccion = this.fb.nonNullable.group({
       direccion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
-      ciudad: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      pais: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(/^[A-Za-z\s]+$/)]],
-      codigoPostal: ['', [Validators.required, Validators.pattern(/^\d{4,10}$/)]]
+      ciudad: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(50),
+          Validators.pattern(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s'-]+$/),
+        ],
+      ],
+      pais: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(50),
+          Validators.pattern(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s'-]+$/),
+        ],
+      ],
+      codigoPostal: ['', [Validators.required, Validators.pattern(/^\d{4,10}$/)]],
     });
   }
 
@@ -80,54 +101,82 @@ export class Direcciones implements OnInit {
   }
 
   eliminarDireccion(id: number) {
-    const direccion = this.direcciones().find(d => d.id === id);
+    this.idDireccionParaEliminar.set(id);
+    this.confirmandoEliminacion.set(true);
+  }
+
+  confirmarEliminacion() {
+    const id = this.idDireccionParaEliminar();
+    if (!id) return;
+
+    const direccion = this.direcciones().find((d) => d.id === id);
     if (!direccion) return;
-    
-    if (confirm('¿Estás seguro de eliminar esta dirección?')) {
-      this.cargando.set(true);
-      
-      const eliminarDTO = {
-        id: direccion.id,
-        direccion: direccion.direccion,
-        codigoPostal: direccion.codigoPostal
-      };
-      
-      this.clienteService.eliminarDireccion(eliminarDTO).subscribe({
-        next: () => {
-          this.cargarDirecciones();
-          if (this.editandoId() === id) {
-            this.cerrarPanel();
-          }
-        },
-        error: (error) => {
-          console.error('Error completo al eliminar dirección:', error);
-          console.error('Status:', error.status);
-          console.error('Mensaje:', error.error);
-          this.cargando.set(false);
-          
-          if (error.status === 401) {
-            alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+
+    this.cargando.set(true);
+    this.confirmandoEliminacion.set(false);
+
+    const eliminarDTO = {
+      id: direccion.id,
+      direccion: direccion.direccion,
+      codigoPostal: direccion.codigoPostal,
+    };
+
+    this.clienteService.eliminarDireccion(eliminarDTO).subscribe({
+      next: () => {
+        this.cargarDirecciones();
+        if (this.editandoId() === id) {
+          this.cerrarPanel();
+        }
+        this.mensajeDireccion = 'Dirección eliminada exitosamente';
+        this.tipoMensajeDireccion = 'success';
+        setTimeout(() => {
+          this.mensajeDireccion = '';
+          this.tipoMensajeDireccion = '';
+        }, 5000);
+      },
+      error: (error) => {
+        console.error('Error completo al eliminar dirección:', error);
+        console.error('Status:', error.status);
+        console.error('Mensaje:', error.error);
+        this.cargando.set(false);
+
+        if (error.status === 401) {
+          this.mensajeDireccion = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
+          this.tipoMensajeDireccion = 'error';
+          setTimeout(() => {
             localStorage.removeItem('token');
             window.location.href = '/login';
-          } else {
-            alert(`Error al eliminar la dirección: ${error.error?.message || error.message || 'Error desconocido'}`);
-          }
+          }, 2000);
+        } else {
+          this.mensajeDireccion = `Error al eliminar la dirección: ${
+            error.error?.message || error.message || 'Error desconocido'
+          }`;
+          this.tipoMensajeDireccion = 'error';
+          setTimeout(() => {
+            this.mensajeDireccion = '';
+            this.tipoMensajeDireccion = '';
+          }, 5000);
         }
-      });
-    }
+      },
+    });
+  }
+
+  cancelarEliminacion() {
+    this.confirmandoEliminacion.set(false);
+    this.idDireccionParaEliminar.set(null);
   }
 
   guardarDireccion() {
     if (this.formularioDireccion.valid) {
       this.cargando.set(true);
       const datosDireccion = this.formularioDireccion.value;
-      
+
       if (this.editandoId()) {
         // Limpiar caracteres especiales antes de enviar
         const datosDireccionLimpia = {
           ...datosDireccion,
-          pais: datosDireccion.pais.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
-          ciudad: datosDireccion.ciudad.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+          pais: datosDireccion.pais.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+          ciudad: datosDireccion.ciudad.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
         };
         this.clienteService.modificarDireccion(this.editandoId()!, datosDireccionLimpia).subscribe({
           next: () => {
@@ -137,23 +186,27 @@ export class Direcciones implements OnInit {
           error: (error) => {
             console.error('Error al modificar dirección:', error);
             this.cargando.set(false);
-            
+
             if (error.status === 401) {
               alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
               localStorage.removeItem('token');
               window.location.href = '/login';
               return;
             }
-            
-            alert(`Error al modificar la dirección: ${error.error?.message || error.message || 'Error desconocido'}`);
-          }
+
+            alert(
+              `Error al modificar la dirección: ${
+                error.error?.message || error.message || 'Error desconocido'
+              }`
+            );
+          },
         });
       } else {
         // Limpiar caracteres especiales antes de enviar
         const datosDireccionLimpia = {
           ...datosDireccion,
-          pais: datosDireccion.pais.normalize("NFD").replace(/[\u0300-\u036f]/g, ""), // Quita acentos
-          ciudad: datosDireccion.ciudad.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+          pais: datosDireccion.pais.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), // Quita acentos
+          ciudad: datosDireccion.ciudad.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
         };
         this.clienteService.crearDireccion(datosDireccionLimpia).subscribe({
           next: (response) => {
@@ -162,25 +215,26 @@ export class Direcciones implements OnInit {
           },
           error: (error) => {
             this.cargando.set(false);
-            
+
             if (error.status === 401) {
               alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
               localStorage.removeItem('token');
               window.location.href = '/login';
               return;
             }
-            
+
             let mensajeError = 'Error desconocido';
             if (error.error?.message) {
               mensajeError = error.error.message;
             } else if (error.error) {
-              mensajeError = typeof error.error === 'string' ? error.error : JSON.stringify(error.error);
+              mensajeError =
+                typeof error.error === 'string' ? error.error : JSON.stringify(error.error);
             } else if (error.message) {
               mensajeError = error.message;
             }
-            
+
             alert(`Error al crear la dirección: ${mensajeError}`);
-          }
+          },
         });
       }
     } else {

@@ -6,7 +6,17 @@
       <p>Bienvenido, <strong>{{ usuario()!.nombreYapellido }}</strong></p>
     }
 
-    @if (loading()) {
+    <!-- Mensaje de éxito o error -->
+    @if (mensajePerfil && tipoMensaje) {
+    <div
+      class="alert-message"
+      [class.alert-success]="tipoMensaje === 'success'"
+      [class.alert-error]="tipoMensaje === 'error'"
+    >
+      <span class="alert-icon">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
+      <span class="alert-text">{{ mensajePerfil }}</span>
+    </div>
+    }@if (loading()) {
       <div class="loading-section">
         <div class="loading-spinner"></div>
         <p>Cargando datos del perfil...</p>
@@ -24,6 +34,7 @@
                 formControlName="nombre" 
                 class="form-input"
                 placeholder="Ingresa tu nombre completo"
+                 maxlength="100"
               />
               @if (perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched) {
                 <small style="color: red;">Nombre requerido (mínimo 3 caracteres)</small>
@@ -37,6 +48,7 @@
                 formControlName="usuario" 
                 class="form-input"
                 placeholder="Nombre de usuario"
+                maxlength="18"
               />
               @if (perfilForm.get('usuario')?.invalid && perfilForm.get('usuario')?.touched) {
                 <small style="color: red;">Usuario requerido (solo letras y números)</small>
@@ -51,6 +63,7 @@
               formControlName="email" 
               class="form-input"
               placeholder="tu@email.com"
+              maxlength="100"
             />
             @if (perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched) {
               <small style="color: red;">Email requerido y válido</small>
@@ -101,10 +114,108 @@
             </div>
             <span class="flecha">→</span>
           </button>
+          <button class="link-card" (click)="abrirModalContrasenia()">
+            <div>
+              <h4>Cambiar Contraseña</h4>
+              <p>Actualiza tu contraseña de acceso</p>
+            </div>
+            <span class="flecha">→</span>
+          </button>
         </div>
       </div>
     }
   </div>
 </div>
 
+<!-- Modal de confirmación de actualización de perfil -->
+@if (confirmandoActualizacion) {
+<div class="modal-overlay" (click)="cancelarActualizacion()">
+  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Confirmar Actualización</h3>
+      <button class="close-modal-btn" (click)="cancelarActualizacion()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas actualizar los datos de tu perfil?</p>
+      <p class="modal-warning">Los cambios se guardarán permanentemente.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirmar" (click)="actualizarPerfil()" [disabled]="loading()">
+        @if (loading()) { Guardando... } @else { Confirmar }
+      </button>
+      <button class="btn-cancelar-modal" (click)="cancelarActualizacion()" [disabled]="loading()">
+        Cancelar
+      </button>
+      
+    </div>
+  </div>
+</div>
+}
+<!-- Modal para cambiar contraseña -->
+@if (mostrarModalContrasenia) {
+  <div class="modal-overlay" (click)="cerrarModalContrasenia()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Cambiar Contraseña</h3>
+        <button class="close-btn" (click)="cerrarModalContrasenia()">&times;</button>
+      </div>
+      
+      <form [formGroup]="cambiarContraseniaForm" (ngSubmit)="cambiarContrasenia()">
+        <div class="form-group">
+          <label>Contraseña Actual *</label>
+          <input 
+            type="password" 
+            formControlName="contraseniaActual" 
+            class="form-input"
+            placeholder="Ingresa tu contraseña actual"
+          />
+          @if (cambiarContraseniaForm.get('contraseniaActual')?.invalid && cambiarContraseniaForm.get('contraseniaActual')?.touched) {
+            <small class="error-text">Contraseña actual requerida (mínimo 6 caracteres)</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Nueva Contraseña *</label>
+          <input 
+            type="password" 
+            formControlName="contraseniaNueva" 
+            class="form-input"
+            placeholder="Ingresa tu nueva contraseña"
+          />
+          @if (cambiarContraseniaForm.get('contraseniaNueva')?.invalid && cambiarContraseniaForm.get('contraseniaNueva')?.touched) {
+            <small class="error-text">Nueva contraseña requerida (mínimo 6 caracteres)</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Confirmar Nueva Contraseña *</label>
+          <input 
+            type="password" 
+            formControlName="confirmarContrasenia" 
+            class="form-input"
+            placeholder="Confirma tu nueva contraseña"
+          />
+          @if (cambiarContraseniaForm.get('confirmarContrasenia')?.invalid && cambiarContraseniaForm.get('confirmarContrasenia')?.touched) {
+            <small class="error-text">Confirma la contraseña (mínimo 6 caracteres)</small>
+          }
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModalContrasenia()">Cancelar</button>
+          <button 
+            type="submit" 
+            class="btn-primary"
+            [disabled]="cambiandoContrasenia || cambiarContraseniaForm.invalid"
+          >
+            @if (cambiandoContrasenia) {
+              Cambiando...
+            } @else {
+              Cambiar Contraseña
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
 <app-footer-cliente></app-footer-cliente>

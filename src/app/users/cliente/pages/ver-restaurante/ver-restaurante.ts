@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-import { DetallePedido, DireccionDTO, PedidoCreate, ProductoResumen, ReseniaCreate, ReseniaResumen, RestauranteDetail, Tarjeta } from '../../../../core/models/app.models';
+import { DetallePedidoDTO, DireccionDTO, PedidoCreate, ProductoResumen, ReseniaCreate, ReseniaResumen, RestauranteDetail, Tarjeta } from '../../../../core/models/app.models';
 import { ClienteService } from '../../../../core/services/cliente.service';
 import { AuthService } from '../../../../core/services/auth-service';
 import { isRestauranteAbierto, formatearHorario } from '../../../../core/utils/horario.utils';
@@ -41,6 +41,9 @@ export class VerRestaurante implements OnInit {
   reseniaForm: FormGroup;
   submittingResenia = false;
   mostrarFormularioResenia = false;
+  mensajeResenia = '';
+  tipoMensajeResenia: 'success' | 'error' | '' = '';
+  confirmandoResenia = false;
 
   // Array para mostrar estrellas
   estrellas = [1, 2, 3, 4, 5];
@@ -56,6 +59,13 @@ export class VerRestaurante implements OnInit {
   metodoPagoSeleccionado?: number;
   direccionRestauranteSeleccionada?: number;
   enviandoPedido = false;
+  confirmandoPedido = false;
+  mensajePedido = '';
+  tipoMensajePedido: 'success' | 'error' | '' = '';
+
+   // Mensajes de stock
+  mensajeStock = '';
+  tipoMensajeStock: 'success' | 'error' | '' = '';
 
   constructor() {
     this.reseniaForm = this.fb.group({
@@ -146,10 +156,12 @@ export class VerRestaurante implements OnInit {
 
   toggleFormularioResenia() {
     this.mostrarFormularioResenia = !this.mostrarFormularioResenia;
+    this.mensajeResenia = '';
+    this.tipoMensajeResenia = '';
     if (!this.mostrarFormularioResenia) {
       this.reseniaForm.reset({
         resenia: '',
-        puntuacion: 5
+        puntuacion: 5,
       });
     }
   }
@@ -161,6 +173,7 @@ export class VerRestaurante implements OnInit {
   submitResenia() {
     if (this.reseniaForm.valid && this.restaurante) {
       this.submittingResenia = true;
+      
 
       const reseniaData: ReseniaCreate = {
         restauranteId: this.restaurante.id,
@@ -188,19 +201,41 @@ export class VerRestaurante implements OnInit {
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
 
-          alert('¡Reseña enviada exitosamente!');
+           // Mostrar mensaje de éxito
+        this.mensajeResenia = '¡Reseña enviada exitosamente!';
+        this.tipoMensajeResenia = 'success';
+        setTimeout(() => {
+          this.mensajeResenia = '';
+          this.tipoMensajeResenia = '';
+        }, 5000);
         },
         error: (error) => {
           this.submittingResenia = false;
-          alert('Error al enviar la reseña. Por favor, inténtalo de nuevo.');
-        },
-      });
-    } else {
-      // Marcar todos los campos como touched para mostrar errores
-      Object.keys(this.reseniaForm.controls).forEach((key) => {
-        this.reseniaForm.get(key)?.markAsTouched();
+
+        // Extraer mensaje de error del backend
+        let mensajeError = 'Error al enviar la reseña. Por favor, inténtalo de nuevo.';
+
+        if (error.error && typeof error.error === 'string') {
+          mensajeError = error.error;
+        } else if (error.error && error.error.message) {
+          mensajeError = error.error.message;
+        } else if (error.message) {
+          mensajeError = error.message;
+        }
+
+        this.mensajeResenia = mensajeError;
+        this.tipoMensajeResenia = 'error';
+        setTimeout(() => {
+          this.mensajeResenia = '';
+          this.tipoMensajeResenia = '';
+        }, 5000);
+      },
       });
     }
+  }
+
+  cancelarConfirmacionResenia() {
+    this.confirmandoResenia = false;
   }
 
   formatearPrecio(precio: number): string {
@@ -230,7 +265,7 @@ export class VerRestaurante implements OnInit {
 
     // Validar stock antes de agregar
     if (!producto.stock || producto.stock === 0) {
-      alert('Este producto no tiene stock disponible');
+      this.mostrarMensajeStock('Este producto no tiene stock disponible', 'error');
       return;
     }
 
@@ -239,14 +274,20 @@ export class VerRestaurante implements OnInit {
     if (itemExistente) {
       // Validar que no exceda el stock disponible
       if (itemExistente.cantidad >= producto.stock) {
-        alert(`Solo hay ${producto.stock} unidades disponibles de este producto`);
-        return;
+      return;
       }
       itemExistente.cantidad++;
     } else {
       this.carrito.push({ producto, cantidad: 1 });
     }
-  }
+    // Validar stock antes de agregar
+    if (!producto.stock || producto.stock === 0) {
+      alert('Este producto no tiene stock disponible');
+      return;
+    }
+
+        
+      }
 
   removerDelCarrito(productoId: number) {
     const index = this.carrito.findIndex(item => item.producto.id === productoId);
@@ -260,7 +301,7 @@ export class VerRestaurante implements OnInit {
     if (item) {
       // Validar que no exceda el stock
       if (item.producto.stock && item.cantidad >= item.producto.stock) {
-        alert(`Solo hay ${item.producto.stock} unidades disponibles de este producto`);
+        this.mostrarMensajeStock(`Solo hay ${item.producto.stock} unidades disponibles de este producto`, 'error');
         return;
       }
       item.cantidad++;
@@ -355,36 +396,61 @@ export class VerRestaurante implements OnInit {
   confirmarPedido() {
     // Validaciones
     if (!this.direccionSeleccionada) {
-      alert('Por favor selecciona una dirección');
+      this.mensajePedido = 'Por favor selecciona tu dirección de entrega';
+      this.tipoMensajePedido = 'error';
+      setTimeout(() => {
+        this.mensajePedido = '';
+        this.tipoMensajePedido = '';
+      }, 5000);
       return;
     }
 
     if (!this.direccionRestauranteSeleccionada) {
-      alert('Por favor selecciona la sucursal del restaurante');
+      this.mensajePedido = 'Por favor selecciona la sucursal del restaurante';
+      this.tipoMensajePedido = 'error';
+      setTimeout(() => {
+        this.mensajePedido = '';
+        this.tipoMensajePedido = '';
+      }, 5000);
       return;
     }
 
     if (!this.metodoPagoSeleccionado) {
-      alert('Por favor selecciona un método de pago');
+      this.mensajePedido = 'Por favor selecciona un método de pago';
+      this.tipoMensajePedido = 'error';
+      setTimeout(() => {
+        this.mensajePedido = '';
+        this.tipoMensajePedido = '';
+      }, 5000);
       return;
     }
 
     if (!this.restaurante) {
-      alert('Error: restaurante no encontrado');
+      this.mensajePedido = 'Error: restaurante no encontrado';
+      this.tipoMensajePedido = 'error';
+      setTimeout(() => {
+        this.mensajePedido = '';
+        this.tipoMensajePedido = '';
+      }, 5000);
       return;
     }
 
+    // Realizar el pedido directamente
+    this.realizarPedido();
+  }
+
+   realizarPedido() {
     // Preparar datos del pedido
-    const detalles: DetallePedido[] = this.carrito.map(item => ({
+    const detalles: DetallePedidoDTO[] = this.carrito.map((item) => ({
       productoId: item.producto.id,
       cantidad: item.cantidad
     }));
 
     const pedido: PedidoCreate = {
-      restauranteId: this.restaurante.id,
-      direccionId: this.direccionSeleccionada,
-      direccionRestauranteId: this.direccionRestauranteSeleccionada,
-      pagoId: this.metodoPagoSeleccionado,
+      restauranteId: this.restaurante!.id,
+      direccionId: this.direccionSeleccionada!,
+      direccionRestauranteId: this.direccionRestauranteSeleccionada!,
+      pagoId: this.metodoPagoSeleccionado!,
       detalles: detalles,
     };
 
@@ -392,8 +458,13 @@ export class VerRestaurante implements OnInit {
     this.enviandoPedido = true;
     this.clienteService.crearPedido(pedido).subscribe({
       next: (pedidoCreado) => {
-        // Éxito
-        alert(`¡Pedido realizado exitosamente!\nNúmero de pedido: ${pedidoCreado.id}\nTotal: ${this.formatearPrecio(this.calcularTotalCarrito())}`);
+        this.enviandoPedido = false;
+        this.mensajePedido = `¡Pedido realizado exitosamente! Número de pedido: ${pedidoCreado.id}`;
+        this.tipoMensajePedido = 'success';
+        setTimeout(() => {
+          this.mensajePedido = '';
+          this.tipoMensajePedido = '';
+        }, 5000);
         this.limpiarCarrito();
         this.cerrarModalPedido();
       },
@@ -402,13 +473,34 @@ export class VerRestaurante implements OnInit {
 
         // Manejo de errores más específico
         if (error.status === 400) {
-          alert(error.error || 'Error en los datos del pedido. Por favor verifica la información.');
+          this.mensajePedido =
+            error.error || 'Error en los datos del pedido. Por favor verifica la información.';
         } else if (error.status === 401) {
-          alert('Error de autenticación. Por favor inicia sesión nuevamente.');
+          this.mensajePedido = 'Error de autenticación. Por favor inicia sesión nuevamente.';
         } else {
-          alert('Error creando el pedido. Por favor intenta de nuevo.');
+          this.mensajePedido = 'Error al realizar el pedido. Por favor intenta nuevamente.';
         }
-      }
+        this.tipoMensajePedido = 'error';
+        setTimeout(() => {
+          this.mensajePedido = '';
+          this.tipoMensajePedido = '';
+        }, 5000);
+      },
     });
   }
+cancelarConfirmacionPedido() {
+    this.confirmandoPedido = false;
+  }
+
+  mostrarMensajeStock(mensaje: string, tipo: 'success' | 'error') {
+    this.mensajeStock = mensaje;
+    this.tipoMensajeStock = tipo;
+    setTimeout(() => {
+      this.mensajeStock = '';
+      this.tipoMensajeStock = '';
+    }, 5000);
+  }
+
+  
+
 }

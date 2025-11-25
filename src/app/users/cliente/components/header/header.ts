@@ -13,6 +13,8 @@ import { AuthService } from '../../../../core/services/auth-service';
 export class Header implements OnInit {
   isLandingPage = false;
   backRoute = '/cliente';
+  confirmandoCerrarSesion = false;
+
 
   constructor(
     private router: Router,
@@ -54,7 +56,16 @@ export class Header implements OnInit {
     this.router.navigate([this.backRoute]);
   }
 
+
   logout() {
-    this.authService.logout();
-  }
+  this.confirmandoCerrarSesion = true;
+}
+
+confirmarCerrarSesion() {
+  this.authService.logout();
+}
+
+cancelarCerrarSesion() {
+  this.confirmandoCerrarSesion = false;
+}
 }

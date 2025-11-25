@@ -6,14 +6,16 @@
     
     <div class="contenido-principal">
       <div class="pedidos-lista">
-        <div *ngIf="pedidos().length === 0" class="mensaje-vacio">
-          <p>Aún no hay pedidos</p>
-        </div>
+        @if (pedidos().length === 0) {
+          <div class="mensaje-vacio">
+            <p>Aún no hay pedidos</p>
+          </div>
+        }
         
-        <div *ngFor="let pedido of pedidos()" 
-             class="pedido-card"
-             [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
-             (click)="verDetalle(pedido)">
+        @for (pedido of pedidos(); track pedido.id) {
+          <div class="pedido-card"
+               [class.seleccionado]="pedidoSeleccionado()?.id === pedido.id"
+               (click)="verDetalle(pedido)">
           <div class="pedido-header">
             <h3>Pedido #{{ pedido.id }}</h3>
             <span class="estado" [class]="pedido.estado.toLowerCase()">
@@ -24,10 +26,12 @@
             <p><strong>Fecha:</strong> {{ pedido.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
             <p><strong>Total:</strong> ${{ pedido.total }}</p>
           </div>
-        </div>
+          </div>
+        }
       </div>
 
-      <div *ngIf="pedidoSeleccionado()" class="detalles-pedido">
+      @if (pedidoSeleccionado()) {
+      <div class="detalles-pedido">
       <div class="detalles-header">
         <h2>Detalles del Pedido #{{ pedidoSeleccionado()!.id }}</h2>
         <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
@@ -46,9 +50,9 @@
         <div class="productos-lista">
           <h3>Productos:</h3>
           <ul>
-            <li *ngFor="let detalle of pedidoSeleccionado()?.detalles || []">
-              {{ detalle.cantidad }}x {{ detalle.nombreProducto }} - ${{ detalle.precioUnitario }}
-            </li>
+            @for (detalle of pedidoSeleccionado()?.detalles || []; track detalle.nombreProducto) {
+              <li>{{ detalle.cantidad }}x {{ detalle.nombreProducto }} - ${{ detalle.precioUnitario }}</li>
+            }
           </ul>
         </div>
 
@@ -78,14 +82,16 @@
             Cancelado
           </button>
           
-          <button *ngIf="estadoNuevo()" 
-                  class="btn-confirmar" 
-                  (click)="confirmarCambio()">
-                Confirmar cambio
-          </button>
+          @if (estadoNuevo()) {
+            <button class="btn-confirmar" 
+                    (click)="confirmarCambio()">
+                  Confirmar cambio
+            </button>
+          }
         </div>
       </div>
       </div>
+      }
     </div>
   </div>
 </div>

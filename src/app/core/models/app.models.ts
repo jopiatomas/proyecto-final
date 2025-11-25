@@ -9,8 +9,8 @@ export interface RegisterRequest {
   nombre: string;
   email: string;
   rol: string;
-  horaApertura?: string; // HH:mm format for RESTAURANTE
-  horaCierre?: string;   // HH:mm format for RESTAURANTE
+  horaApertura?: string; 
+  horaCierre?: string;   
 }
 
 export interface AuthResponse {
@@ -34,6 +34,8 @@ export interface PerfilUsuario {
   nombreYapellido: string;
   usuario: string;
   email: string;
+  horaApertura?: string;
+  horaCierre?: string;
 }
 
 export interface ActualizarPerfilRequest {

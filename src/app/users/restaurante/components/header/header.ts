@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth-service';
 import { CommonModule } from '@angular/common';
@@ -49,7 +49,31 @@ export class Header implements OnInit {
     this.router.navigate([this.rutaRetorno]);
   }
 
-  cerrarSesion() {
-    this.authService.logout();
+   dropdownOpen = signal<boolean>(false);
+   confirmandoCerrarSesion = false;
+
+   toggleDropdown(): void {
+    this.dropdownOpen.set(!this.dropdownOpen());
   }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.perfil-container')) {
+      this.dropdownOpen.set(false);
+    }
+  }
+
+cerrarSesion(): void {
+  this.dropdownOpen.set(false);
+  this.confirmandoCerrarSesion = true;
+}
+
+confirmarCerrarSesion(): void {
+  this.authService.logout();
+}
+
+cancelarCerrarSesion(): void {
+  this.confirmandoCerrarSesion = false;
+}
 }

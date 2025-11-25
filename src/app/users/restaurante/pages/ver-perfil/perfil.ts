@@ -25,6 +25,9 @@ export class Perfil implements OnInit {
   perfilForm!: FormGroup;
   usuario = signal<PerfilUsuario | null>(null);
   loading = signal(false);
+  confirmandoActualizacion = false;
+  mensajePerfil = '';
+  tipoMensaje: 'success' | 'error' | '' = '';
 
   ngOnInit() {
     this.initForm();
@@ -100,8 +103,6 @@ export class Perfil implements OnInit {
         horaApertura: datosUsuario.horaApertura || '',
         horaCierre: datosUsuario.horaCierre || ''
       });
-
-
       this.loading.set(false);
     },
     error: (error) => {
@@ -135,52 +136,68 @@ export class Perfil implements OnInit {
 
   alEnviar() {
     if (this.perfilForm.valid) {
-      const confirmacion = confirm('¿Estás seguro de que deseas actualizar tu perfil?');
-
-      if (confirmacion) {
-        this.actualizarPerfil();
-      }
+      this.confirmandoActualizacion = true;
     } else {
-      alert('Por favor, completa todos los campos correctamente. La contraseña es requerida para confirmar los cambios.');
+      this.mensajePerfil = 'Por favor, completa todos los campos correctamente. La contraseña es requerida.';
+      this.tipoMensaje = 'error';
+      setTimeout(() => {
+        this.mensajePerfil = '';
+        this.tipoMensaje = '';
+      }, 5000);
     }
   }
 
   actualizarPerfil() {
-  this.loading.set(true);
-  const datosActualizados = {
-  nombreRestaurante: this.perfilForm.value.nombre,
-  email: this.perfilForm.value.email,
-  horaApertura: this.perfilForm.value.horaApertura,
-  horaCierre: this.perfilForm.value.horaCierre,
-  contraseniaActual: this.perfilForm.value.contrasenia
-};
+    this.loading.set(true);
+    this.confirmandoActualizacion = false;
+    const datosActualizados = {
+      nombreRestaurante: this.perfilForm.value.nombre,
+      email: this.perfilForm.value.email,
+      horaApertura: this.perfilForm.value.horaApertura,
+      horaCierre: this.perfilForm.value.horaCierre,
+      contraseniaActual: this.perfilForm.value.contrasenia
+    };
 
-  console.log('Datos a enviar:', datosActualizados);
-  console.log('Hora apertura:', this.perfilForm.value.horaApertura);
-  console.log('Hora cierre:', this.perfilForm.value.horaCierre);
+    console.log('Datos a enviar:', datosActualizados);
+    console.log('Hora apertura:', this.perfilForm.value.horaApertura);
+    console.log('Hora cierre:', this.perfilForm.value.horaCierre);
 
-  this.restauranteService.actualizarPerfil(datosActualizados as ActualizarPerfilRestauranteRequest).subscribe({
-    next: (mensaje: string) => {
-      this.loading.set(false);
-      alert(mensaje);
-      this.cargarDatosUsuario();
-    },
-    error: (error: any) => {
-      this.loading.set(false);
+    this.restauranteService.actualizarPerfil(datosActualizados as ActualizarPerfilRestauranteRequest).subscribe({
+      next: (mensaje: string) => {
+        this.loading.set(false);
+        this.mensajePerfil = mensaje || 'Perfil actualizado exitosamente';
+        this.tipoMensaje = 'success';
+        this.cargarDatosUsuario();
+        setTimeout(() => {
+          this.mensajePerfil = '';
+          this.tipoMensaje = '';
+        }, 5000);
+      },
+      error: (error: any) => {
+        this.loading.set(false);
 
-      let mensaje = 'Error al actualizar el perfil.';
-      if (error.error && error.error.message) {
-        mensaje = error.error.message;
-      } else if (error.status === 400) {
-        mensaje = 'Datos inválidos. Verifica que todos los campos estén correctos.';
-      } else if (error.status === 403) {
-        mensaje = 'No tienes permisos para actualizar este perfil.';
+        let mensaje = 'Error al actualizar el perfil.';
+        if (error.error && error.error.message) {
+          mensaje = error.error.message;
+        } else if (error.status === 400) {
+          mensaje = 'Datos inválidos. Verifica que todos los campos estén correctos.';
+        } else if (error.status === 403) {
+          mensaje = 'No tienes permisos para actualizar este perfil.';
+        }
+
+        this.mensajePerfil = mensaje + ' Inténtalo de nuevo.';
+        this.tipoMensaje = 'error';
+        setTimeout(() => {
+          this.mensajePerfil = '';
+          this.tipoMensaje = '';
+        }, 5000);
       }
+    });
+  }
 
-      alert(mensaje + ' Inténtalo de nuevo.');
-    }
-  });
-}
+  cancelarActualizacion() {
+    this.confirmandoActualizacion = false;
+  }
 
   navegarA(ruta: string) {
     this.router.navigate([ruta]);

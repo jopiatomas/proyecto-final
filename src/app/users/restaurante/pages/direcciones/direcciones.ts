@@ -28,6 +28,10 @@ export class Direcciones implements OnInit {
   panelAbierto = signal(false);
   editandoId = signal<number | null>(null);
   cargando = signal(false);
+  confirmandoEliminacion = signal(false);
+  idParaEliminar = signal<number | null>(null);
+  mensajeDireccion = '';
+  tipoMensajeDireccion: 'success' | 'error' | '' = '';
 
   ngOnInit() {
     this.inicializarFormulario();
@@ -53,7 +57,12 @@ export class Direcciones implements OnInit {
       error: (error) => {
         console.error('Error al cargar direcciones:', error);
         this.cargando.set(false);
-        alert('Error al cargar las direcciones');
+        this.mensajeDireccion = 'Error al cargar las direcciones';
+        this.tipoMensajeDireccion = 'error';
+        setTimeout(() => {
+          this.mensajeDireccion = '';
+          this.tipoMensajeDireccion = '';
+        }, 5000);
       }
     });
   }
@@ -77,31 +86,55 @@ export class Direcciones implements OnInit {
   }
 
   eliminarDireccion(id: number) {
-    const direccion = this.direcciones().find(d => d.id === id);
+    this.idParaEliminar.set(id);
+    this.confirmandoEliminacion.set(true);
+  }
+
+  confirmarEliminacion() {
+    const id = this.idParaEliminar();
+    if (!id) return;
+
+    const direccion = this.direcciones().find((d) => d.id === id);
     if (!direccion) return;
-    
-    if (confirm('¿Estás seguro de eliminar esta dirección?')) {
-      this.cargando.set(true);
-      const eliminarDTO = {
-        id: direccion.id,
-        direccion: direccion.direccion,
-        codigoPostal: direccion.codigoPostal
-      };
-      
-      this.restauranteService.eliminarDireccion(eliminarDTO).subscribe({
-        next: () => {
-          this.cargarDirecciones();
-          if (this.editandoId() === id) {
-            this.cerrarPanel();
-          }
-        },
-        error: (error) => {
-          console.error('Error al eliminar dirección:', error);
-          this.cargando.set(false);
-          alert('Error al eliminar la dirección');
+
+    this.cargando.set(true);
+    this.confirmandoEliminacion.set(false);
+
+    const eliminarDTO = {
+      id: direccion.id,
+      direccion: direccion.direccion,
+      codigoPostal: direccion.codigoPostal,
+    };
+
+    this.restauranteService.eliminarDireccion(eliminarDTO).subscribe({
+      next: () => {
+        this.cargarDirecciones();
+        if (this.editandoId() === id) {
+          this.cerrarPanel();
         }
-      });
-    }
+        this.mensajeDireccion = 'Dirección eliminada exitosamente';
+        this.tipoMensajeDireccion = 'success';
+        setTimeout(() => {
+          this.mensajeDireccion = '';
+          this.tipoMensajeDireccion = '';
+        }, 5000);
+      },
+      error: (error) => {
+        console.error('Error al eliminar dirección:', error);
+        this.cargando.set(false);
+        this.mensajeDireccion = 'Error al eliminar la dirección';
+        this.tipoMensajeDireccion = 'error';
+        setTimeout(() => {
+          this.mensajeDireccion = '';
+          this.tipoMensajeDireccion = '';
+        }, 5000);
+      }
+    });
+  }
+
+  cancelarEliminacion() {
+    this.confirmandoEliminacion.set(false);
+    this.idParaEliminar.set(null);
   }
 
   guardarDireccion() {
@@ -116,13 +149,24 @@ export class Direcciones implements OnInit {
           next: () => {
             this.cargarDirecciones();
             this.cerrarPanel();
+            this.mensajeDireccion = 'Dirección modificada exitosamente';
+            this.tipoMensajeDireccion = 'success';
+            setTimeout(() => {
+              this.mensajeDireccion = '';
+              this.tipoMensajeDireccion = '';
+            }, 5000);
           },
           error: (error) => {
             console.error('Error completo al modificar dirección:', error);
             console.error('Estado:', error.status);
             console.error('Mensaje:', error.error);
             this.cargando.set(false);
-            alert(`Error al modificar la dirección: ${error.error?.message || error.message || 'Error desconocido'}`);
+            this.mensajeDireccion = `Error al modificar la dirección: ${error.error?.message || error.message || 'Error desconocido'}`;
+            this.tipoMensajeDireccion = 'error';
+            setTimeout(() => {
+              this.mensajeDireccion = '';
+              this.tipoMensajeDireccion = '';
+            }, 5000);
           }
         });
       } else {
@@ -130,18 +174,34 @@ export class Direcciones implements OnInit {
           next: () => {
             this.cargarDirecciones();
             this.cerrarPanel();
+            this.mensajeDireccion = 'Dirección creada exitosamente';
+            this.tipoMensajeDireccion = 'success';
+            setTimeout(() => {
+              this.mensajeDireccion = '';
+              this.tipoMensajeDireccion = '';
+            }, 5000);
           },
           error: (error) => {
             console.error('Error completo al crear dirección:', error);
             console.error('Estado:', error.status);
             console.error('Mensaje:', error.error);
             this.cargando.set(false);
-            alert(`Error al crear la dirección: ${error.error?.message || error.message || 'Error desconocido'}`);
+            this.mensajeDireccion = `Error al crear la dirección: ${error.error?.message || error.message || 'Error desconocido'}`;
+            this.tipoMensajeDireccion = 'error';
+            setTimeout(() => {
+              this.mensajeDireccion = '';
+              this.tipoMensajeDireccion = '';
+            }, 5000);
           }
         });
       }
     } else {
-      alert('Por favor completa todos los campos correctamente');
+      this.mensajeDireccion = 'Por favor completa todos los campos correctamente';
+      this.tipoMensajeDireccion = 'error';
+      setTimeout(() => {
+        this.mensajeDireccion = '';
+        this.tipoMensajeDireccion = '';
+      }, 5000);
     }
   }
 }

@@ -28,3 +28,22 @@
     </div>
   </div>
 </header>
+
+<!-- Modal de confirmación para cerrar sesión -->
+@if (confirmandoCerrarSesion) {
+<div class="modal-overlay" (click)="cancelarCerrarSesion()">
+  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Cerrar Sesión</h3>
+      <button class="close-modal-btn" (click)="cancelarCerrarSesion()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>¿Estás seguro de que deseas cerrar sesión?</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirmar" (click)="confirmarCerrarSesion()">Cerrar Sesión</button>
+      <button class="btn-cancelar-modal" (click)="cancelarCerrarSesion()">Cancelar</button>
+    </div>
+  </div>
+</div>
+}
