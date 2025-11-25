@@ -101,7 +101,7 @@ export class AuthService {
       let rol = 'CLIENTE';
       if (payload.roles && payload.roles.length > 0) {
         // Viene como "ROLECLIENTE", quitamos el prefijo
-        rol = payload.roles[0].replace('ROLE', '');
+        rol = payload.roles[0].replace('ROLE_', '');
       }
 
       return {
