@@ -1,59 +1,81 @@
-# ProyectoFinal
+# Quickish
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.5.
+![logo-quickish](https://github.com/user-attachments/assets/0cad52c3-4de8-4c9d-b524-2bfafb5b8020)
 
-## Development server
+Quickish es una aplicación de pedidos de comida a domicilio en proceso de desarrollo. Permite a los Clientes explorar restaurantes y gestionar pedidos; a los Restaurantes, administrar su catálogo y procesar pedidos; y al Administrador, supervisar usuarios.
+___
 
-To start a local development server, run:
+## Equipo de trabajo
+- [Tomas Jopia](https://github.com/jopiatomas)
+- [Lucas Monti](https://github.com/Lucasmonti)
+- [Bruno Logghe](https://github.com/brunologghe)
+- [Felipe Alvarez](https://github.com/felialvarez)
+___
 
+# Requisitos previos
+Antes de correr el proyecto, asegurate de tener instalados globalmente:
+- [Node.js](https://nodejs.org/) (Se recomienda v22+)
+- [Angular CLI](https://angular.io/cli)
+- [json-server](https://www.npmjs.com/package/json-server)
+- [Java JDK](https://adoptium.net/) (Se recomienda JDK 17+)
+- [MySQL](https://www.mysql.com/downloads/)
+
+Instala Angular CLI y json-server de la siguiente manera:
 ```bash
-ng serve
+npm install -g @angular/cli json-server
 ```
+___
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+# Pasos para hacer funcionar la aplicación
 
-## Code scaffolding
+1. **Instala las dependencias del frontend:**
+   ```bash
+   npm install
+   ```
+2. **Navega hasta la carpeta del proyecto frontend:**
+   ```bash
+   cd code
+   ```
+3. **Corre el proyecto frontend:**
+   ```bash
+   ng serve -o
+   ```
+4. **Configura y ejecuta el backend** (necesario para el funcionamiento completo del sistema):
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+   - **Clona el repositorio del backend:**
+     ```bash
+     git clone https://github.com/jopiatomas/proyecto-final
+     ```
+   - **Ingresa a la carpeta del backend:**
+     ```bash
+     cd proyecto-final
+     ```
+   - **Configura la conexión a la base de datos MySQL:**
+     - Crea una base de datos nueva en MySQL (por ejemplo, `quickish_db`).
+     - Abre el archivo `src/main/resources/application.properties` en el backend.
+     - Modifica las siguientes líneas con los datos de tu base de datos local:
+       ```
+       spring.datasource.url=jdbc:mysql://localhost:3306/quickish_db
+       spring.datasource.username=TU_USUARIO
+       spring.datasource.password=TU_PASSWORD
+       ```
+   - **Ejecuta el backend en Visual Studio Code:**
+     - Abre una nueva ventana en VS Code.
+     - Selecciona `File > Open Folder...` y elige la carpeta del backend.
+     - Busca el archivo principal `PedidosYaApplication.java`.
+     - Haz clic en el botón de "Run" (▶️) sobre la función `main` o en la barra superior.
+     - El backend se compilará y ejecutará automáticamente en la consola de VS Code.
 
-```bash
-ng generate component component-name
-```
+     > **Importante:** Asegúrate de tener Java JDK instalado y las extensiones de Java configuradas en Visual Studio Code.  
+     > Además, el backend debe estar corriendo antes de utilizar la aplicación frontend para que el sistema funcione correctamente.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+5. **¡Listo! Ya podés utilizar Quickish sin problemas.**
+___
 
-```bash
-ng generate --help
-```
+# Tecnologías utilizadas
 
-## Building
+- **Frontend:** Angular
+- **Backend:** Spring Boot (Java)
+- **Base de datos:** MySQL
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
