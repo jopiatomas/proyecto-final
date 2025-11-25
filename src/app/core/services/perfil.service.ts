@@ -39,6 +39,14 @@ export class PerfilService {
     });
   }
 
+  // Cambiar contraseña del usuario - PUT /clientes/cambiar-contrasenia
+  cambiarContrasenia(datos: { contraseniaActual: string, contraseniaNueva: string, confirmarContrasenia: string }): Observable<string> {
+    return this.http.put(`${this.apiUrl}/nueva-contrasenia`, datos, {
+      headers: this.getHeaders(),
+      responseType: 'text'
+    });
+  }
+
   // Headers con autenticación JWT
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');

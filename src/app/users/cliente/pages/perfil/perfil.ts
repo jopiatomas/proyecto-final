@@ -20,31 +20,35 @@ export class Perfil implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private perfilService = inject(PerfilService);
-  
+
   perfilForm!: FormGroup;
+  cambiarContraseniaForm!: FormGroup;
   usuario = signal<PerfilUsuario | null>(null);
   loading = signal(false);
+  mostrarModalContrasenia = false;
+  cambiandoContrasenia = false;
 
   ngOnInit() {
     this.initForm();
+    this.initCambiarContraseniaForm();
     this.cargarDatosUsuario();
   }
 
   initForm() {
     this.perfilForm = this.fb.nonNullable.group({
       nombre: ['', [
-        Validators.required, 
-        Validators.minLength(3), 
+        Validators.required,
+        Validators.minLength(3),
         Validators.maxLength(50)
       ]],
       usuario: [{value: '', disabled: true}, [
-        Validators.required, 
-        Validators.minLength(3), 
+        Validators.required,
+        Validators.minLength(3),
         Validators.maxLength(18),
         Validators.pattern(/^[a-zA-Z0-9]+$/)
       ]],
       email: ['', [
-        Validators.required, 
+        Validators.required,
         Validators.email,
         Validators.maxLength(100)
       ]],
@@ -55,20 +59,28 @@ export class Perfil implements OnInit {
     });
   }
 
+  initCambiarContraseniaForm() {
+    this.cambiarContraseniaForm = this.fb.group({
+      contraseniaActual: ['', [Validators.required, Validators.minLength(6)]],
+      contraseniaNueva: ['', [Validators.required, Validators.minLength(6)]],
+      confirmarContrasenia: ['', [Validators.required, Validators.minLength(6)]]
+    });
+  }
+
   cargarDatosUsuario() {
     this.loading.set(true);
-    
+
     const token = localStorage.getItem('token');
     const currentUser = this.authService.currentUser();
-    
+
     // Verificar expiración del token
     if (currentUser) {
       const now = Math.floor(Date.now() / 1000);
       const exp = currentUser.exp;
-      
+
       if (exp) {
         const timeLeft = exp - now;
-        
+
         if (timeLeft <= 0) {
           localStorage.removeItem('token');
           alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
@@ -77,14 +89,14 @@ export class Perfil implements OnInit {
         }
       }
     }
-    
+
     // Verificar que el usuario esté autenticado
     if (!this.authService.isAuthenticated() || !token) {
       alert('Debes iniciar sesión para ver tu perfil.');
       this.router.navigate(['/login']);
       return;
     }
-    
+
     // Obtener datos del perfil desde la API
     this.perfilService.obtenerPerfil().subscribe({
       next: (datosUsuario) => {
@@ -100,7 +112,7 @@ export class Perfil implements OnInit {
       error: (error) => {
         this.loading.set(false);
         console.error('Error al cargar perfil:', error);
-        
+
         // Intentar usar datos del token como fallback
         const currentUser = this.authService.currentUser();
         if (currentUser) {
@@ -129,7 +141,7 @@ export class Perfil implements OnInit {
   onSubmit() {
     if (this.perfilForm.valid) {
       const confirmacion = confirm('¿Estás seguro de que deseas actualizar tu perfil?');
-      
+
       if (confirmacion) {
         this.actualizarPerfil();
       }
@@ -145,22 +157,22 @@ export class Perfil implements OnInit {
       email: this.perfilForm.value.email,
       contraseniaActual: this.perfilForm.value.contrasenia
     };
-    
 
-    
+
+
     // Llamada real al backend
     this.perfilService.actualizarPerfil(datosActualizados).subscribe({
       next: (mensaje) => {
 
         this.loading.set(false);
-        alert(mensaje); 
+        alert(mensaje);
         // Recargar los datos del perfil después de actualizar
         this.cargarDatosUsuario();
       },
       error: (error) => {
         console.error('Error al actualizar perfil:', error);
         this.loading.set(false);
-        
+
         // Mostrar error más específico
         let mensaje = 'Error al actualizar el perfil.';
         if (error.error && error.error.message) {
@@ -170,7 +182,7 @@ export class Perfil implements OnInit {
         } else if (error.status === 403) {
           mensaje = 'No tienes permisos para actualizar este perfil.';
         }
-        
+
         alert(mensaje + ' Inténtalo de nuevo.');
       }
     });
@@ -178,5 +190,60 @@ export class Perfil implements OnInit {
 
   navegarA(ruta: string) {
     this.router.navigate([ruta]);
+  }
+
+  abrirModalContrasenia() {
+    this.mostrarModalContrasenia = true;
+    this.cambiarContraseniaForm.reset();
+  }
+
+  cerrarModalContrasenia() {
+    this.mostrarModalContrasenia = false;
+    this.cambiarContraseniaForm.reset();
+  }
+
+  cambiarContrasenia() {
+    if (this.cambiarContraseniaForm.invalid) {
+      alert('Por favor, completa todos los campos correctamente.');
+      return;
+    }
+
+    const { contraseniaActual, contraseniaNueva, confirmarContrasenia } = this.cambiarContraseniaForm.value;
+
+    if (contraseniaNueva !== confirmarContrasenia) {
+      alert('Las contraseñas nuevas no coinciden.');
+      return;
+    }
+
+    if (contraseniaActual === contraseniaNueva) {
+      alert('La nueva contraseña debe ser diferente a la actual.');
+      return;
+    }
+
+    this.cambiandoContrasenia = true;
+    this.perfilService.cambiarContrasenia({
+      contraseniaActual,
+      contraseniaNueva,
+      confirmarContrasenia
+    }).subscribe({
+      next: (mensaje: string) => {
+        this.cambiandoContrasenia = false;
+        alert(mensaje || '¡Contraseña cambiada exitosamente!');
+        this.cerrarModalContrasenia();
+      },
+      error: (error: any) => {
+        this.cambiandoContrasenia = false;
+        console.error('Error al cambiar contraseña:', error);
+        let mensaje = 'Error al cambiar la contraseña.';
+        if (error.error && error.error.message) {
+          mensaje = error.error.message;
+        } else if (error.status === 400) {
+          mensaje = 'La contraseña actual es incorrecta.';
+        } else if (error.status === 403) {
+          mensaje = 'No tienes permisos para realizar esta acción.';
+        }
+        alert(mensaje);
+      }
+    });
   }
 }

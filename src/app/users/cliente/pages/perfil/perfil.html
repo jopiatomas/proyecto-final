@@ -15,13 +15,13 @@
       <div class="perfil-content">
         <form class="perfil-form" [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
           <h3>Información Personal</h3>
-          
+
           <div class="form-row">
             <div class="form-group">
               <label>Nombre completo *</label>
-              <input 
-                type="text" 
-                formControlName="nombre" 
+              <input
+                type="text"
+                formControlName="nombre"
                 class="form-input"
                 placeholder="Ingresa tu nombre completo"
               />
@@ -32,9 +32,9 @@
 
             <div class="form-group">
               <label>Usuario *</label>
-              <input 
-                type="text" 
-                formControlName="usuario" 
+              <input
+                type="text"
+                formControlName="usuario"
                 class="form-input"
                 placeholder="Nombre de usuario"
               />
@@ -46,9 +46,9 @@
 
           <div class="form-group">
             <label>Email *</label>
-            <input 
-              type="email" 
-              formControlName="email" 
+            <input
+              type="email"
+              formControlName="email"
               class="form-input"
               placeholder="tu@email.com"
             />
@@ -59,9 +59,9 @@
 
           <div class="form-group">
             <label>Contraseña Actual *</label>
-            <input 
-              type="password" 
-              formControlName="contrasenia" 
+            <input
+              type="password"
+              formControlName="contrasenia"
               class="form-input"
               placeholder="Ingresa tu contraseña actual para verificar identidad"
             />
@@ -71,8 +71,8 @@
           </div>
 
           <div class="form-actions">
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               class="btn-primary"
               [disabled]="loading()"
             >
@@ -101,10 +101,85 @@
             </div>
             <span class="flecha">→</span>
           </button>
+          <button class="link-card" (click)="abrirModalContrasenia()">
+            <div>
+              <h4>Cambiar Contraseña</h4>
+              <p>Actualiza tu contraseña de acceso</p>
+            </div>
+            <span class="flecha">→</span>
+          </button>
         </div>
       </div>
     }
   </div>
 </div>
+
+<!-- Modal para cambiar contraseña -->
+@if (mostrarModalContrasenia) {
+  <div class="modal-overlay" (click)="cerrarModalContrasenia()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Cambiar Contraseña</h3>
+        <button class="close-btn" (click)="cerrarModalContrasenia()">&times;</button>
+      </div>
+
+      <form [formGroup]="cambiarContraseniaForm" (ngSubmit)="cambiarContrasenia()">
+        <div class="form-group">
+          <label>Contraseña Actual *</label>
+          <input
+            type="password"
+            formControlName="contraseniaActual"
+            class="form-input"
+            placeholder="Ingresa tu contraseña actual"
+          />
+          @if (cambiarContraseniaForm.get('contraseniaActual')?.invalid && cambiarContraseniaForm.get('contraseniaActual')?.touched) {
+            <small class="error-text">Contraseña actual requerida (mínimo 6 caracteres)</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Nueva Contraseña *</label>
+          <input
+            type="password"
+            formControlName="contraseniaNueva"
+            class="form-input"
+            placeholder="Ingresa tu nueva contraseña"
+          />
+          @if (cambiarContraseniaForm.get('contraseniaNueva')?.invalid && cambiarContraseniaForm.get('contraseniaNueva')?.touched) {
+            <small class="error-text">Nueva contraseña requerida (mínimo 6 caracteres)</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Confirmar Nueva Contraseña *</label>
+          <input
+            type="password"
+            formControlName="confirmarContrasenia"
+            class="form-input"
+            placeholder="Confirma tu nueva contraseña"
+          />
+          @if (cambiarContraseniaForm.get('confirmarContrasenia')?.invalid && cambiarContraseniaForm.get('confirmarContrasenia')?.touched) {
+            <small class="error-text">Confirma la contraseña (mínimo 6 caracteres)</small>
+          }
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModalContrasenia()">Cancelar</button>
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="cambiandoContrasenia || cambiarContraseniaForm.invalid"
+          >
+            @if (cambiandoContrasenia) {
+              Cambiando...
+            } @else {
+              Cambiar Contraseña
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
 
 <app-footer-cliente></app-footer-cliente>
