@@ -27,6 +27,12 @@ export class Perfil implements OnInit {
   mensajeError = '';
   tipoMensaje: 'success' | 'error' | '' = '';
 
+  // Modal de alerta genérico
+  mostrarModalAlerta = false;
+  tituloAlerta = '';
+  mensajeAlerta = '';
+  tipoAlerta: 'info' | 'warning' | 'error' | 'success' = 'info';
+
   ngOnInit() {
     this.initForm();
     this.cargarDatosUsuario();
@@ -65,8 +71,12 @@ export class Perfil implements OnInit {
 
         if (timeLeft <= 0) {
           localStorage.removeItem('token');
-          alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-          this.router.navigate(['/login']);
+          this.mostrarAlerta(
+            'Sesión expirada',
+            'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+            'warning'
+          );
+          setTimeout(() => this.router.navigate(['/login']), 2000);
           return;
         }
       }
@@ -74,8 +84,8 @@ export class Perfil implements OnInit {
 
     // Verificar que el usuario esté autenticado
     if (!this.authService.isAuthenticated() || !token) {
-      alert('Debes iniciar sesión para ver tu perfil.');
-      this.router.navigate(['/login']);
+      this.mostrarAlerta('Acceso denegado', 'Debes iniciar sesión para ver tu perfil.', 'warning');
+      setTimeout(() => this.router.navigate(['/login']), 2000);
       return;
     }
 
@@ -112,8 +122,12 @@ export class Perfil implements OnInit {
         } else {
           // Si no hay token válido, redirigir al login
           localStorage.removeItem('token');
-          alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-          this.router.navigate(['/login']);
+          this.mostrarAlerta(
+            'Sesión expirada',
+            'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+            'warning'
+          );
+          setTimeout(() => this.router.navigate(['/login']), 2000);
         }
       },
     });
@@ -154,7 +168,11 @@ export class Perfil implements OnInit {
     this.clienteService.actualizarPerfil(datosActualizados).subscribe({
       next: (mensaje) => {
         this.loading.set(false);
-        alert(mensaje);
+        this.mostrarAlerta(
+          'Perfil actualizado',
+          mensaje || 'Tu perfil se actualizó correctamente',
+          'success'
+        );
         // Recargar los datos del perfil después de actualizar
         this.cargarDatosUsuario();
       },
@@ -171,12 +189,28 @@ export class Perfil implements OnInit {
           mensaje = 'No tienes permisos para actualizar este perfil.';
         }
 
-        alert(mensaje + ' Inténtalo de nuevo.');
+        this.mostrarAlerta('Error al actualizar', mensaje + ' Inténtalo de nuevo.', 'error');
       },
     });
   }
 
   navegarA(ruta: string) {
     this.router.navigate([ruta]);
+  }
+
+  // Métodos para modal de alerta
+  mostrarAlerta(
+    titulo: string,
+    mensaje: string,
+    tipo: 'info' | 'warning' | 'error' | 'success' = 'info'
+  ) {
+    this.tituloAlerta = titulo;
+    this.mensajeAlerta = mensaje;
+    this.tipoAlerta = tipo;
+    this.mostrarModalAlerta = true;
+  }
+
+  cerrarModalAlerta() {
+    this.mostrarModalAlerta = false;
   }
 }

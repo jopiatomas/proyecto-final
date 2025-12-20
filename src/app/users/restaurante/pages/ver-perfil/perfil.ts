@@ -6,7 +6,10 @@ import { Header } from '../../components/header/header';
 import { FooterRestaurante } from '../../components/footer/footer';
 import { AuthService } from '../../../../core/services/auth-service';
 import { PerfilService } from '../../../../core/services/perfil.service';
-import { ActualizarPerfilRestauranteRequest, PerfilUsuario } from '../../../../core/models/app.models';
+import {
+  ActualizarPerfilRestauranteRequest,
+  PerfilUsuario,
+} from '../../../../core/models/app.models';
 import { RestauranteService } from '../../../../core/services/restaurante.service';
 
 @Component({
@@ -21,16 +24,13 @@ export class Perfil implements OnInit {
   private router = inject(Router);
   public authService = inject(AuthService);
   private restauranteService = inject(RestauranteService);
-  
+
   perfilForm!: FormGroup;
   usuario = signal<PerfilUsuario | null>(null);
   loading = signal(false);
-
-  formularioPerfil!: FormGroup;
-  cargando = signal(false);
+  confirmandoActualizacion = false;
   mensajePerfil = '';
   tipoMensaje: 'success' | 'error' | '' = '';
-  confirmandoActualizacion = false;
 
   ngOnInit() {
     this.initForm();
@@ -39,28 +39,6 @@ export class Perfil implements OnInit {
 
   initForm() {
     this.perfilForm = this.fb.nonNullable.group({
-      nombre: ['', [
-        Validators.required, 
-        Validators.minLength(3), 
-        Validators.maxLength(50)
-      ]],
-      usuario: [{value: '', disabled: true}, [
-        Validators.required, 
-        Validators.minLength(3), 
-        Validators.maxLength(18),
-        Validators.pattern(/^[a-zA-Z0-9]+$/)
-      ]],
-      email: ['', [
-        Validators.required, 
-        Validators.email,
-        Validators.maxLength(100)
-      ]],
-      contrasenia: ['', [
-        Validators.required,
-        Validators.minLength(6)
-      ]]
-  inicializarFormulario() {
-    this.formularioPerfil = this.fb.nonNullable.group({
       nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
       usuario: [
         { value: '', disabled: true },
@@ -72,94 +50,68 @@ export class Perfil implements OnInit {
         ],
       ],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+      horaApertura: [
+        '',
+        [Validators.required, Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)],
+      ],
+      horaCierre: [
+        '',
+        [Validators.required, Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)],
+      ],
       contrasenia: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
   cargarDatosUsuario() {
-  this.loading.set(true);
-  const token = localStorage.getItem('token');
-  const currentUser = this.authService.currentUser();
+    this.loading.set(true);
+    const token = localStorage.getItem('token');
 
-  if (currentUser) {
-    const now = Math.floor(Date.now() / 1000);
-    const exp = currentUser.exp;
-
-    if (exp) {
-      const timeLeft = exp - now;
-
-      if (timeLeft <= 0) {
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-        return;
-      }
-    this.cargando.set(true);
-
-    const usuarioActual = this.authService.currentUser();
-    if (usuarioActual) {
-      this.formularioPerfil.patchValue({
-        nombre: usuarioActual.nombre,
-        usuario: usuarioActual.usuario,
-        email: usuarioActual.email,
-      });
+    if (!this.authService.isAuthenticated() || !token) {
+      this.router.navigate(['/login']);
+      return;
     }
-  }
 
-  if (!this.authService.isAuthenticated() || !token) {
-    this.router.navigate(['/login']);
-    return;
-  }
+    this.restauranteService.obtenerPerfil().subscribe({
+      next: (datosUsuario: any) => {
+        this.usuario.set(datosUsuario);
 
-  this.restauranteService.obtenerPerfil().subscribe({
-    next: (datosUsuario) => {
-      this.usuario.set(datosUsuario);
-
-      this.perfilForm.patchValue({
-        nombre: datosUsuario.nombreYapellido,
-        usuario: datosUsuario.usuario,
-        email: datosUsuario.email
-      });
-
-
-      this.loading.set(false);
-    },
-    error: (error) => {
-      this.loading.set(false);
-
-      const currentUser = this.authService.currentUser();
-      if (currentUser) {
-
-        const datosBasicos: PerfilUsuario = {
-          id: currentUser.id,
-          nombreYapellido: currentUser.nombre,
-          usuario: currentUser.usuario,
-          email: currentUser.email
-        };
-
-        this.usuario.set(datosBasicos);
         this.perfilForm.patchValue({
-          nombre: datosBasicos.nombreYapellido,
-          usuario: datosBasicos.usuario,
-          email: datosBasicos.email
+          nombre: datosUsuario.nombreYapellido,
+          usuario: datosUsuario.usuario,
+          email: datosUsuario.email,
+          horaApertura: datosUsuario.horaApertura || '',
+          horaCierre: datosUsuario.horaCierre || '',
         });
+        this.loading.set(false);
+      },
+      error: (error: any) => {
+        this.loading.set(false);
 
-      } else {
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-      }
-    }
-  });
-}
+        const currentUser = this.authService.currentUser();
+        if (currentUser) {
+          const datosBasicos: PerfilUsuario = {
+            id: currentUser.id,
+            nombreYapellido: currentUser.nombre,
+            usuario: currentUser.usuario,
+            email: currentUser.email,
+          };
 
+          this.usuario.set(datosBasicos);
+          this.perfilForm.patchValue({
+            nombre: datosBasicos.nombreYapellido,
+            usuario: datosBasicos.usuario,
+            email: datosBasicos.email,
+          });
+        } else {
+          localStorage.removeItem('token');
+          this.router.navigate(['/login']);
+        }
+      },
+    });
+  }
 
   alEnviar() {
     if (this.perfilForm.valid) {
-      const confirmacion = confirm('¿Estás seguro de que deseas actualizar tu perfil?');
-      
-      if (confirmacion) {
-        this.actualizarPerfil();
-      }
-    if (this.formularioPerfil.valid) {
       this.confirmandoActualizacion = true;
     } else {
       this.mensajePerfil =
@@ -173,55 +125,53 @@ export class Perfil implements OnInit {
   }
 
   actualizarPerfil() {
-  this.loading.set(true);
-  const datosActualizados = {
-  nombreRestaurante: this.perfilForm.value.nombre,
-  email: this.perfilForm.value.email,
-  contraseniaActual: this.perfilForm.value.contrasenia
-};
-
-  alert('Enviando al backend:\n\n' + JSON.stringify(datosActualizados, null, 2));
-    
-  this.restauranteService.actualizarPerfil(datosActualizados as ActualizarPerfilRestauranteRequest).subscribe({
-    next: (mensaje: string) => {
-      this.loading.set(false);
-      alert(mensaje);
-      this.cargarDatosUsuario();
-    },
-    error: (error: any) => {
-      this.loading.set(false);
-      
-      let mensaje = 'Error al actualizar el perfil.';
-      if (error.error && error.error.message) {
-        mensaje = error.error.message;
-      } else if (error.status === 400) {
-        mensaje = 'Datos inválidos. Verifica que todos los campos estén correctos.';
-      } else if (error.status === 403) {
-        mensaje = 'No tienes permisos para actualizar este perfil.';
-      }
-      
-      alert(mensaje + ' Inténtalo de nuevo.');
-    }
-  });
-}
-    this.cargando.set(true);
+    this.loading.set(true);
     this.confirmandoActualizacion = false;
     const datosActualizados = {
-      nombre: this.formularioPerfil.value.nombre,
-      email: this.formularioPerfil.value.email,
-      contraseniaActual: this.formularioPerfil.value.contrasenia,
+      nombreRestaurante: this.perfilForm.value.nombre,
+      email: this.perfilForm.value.email,
+      horaApertura: this.perfilForm.value.horaApertura,
+      horaCierre: this.perfilForm.value.horaCierre,
+      contraseniaActual: this.perfilForm.value.contrasenia,
     };
 
-    setTimeout(() => {
-      this.cargando.set(false);
-      this.mensajePerfil = 'Perfil actualizado exitosamente';
-      this.tipoMensaje = 'success';
-      this.cargarDatosUsuario();
-      setTimeout(() => {
-        this.mensajePerfil = '';
-        this.tipoMensaje = '';
-      }, 5000);
-    }, 1000);
+    console.log('Datos a enviar:', datosActualizados);
+    console.log('Hora apertura:', this.perfilForm.value.horaApertura);
+    console.log('Hora cierre:', this.perfilForm.value.horaCierre);
+
+    this.restauranteService
+      .actualizarPerfil(datosActualizados as ActualizarPerfilRestauranteRequest)
+      .subscribe({
+        next: (mensaje: string) => {
+          this.loading.set(false);
+          this.mensajePerfil = mensaje || 'Perfil actualizado exitosamente';
+          this.tipoMensaje = 'success';
+          this.cargarDatosUsuario();
+          setTimeout(() => {
+            this.mensajePerfil = '';
+            this.tipoMensaje = '';
+          }, 5000);
+        },
+        error: (error: any) => {
+          this.loading.set(false);
+
+          let mensaje = 'Error al actualizar el perfil.';
+          if (error.error && error.error.message) {
+            mensaje = error.error.message;
+          } else if (error.status === 400) {
+            mensaje = 'Datos inválidos. Verifica que todos los campos estén correctos.';
+          } else if (error.status === 403) {
+            mensaje = 'No tienes permisos para actualizar este perfil.';
+          }
+
+          this.mensajePerfil = mensaje + ' Inténtalo de nuevo.';
+          this.tipoMensaje = 'error';
+          setTimeout(() => {
+            this.mensajePerfil = '';
+            this.tipoMensaje = '';
+          }, 5000);
+        },
+      });
   }
 
   cancelarActualizacion() {

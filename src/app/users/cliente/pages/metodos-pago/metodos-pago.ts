@@ -26,6 +26,12 @@ export class MetodosPago implements OnInit {
   mensajeError = '';
   tipoMensaje: 'success' | 'error' | '' = '';
 
+  // Propiedades para modal de alerta
+  mostrarModalAlerta = false;
+  tituloAlerta = '';
+  mensajeAlerta = '';
+  tipoAlerta: 'info' | 'warning' | 'error' | 'success' = 'info';
+
   ngOnInit() {
     this.inicializarFormulario();
     this.cargarTarjetas();
@@ -170,15 +176,37 @@ export class MetodosPago implements OnInit {
         },
         error: (error) => {
           this.cargando.set(false);
-          alert(
+          this.mostrarAlerta(
+            'Error',
             `Error al agregar la tarjeta: ${
               error.error?.message || error.message || 'Error desconocido'
-            }`
+            }`,
+            'error'
           );
         },
       });
     } else {
-      alert('Por favor completa todos los campos correctamente');
+      this.mostrarAlerta(
+        'Campos incompletos',
+        'Por favor completa todos los campos correctamente',
+        'warning'
+      );
     }
+  }
+
+  // Métodos para modal de alerta
+  mostrarAlerta(
+    titulo: string,
+    mensaje: string,
+    tipo: 'info' | 'warning' | 'error' | 'success' = 'info'
+  ) {
+    this.tituloAlerta = titulo;
+    this.mensajeAlerta = mensaje;
+    this.tipoAlerta = tipo;
+    this.mostrarModalAlerta = true;
+  }
+
+  cerrarModalAlerta() {
+    this.mostrarModalAlerta = false;
   }
 }

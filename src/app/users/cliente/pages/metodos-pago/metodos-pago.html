@@ -121,13 +121,11 @@
                 formularioTarjeta.get('vencimiento')?.touched) {
                 <small class="error">Formato: MM/YY</small>
                 } @if (formularioTarjeta.get('vencimiento')?.hasError('vencimientoAntiguo') &&
-                formularioTarjeta.get('vencimiento')?.touched) {
-<<<<<<< HEAD
+                formularioTarjeta.get('vencimiento')?.touched) { <<<<<<< HEAD
                 <small class="error">La tarjeta debe vencer a partir de 01/26</small>
-=======
+                =======
                 <small class="error">La tarjeta debe vencer a partir de 01/28</small>
->>>>>>> Tomas
-                } @if (formularioTarjeta.get('vencimiento')?.hasError('vencida') &&
+                >>>>>>> Tomas } @if (formularioTarjeta.get('vencimiento')?.hasError('vencida') &&
                 formularioTarjeta.get('vencimiento')?.touched) {
                 <small class="error">La tarjeta está vencida</small>
                 }
@@ -184,6 +182,24 @@
     <div class="modal-actions">
       <button class="btn-confirmar" (click)="confirmarEliminacion()">Eliminar</button>
       <button class="btn-cancelar-modal" (click)="cancelarEliminacion()">Cancelar</button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Modal de alerta -->
+@if (mostrarModalAlerta) {
+<div class="modal-overlay" (click)="cerrarModalAlerta()">
+  <div class="modal-content-alerta {{ tipoAlerta }}" (click)="$event.stopPropagation()">
+    <div class="modal-header-alerta">
+      <h3>{{ tituloAlerta }}</h3>
+      <button class="close-btn-alerta" (click)="cerrarModalAlerta()">×</button>
+    </div>
+    <div class="modal-body-alerta">
+      <p>{{ mensajeAlerta }}</p>
+    </div>
+    <div class="modal-actions-alerta">
+      <button class="btn-aceptar" (click)="cerrarModalAlerta()">Aceptar</button>
     </div>
   </div>
 </div>

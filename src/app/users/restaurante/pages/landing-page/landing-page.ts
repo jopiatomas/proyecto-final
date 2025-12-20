@@ -52,7 +52,13 @@ export class LandingPage implements OnInit {
   }
 
   confirmarCambio() {
-    this.confirmandoCambioEstado = true;
+    // Validar que haya un estado nuevo seleccionado
+    if (!this.estadoNuevo()) {
+      return;
+    }
+
+    // Ejecutar el cambio directamente
+    this.ejecutarCambioEstado();
   }
 
   ejecutarCambioEstado() {
@@ -63,7 +69,6 @@ export class LandingPage implements OnInit {
       this.cambiandoEstado = true;
       this.restauranteService.cambiarEstadoPedido(pedido.id, estado).subscribe({
         next: (pedidoActualizado: Pedido) => {
-        next: (pedidoActualizado) => {
           this.cambiandoEstado = false;
           this.confirmandoCambioEstado = false;
           this.mensajeCambioEstado = 'Estado actualizado exitosamente';
@@ -74,11 +79,12 @@ export class LandingPage implements OnInit {
             this.pedidos.set(pedidosActualizados);
             this.cerrarDetalle();
           } else {
+            // Mantener los detalles originales del pedido
             const pedidosActualizados = this.pedidos().map((p) =>
-              p.id === pedido.id ? pedidoActualizado : p
+              p.id === pedido.id ? { ...p, estado: estado } : p
             );
             this.pedidos.set(pedidosActualizados);
-            this.pedidoSeleccionado.set(pedidoActualizado);
+            this.pedidoSeleccionado.set({ ...pedido, estado: estado });
             this.estadoNuevo.set(null);
           }
 
@@ -87,7 +93,6 @@ export class LandingPage implements OnInit {
           }, 5000);
         },
         error: (error: any) => {
-        error: (error) => {
           this.cambiandoEstado = false;
           this.confirmandoCambioEstado = false;
           this.mensajeCambioEstado = 'Error al cambiar estado del pedido';

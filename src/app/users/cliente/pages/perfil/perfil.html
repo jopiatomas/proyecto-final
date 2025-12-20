@@ -133,4 +133,30 @@
 </div>
 }
 
+<!-- Modal de Alerta Genérico -->
+@if (mostrarModalAlerta) {
+<div class="modal-overlay" (click)="cerrarModalAlerta()">
+  <div
+    class="modal-content-alerta"
+    (click)="$event.stopPropagation()"
+    [class]="'modal-' + tipoAlerta"
+  >
+    <div class="modal-header-alerta">
+      <span class="modal-icon">
+        @if (tipoAlerta === 'success') { ✓ } @if (tipoAlerta === 'error') { ✗ } @if (tipoAlerta ===
+        'warning') { ⚠ } @if (tipoAlerta === 'info') { ℹ }
+      </span>
+      <h3>{{ tituloAlerta }}</h3>
+      <button class="close-modal-btn" (click)="cerrarModalAlerta()">×</button>
+    </div>
+    <div class="modal-body-alerta">
+      <p>{{ mensajeAlerta }}</p>
+    </div>
+    <div class="modal-actions-alerta">
+      <button class="btn-aceptar" (click)="cerrarModalAlerta()">Aceptar</button>
+    </div>
+  </div>
+</div>
+}
+
 <app-footer-cliente></app-footer-cliente>

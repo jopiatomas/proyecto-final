@@ -6,17 +6,6 @@
     <p>Revisa todos tus pedidos</p>
   </div>
 
-  @if (mensajeCancelacion) {
-  <div
-    class="alert-message"
-    [class.alert-success]="tipoMensajeCancelacion === 'success'"
-    [class.alert-error]="tipoMensajeCancelacion === 'error'"
-  >
-    <span class="alert-icon">{{ tipoMensajeCancelacion === 'success' ? '✓' : '⚠' }}</span>
-    <span class="alert-text">{{ mensajeCancelacion }}</span>
-  </div>
-  }
-
   <div class="pedidos-layout">
     <!-- Lista de pedidos -->
     <div class="pedidos-lista">
@@ -40,17 +29,10 @@
         >
           Pendiente
         </button>
-<<<<<<< HEAD
-        <button 
-          class="filtro-btn" 
-          [class.active]="filtroActivo === 'PREPARACION'"
-          (click)="cambiarFiltro('PREPARACION')"
-=======
         <button
           class="filtro-btn"
-          [class.active]="filtroActivo === 'EN_PREPARACION'"
-          (click)="cambiarFiltro('EN_PREPARACION')"
->>>>>>> Tomas
+          [class.active]="filtroActivo === 'PREPARACION'"
+          (click)="cambiarFiltro('PREPARACION')"
         >
           En Preparación
         </button>
@@ -207,33 +189,19 @@
   </div>
 </main>
 
-<!-- Modal de confirmación de cancelación -->
-@if (confirmandoCancelacion) {
-<div class="modal-overlay" (click)="cancelarConfirmacion()">
-  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Cancelar Pedido</h3>
-      <button class="close-modal-btn" (click)="cancelarConfirmacion()">×</button>
+<!-- Modal de alerta -->
+@if (mostrarModalAlerta) {
+<div class="modal-overlay" (click)="cerrarModalAlerta()">
+  <div class="modal-content-alerta {{ tipoAlerta }}" (click)="$event.stopPropagation()">
+    <div class="modal-header-alerta">
+      <h3>{{ tituloAlerta }}</h3>
+      <button class="close-btn-alerta" (click)="cerrarModalAlerta()">×</button>
     </div>
-    <div class="modal-body">
-      <p>¿Estás seguro de que deseas cancelar este pedido?</p>
-      @if (pedidoSeleccionado) {
-      <p class="modal-warning">
-        Pedido #{{ pedidoSeleccionado.id }} - Total: {{ formatearPrecio(pedidoSeleccionado.total) }}
-      </p>
-      }
+    <div class="modal-body-alerta">
+      <p>{{ mensajeAlerta }}</p>
     </div>
-    <div class="modal-actions">
-      <button
-        class="btn-confirmar-cancelar"
-        (click)="ejecutarCancelacion()"
-        [disabled]="cancelando"
-      >
-        @if (cancelando) { Cancelando... } @else { Sí, Cancelar Pedido }
-      </button>
-      <button class="btn-cancelar-modal" (click)="cancelarConfirmacion()" [disabled]="cancelando">
-        No, Volver
-      </button>
+    <div class="modal-actions-alerta">
+      <button class="btn-aceptar" (click)="cerrarModalAlerta()">Aceptar</button>
     </div>
   </div>
 </div>

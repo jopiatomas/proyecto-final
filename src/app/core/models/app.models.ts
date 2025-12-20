@@ -69,6 +69,8 @@ export interface RestauranteDetail {
   usuario: string;
   nombre: string;
   email: string;
+  horaApertura?: string;
+  horaCierre?: string;
   menu: ProductoResumen[];
   reseniasRestaurante: ReseniaResumen[];
   direcciones: DireccionDTO[];

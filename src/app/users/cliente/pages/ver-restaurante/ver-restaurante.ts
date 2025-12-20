@@ -5,12 +5,6 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { Header } from '../../components/header/header';
 import { FooterCliente } from '../../components/footer/footer';
-<<<<<<< HEAD
-import { DetallePedido, DireccionDTO, PedidoCreate, ProductoResumen, ReseniaCreate, ReseniaResumen, RestauranteDetail, Tarjeta } from '../../../../core/models/app.models';
-import { ClienteService } from '../../../../core/services/cliente.service';
-import { AuthService } from '../../../../core/services/auth-service';
-
-=======
 import {
   DetallePedidoDTO,
   DireccionDTO,
@@ -23,7 +17,7 @@ import {
 } from '../../../../core/models/app.models';
 import { ClienteService } from '../../../../core/services/cliente.service';
 import { AuthService } from '../../../../core/services/auth-service';
->>>>>>> Tomas
+import { isRestauranteAbierto, formatearHorario } from '../../../../core/utils/horario.utils';
 
 // Interface para items del carrito
 interface CarritoItem {
@@ -81,14 +75,16 @@ export class VerRestaurante implements OnInit {
   mensajeStock = '';
   tipoMensajeStock: 'success' | 'error' | '' = '';
 
+  // Modal de alerta genérico
+  mostrarModalAlerta = false;
+  tituloAlerta = '';
+  mensajeAlerta = '';
+  tipoAlerta: 'info' | 'warning' | 'error' | 'success' = 'info';
+
   constructor() {
     this.reseniaForm = this.fb.group({
       resenia: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
-<<<<<<< HEAD
-      puntuacion: [5, [Validators.required, Validators.min(0.1), Validators.max(5)]]
-=======
       puntuacion: [5, [Validators.required, Validators.min(0.1), Validators.max(5)]],
->>>>>>> Tomas
     });
   }
 
@@ -117,7 +113,7 @@ export class VerRestaurante implements OnInit {
       error: (error) => {
         this.loading = false;
         this.loadingMenu = false;
-      }
+      },
     });
   }
 
@@ -125,7 +121,7 @@ export class VerRestaurante implements OnInit {
     this.clienteService.getRestaurantesFavoritos().subscribe({
       next: (favoritos) => {
         if (this.restaurante) {
-          this.esFavorito = favoritos.some(f => f.id === this.restaurante!.id);
+          this.esFavorito = favoritos.some((f) => f.id === this.restaurante!.id);
         }
       },
       error: (error) => {
@@ -135,14 +131,14 @@ export class VerRestaurante implements OnInit {
         } else {
           this.esFavorito = false;
         }
-      }
+      },
     });
   }
 
   toggleFavorito(event: Event) {
     event.stopPropagation();
     event.preventDefault();
-    
+
     if (!this.restaurante) return;
 
     if (this.esFavorito) {
@@ -152,10 +148,14 @@ export class VerRestaurante implements OnInit {
         },
         error: (error) => {
           if (error.status === 401) {
-            alert('Sesión expirada. Redirigiendo al login...');
-            this.authService.logout();
+            this.mostrarAlerta(
+              'Sesión expirada',
+              'Tu sesión ha expirado. Redirigiendo al login...',
+              'warning'
+            );
+            setTimeout(() => this.authService.logout(), 2000);
           }
-        }
+        },
       });
     } else {
       this.clienteService.agregarRestauranteFavorito(this.restaurante.id).subscribe({
@@ -164,10 +164,14 @@ export class VerRestaurante implements OnInit {
         },
         error: (error) => {
           if (error.status === 401) {
-            alert('Sesión expirada. Redirigiendo al login...');
-            this.authService.logout();
+            this.mostrarAlerta(
+              'Sesión expirada',
+              'Tu sesión ha expirado. Redirigiendo al login...',
+              'warning'
+            );
+            setTimeout(() => this.authService.logout(), 2000);
           }
-        }
+        },
       });
     }
   }
@@ -179,11 +183,7 @@ export class VerRestaurante implements OnInit {
     if (!this.mostrarFormularioResenia) {
       this.reseniaForm.reset({
         resenia: '',
-<<<<<<< HEAD
-        puntuacion: 5
-=======
         puntuacion: 5,
->>>>>>> Tomas
       });
     }
   }
@@ -194,7 +194,6 @@ export class VerRestaurante implements OnInit {
 
   submitResenia() {
     if (this.reseniaForm.valid && this.restaurante) {
-<<<<<<< HEAD
       this.submittingResenia = true;
 
       const reseniaData: ReseniaCreate = {
@@ -223,86 +222,44 @@ export class VerRestaurante implements OnInit {
           this.mostrarFormularioResenia = false;
           this.submittingResenia = false;
 
-          alert('¡Reseña enviada exitosamente!');
+          // Mostrar mensaje de éxito
+          this.mensajeResenia = '¡Reseña enviada exitosamente!';
+          this.tipoMensajeResenia = 'success';
+          setTimeout(() => {
+            this.mensajeResenia = '';
+            this.tipoMensajeResenia = '';
+          }, 5000);
         },
         error: (error) => {
           this.submittingResenia = false;
-          alert('Error al enviar la reseña. Por favor, inténtalo de nuevo.');
+
+          // Extraer mensaje de error del backend
+          let mensajeError = 'Error al enviar la reseña. Por favor, inténtalo de nuevo.';
+
+          if (error.error && typeof error.error === 'string') {
+            // Si es un string, intentar parsearlo como JSON
+            try {
+              const errorObj = JSON.parse(error.error);
+              mensajeError = errorObj.message || error.error;
+            } catch {
+              // Si no es JSON, usar el string directamente
+              mensajeError = error.error;
+            }
+          } else if (error.error && error.error.message) {
+            mensajeError = error.error.message;
+          } else if (error.message) {
+            mensajeError = error.message;
+          }
+
+          this.mensajeResenia = mensajeError;
+          this.tipoMensajeResenia = 'error';
+          setTimeout(() => {
+            this.mensajeResenia = '';
+            this.tipoMensajeResenia = '';
+          }, 5000);
         },
       });
-=======
-      this.confirmandoResenia = true;
->>>>>>> Tomas
-    } else {
-      this.mensajeResenia = 'Por favor completa todos los campos correctamente';
-      this.tipoMensajeResenia = 'error';
-      setTimeout(() => {
-        this.mensajeResenia = '';
-        this.tipoMensajeResenia = '';
-      }, 5000);
     }
-  }
-
-  enviarResenia() {
-    this.confirmandoResenia = false;
-    this.submittingResenia = true;
-
-    const reseniaData: ReseniaCreate = {
-      restauranteId: this.restaurante!.id,
-      resenia: this.reseniaForm.value.resenia.trim(),
-      puntuacion: this.reseniaForm.value.puntuacion,
-    };
-
-    this.clienteService.crearResenia(reseniaData).subscribe({
-      next: (nuevaResenia) => {
-        // Agregar la nueva reseña al principio de la lista
-        const currentUser = this.authService.currentUser();
-        const reseniaResumen: ReseniaResumen = {
-          idCliente: nuevaResenia.idCliente,
-          nombreCliente: currentUser?.usuario || '',
-          resenia: nuevaResenia.resenia,
-          puntuacion: nuevaResenia.puntuacion,
-        };
-        this.resenias.unshift(reseniaResumen);
-
-        // Resetear formulario y ocultar
-        this.reseniaForm.reset({
-          resenia: '',
-          puntuacion: 5,
-        });
-        this.mostrarFormularioResenia = false;
-        this.submittingResenia = false;
-
-        // Mostrar mensaje de éxito
-        this.mensajeResenia = '¡Reseña enviada exitosamente!';
-        this.tipoMensajeResenia = 'success';
-        setTimeout(() => {
-          this.mensajeResenia = '';
-          this.tipoMensajeResenia = '';
-        }, 5000);
-      },
-      error: (error) => {
-        this.submittingResenia = false;
-
-        // Extraer mensaje de error del backend
-        let mensajeError = 'Error al enviar la reseña. Por favor, inténtalo de nuevo.';
-
-        if (error.error && typeof error.error === 'string') {
-          mensajeError = error.error;
-        } else if (error.error && error.error.message) {
-          mensajeError = error.error.message;
-        } else if (error.message) {
-          mensajeError = error.message;
-        }
-
-        this.mensajeResenia = mensajeError;
-        this.tipoMensajeResenia = 'error';
-        setTimeout(() => {
-          this.mensajeResenia = '';
-          this.tipoMensajeResenia = '';
-        }, 5000);
-      },
-    });
   }
 
   cancelarConfirmacionResenia() {
@@ -310,7 +267,10 @@ export class VerRestaurante implements OnInit {
   }
 
   formatearPrecio(precio: number): string {
-    return `$${precio.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return `$${precio.toLocaleString('es-AR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   }
 
   calcularPromedioPuntuacion(): number {
@@ -320,47 +280,63 @@ export class VerRestaurante implements OnInit {
   }
 
   formatearPuntuacion(puntuacion: number | null | undefined): string {
-  const valor =
-    typeof puntuacion === 'number' && !isNaN(puntuacion) ? puntuacion : 0;
+    const valor = typeof puntuacion === 'number' && !isNaN(puntuacion) ? puntuacion : 0;
 
-  return valor.toFixed(1);
-}
+    return valor.toFixed(1);
+  }
 
   // Métodos del carrito
   agregarAlCarrito(producto: ProductoResumen) {
+    // Validar que el restaurante esté abierto
+    if (!this.isRestauranteAbierto()) {
+      this.mostrarAlerta(
+        'Restaurante cerrado',
+        'El restaurante está cerrado en este momento. No se pueden agregar productos al carrito.',
+        'warning'
+      );
+      return;
+    }
+
     // Validar stock antes de agregar
     if (!producto.stock || producto.stock === 0) {
       this.mostrarMensajeStock('Este producto no tiene stock disponible', 'error');
       return;
     }
 
-    const itemExistente = this.carrito.find(item => item.producto.id === producto.id);
+    const itemExistente = this.carrito.find((item) => item.producto.id === producto.id);
 
     if (itemExistente) {
       // Validar que no exceda el stock disponible
       if (itemExistente.cantidad >= producto.stock) {
-        this.mostrarMensajeStock(`Solo hay ${producto.stock} unidades disponibles de este producto`, 'error');
         return;
       }
       itemExistente.cantidad++;
     } else {
       this.carrito.push({ producto, cantidad: 1 });
     }
+    // Validar stock antes de agregar
+    if (!producto.stock || producto.stock === 0) {
+      this.mostrarAlerta('Sin stock', 'Este producto no tiene stock disponible', 'warning');
+      return;
+    }
   }
 
   removerDelCarrito(productoId: number) {
-    const index = this.carrito.findIndex(item => item.producto.id === productoId);
+    const index = this.carrito.findIndex((item) => item.producto.id === productoId);
     if (index > -1) {
       this.carrito.splice(index, 1);
     }
   }
 
   aumentarCantidad(productoId: number) {
-    const item = this.carrito.find(item => item.producto.id === productoId);
+    const item = this.carrito.find((item) => item.producto.id === productoId);
     if (item) {
       // Validar que no exceda el stock
       if (item.producto.stock && item.cantidad >= item.producto.stock) {
-        this.mostrarMensajeStock(`Solo hay ${item.producto.stock} unidades disponibles de este producto`, 'error');
+        this.mostrarMensajeStock(
+          `Solo hay ${item.producto.stock} unidades disponibles de este producto`,
+          'error'
+        );
         return;
       }
       item.cantidad++;
@@ -368,7 +344,7 @@ export class VerRestaurante implements OnInit {
   }
 
   disminuirCantidad(productoId: number) {
-    const item = this.carrito.find(item => item.producto.id === productoId);
+    const item = this.carrito.find((item) => item.producto.id === productoId);
     if (item && item.cantidad > 1) {
       item.cantidad--;
     } else if (item && item.cantidad === 1) {
@@ -377,7 +353,7 @@ export class VerRestaurante implements OnInit {
   }
 
   calcularTotalCarrito(): number {
-    return this.carrito.reduce((total, item) => total + (item.producto.precio * item.cantidad), 0);
+    return this.carrito.reduce((total, item) => total + item.producto.precio * item.cantidad, 0);
   }
 
   calcularCantidadTotalItems(): number {
@@ -388,9 +364,28 @@ export class VerRestaurante implements OnInit {
     this.carrito = [];
   }
 
+  isRestauranteAbierto(): boolean {
+    if (!this.restaurante) return true;
+    return isRestauranteAbierto(this.restaurante.horaApertura, this.restaurante.horaCierre);
+  }
+
+  formatearHorario(horario?: string): string {
+    return formatearHorario(horario);
+  }
+
   procesarPedido() {
     if (this.carrito.length === 0) {
-      alert('El carrito está vacío');
+      this.mostrarAlerta('Carrito vacío', 'No hay productos en el carrito', 'warning');
+      return;
+    }
+
+    // Verificar si el restaurante está abierto
+    if (!this.isRestauranteAbierto()) {
+      this.mostrarAlerta(
+        'Restaurante cerrado',
+        'El restaurante está cerrado en este momento. No se pueden realizar pedidos.',
+        'warning'
+      );
       return;
     }
 
@@ -406,8 +401,12 @@ export class VerRestaurante implements OnInit {
         this.direcciones = direcciones;
       },
       error: (error) => {
-        alert('Error cargando direcciones. Por favor, intenta de nuevo.');
-      }
+        this.mostrarAlerta(
+          'Error',
+          'Error cargando direcciones. Por favor, intenta de nuevo.',
+          'error'
+        );
+      },
     });
 
     this.clienteService.getMetodosPago().subscribe({
@@ -415,8 +414,12 @@ export class VerRestaurante implements OnInit {
         this.metodosPago = metodos;
       },
       error: (error) => {
-        alert('Error cargando métodos de pago. Por favor, intenta de nuevo.');
-      }
+        this.mostrarAlerta(
+          'Error',
+          'Error cargando métodos de pago. Por favor, intenta de nuevo.',
+          'error'
+        );
+      },
     });
   }
 
@@ -433,23 +436,19 @@ export class VerRestaurante implements OnInit {
   }
 
   obtenerCantidadEnCarrito(productoId: number): number {
-    const item = this.carrito.find(item => item.producto.id === productoId);
+    const item = this.carrito.find((item) => item.producto.id === productoId);
     return item ? item.cantidad : 0;
   }
 
   confirmarPedido() {
     // Validaciones
     if (!this.direccionSeleccionada) {
-<<<<<<< HEAD
-      alert('Por favor selecciona una dirección');
-=======
       this.mensajePedido = 'Por favor selecciona tu dirección de entrega';
       this.tipoMensajePedido = 'error';
       setTimeout(() => {
         this.mensajePedido = '';
         this.tipoMensajePedido = '';
       }, 5000);
->>>>>>> Tomas
       return;
     }
 
@@ -483,21 +482,15 @@ export class VerRestaurante implements OnInit {
       return;
     }
 
-    // Mostrar modal de confirmación
-    this.confirmandoPedido = true;
+    // Realizar el pedido directamente
+    this.realizarPedido();
   }
 
   realizarPedido() {
-    this.confirmandoPedido = false;
-
     // Preparar datos del pedido
-<<<<<<< HEAD
-    const detalles: DetallePedido[] = this.carrito.map(item => ({
-=======
     const detalles: DetallePedidoDTO[] = this.carrito.map((item) => ({
->>>>>>> Tomas
       productoId: item.producto.id,
-      cantidad: item.cantidad
+      cantidad: item.cantidad,
     }));
 
     const pedido: PedidoCreate = {
@@ -512,10 +505,6 @@ export class VerRestaurante implements OnInit {
     this.enviandoPedido = true;
     this.clienteService.crearPedido(pedido).subscribe({
       next: (pedidoCreado) => {
-<<<<<<< HEAD
-        // Éxito
-        alert(`¡Pedido realizado exitosamente!\nNúmero de pedido: ${pedidoCreado.id}\nTotal: ${this.formatearPrecio(this.calcularTotalCarrito())}`);
-=======
         this.enviandoPedido = false;
         this.mensajePedido = `¡Pedido realizado exitosamente! Número de pedido: ${pedidoCreado.id}`;
         this.tipoMensajePedido = 'success';
@@ -523,7 +512,6 @@ export class VerRestaurante implements OnInit {
           this.mensajePedido = '';
           this.tipoMensajePedido = '';
         }, 5000);
->>>>>>> Tomas
         this.limpiarCarrito();
         this.cerrarModalPedido();
       },
@@ -531,24 +519,29 @@ export class VerRestaurante implements OnInit {
         this.enviandoPedido = false;
 
         // Manejo de errores más específico
+        let mensajeError = 'Error al realizar el pedido. Por favor intenta nuevamente.';
+
         if (error.status === 400) {
-<<<<<<< HEAD
-          alert(error.error || 'Error en los datos del pedido. Por favor verifica la información.');
-=======
-          this.mensajePedido =
-            error.error || 'Error en los datos del pedido. Por favor verifica la información.';
->>>>>>> Tomas
+          // Extraer mensaje limpio del backend
+          if (error.error?.message) {
+            mensajeError = error.error.message;
+          } else if (typeof error.error === 'string') {
+            // Si es un string, intentar parsearlo como JSON
+            try {
+              const errorObj = JSON.parse(error.error);
+              mensajeError = errorObj.message || error.error;
+            } catch {
+              // Si no es JSON, usar el string directamente
+              mensajeError = error.error;
+            }
+          } else {
+            mensajeError = 'Error en los datos del pedido. Por favor verifica la información.';
+          }
         } else if (error.status === 401) {
-          this.mensajePedido = 'Error de autenticación. Por favor inicia sesión nuevamente.';
-        } else {
-          this.mensajePedido = 'Error al realizar el pedido. Por favor intenta nuevamente.';
+          mensajeError = 'Error de autenticación. Por favor inicia sesión nuevamente.';
         }
-<<<<<<< HEAD
-      }
-    });
-  }
-}
-=======
+
+        this.mensajePedido = mensajeError;
         this.tipoMensajePedido = 'error';
         setTimeout(() => {
           this.mensajePedido = '';
@@ -557,7 +550,6 @@ export class VerRestaurante implements OnInit {
       },
     });
   }
-
   cancelarConfirmacionPedido() {
     this.confirmandoPedido = false;
   }
@@ -570,5 +562,20 @@ export class VerRestaurante implements OnInit {
       this.tipoMensajeStock = '';
     }, 5000);
   }
+
+  // Métodos para modal de alerta
+  mostrarAlerta(
+    titulo: string,
+    mensaje: string,
+    tipo: 'info' | 'warning' | 'error' | 'success' = 'info'
+  ) {
+    this.tituloAlerta = titulo;
+    this.mensajeAlerta = mensaje;
+    this.tipoAlerta = tipo;
+    this.mostrarModalAlerta = true;
+  }
+
+  cerrarModalAlerta() {
+    this.mostrarModalAlerta = false;
+  }
 }
->>>>>>> Tomas

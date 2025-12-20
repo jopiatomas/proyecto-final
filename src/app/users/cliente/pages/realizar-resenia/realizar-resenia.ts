@@ -24,6 +24,12 @@ export class RealizarResenia implements OnInit {
   calificacionSeleccionada = signal(0);
   estrellaHover = signal(0);
 
+  // Propiedades para modal de alerta
+  mostrarModalAlerta = false;
+  tituloAlerta = '';
+  mensajeAlerta = '';
+  tipoAlerta: 'info' | 'warning' | 'error' | 'success' = 'info';
+
   ngOnInit() {
     this.inicializarFormulario();
     this.cargarRestaurantes();
@@ -47,7 +53,7 @@ export class RealizarResenia implements OnInit {
       error: (error) => {
         console.error('Error al cargar restaurantes:', error);
         this.cargando.set(false);
-        alert('Error al cargar los restaurantes');
+        this.mostrarAlerta('Error', 'Error al cargar los restaurantes', 'error');
       },
     });
   }
@@ -89,7 +95,7 @@ export class RealizarResenia implements OnInit {
         this.clienteService.crearResenia(reseniaData).subscribe({
           next: (resenia) => {
             console.log('Reseña creada:', resenia);
-            alert('¡Reseña enviada con éxito!');
+            this.mostrarAlerta('¡Éxito!', '¡Reseña enviada con éxito!', 'success');
             this.resetFormulario();
             this.cargando.set(false);
           },
@@ -108,7 +114,7 @@ export class RealizarResenia implements OnInit {
               mensaje =
                 'Datos inválidos. Verifica que hayas completado todos los campos correctamente.';
             }
-            alert(mensaje);
+            this.mostrarAlerta('Error', mensaje, 'error');
           },
         });
       }
@@ -126,8 +132,10 @@ export class RealizarResenia implements OnInit {
           control?.errors
         );
       });
-      alert(
-        'Por favor, completa todos los campos: restaurante, calificación y reseña (mínimo 10 caracteres)'
+      this.mostrarAlerta(
+        'Campos incompletos',
+        'Por favor, completa todos los campos: restaurante, calificación y reseña (mínimo 10 caracteres)',
+        'warning'
       );
     }
   }
@@ -139,5 +147,21 @@ export class RealizarResenia implements OnInit {
 
   navegarA(ruta: string) {
     this.router.navigate([ruta]);
+  }
+
+  // Métodos para modal de alerta
+  mostrarAlerta(
+    titulo: string,
+    mensaje: string,
+    tipo: 'info' | 'warning' | 'error' | 'success' = 'info'
+  ) {
+    this.tituloAlerta = titulo;
+    this.mensajeAlerta = mensaje;
+    this.tipoAlerta = tipo;
+    this.mostrarModalAlerta = true;
+  }
+
+  cerrarModalAlerta() {
+    this.mostrarModalAlerta = false;
   }
 }

@@ -21,10 +21,12 @@ export class VerHistorialPedidos implements OnInit {
   error: string | null = null;
   mostrarMenuOpciones = false;
   filtroActivo: string = 'TODOS';
-  confirmandoCancelacion = false;
-  cancelando = false;
-  mensajeCancelacion = '';
-  tipoMensajeCancelacion: 'success' | 'error' = 'success';
+
+  // Propiedades para modal de alerta
+  mostrarModalAlerta = false;
+  tituloAlerta = '';
+  mensajeAlerta = '';
+  tipoAlerta: 'info' | 'warning' | 'error' | 'success' = 'info';
 
   ngOnInit() {
     this.cargarPedidos();
@@ -62,49 +64,46 @@ export class VerHistorialPedidos implements OnInit {
 
   cancelarPedido() {
     if (!this.pedidoSeleccionado) return;
-    this.mostrarMenuOpciones = false;
-    this.confirmandoCancelacion = true;
-  }
 
-  ejecutarCancelacion() {
-    if (!this.pedidoSeleccionado) return;
+    if (confirm('¿Estás seguro de que quieres cancelar este pedido?')) {
+      this.clienteService.cancelarPedido(this.pedidoSeleccionado.id).subscribe({
+        next: (mensaje) => {
+          this.mostrarAlerta(
+            'Pedido cancelado',
+            mensaje || 'Pedido cancelado exitosamente',
+            'success'
+          );
+          this.cargarPedidos(); // Recargar la lista
+          this.pedidoSeleccionado = null; // Limpiar selección
+          this.mostrarMenuOpciones = false;
+        },
+        error: (error) => {
+          console.error('Error cancelando pedido:', error);
 
-    this.cancelando = true;
-    this.clienteService.cancelarPedido(this.pedidoSeleccionado.id).subscribe({
-      next: (mensaje) => {
-        this.cancelando = false;
-        this.confirmandoCancelacion = false;
-        this.mensajeCancelacion = mensaje || 'Pedido cancelado exitosamente';
-        this.tipoMensajeCancelacion = 'success';
+          // Extraer mensaje limpio del backend
+          let mensajeError = 'Error al cancelar el pedido';
+          if (error.error?.message) {
+            mensajeError = error.error.message;
+          } else if (typeof error.error === 'string') {
+            // Si es un string, intentar parsearlo como JSON
+            try {
+              const errorObj = JSON.parse(error.error);
+              mensajeError = errorObj.message || error.error;
+            } catch {
+              // Si no es JSON, usar el string directamente
+              mensajeError = error.error;
+            }
+          }
 
-        this.cargarPedidos();
-        this.pedidoSeleccionado = null;
+          this.mostrarAlerta('Error', mensajeError, 'error');
 
-        setTimeout(() => {
-          this.mensajeCancelacion = '';
-        }, 5000);
-      },
-      error: (error) => {
-        this.cancelando = false;
-        this.confirmandoCancelacion = false;
-        console.error('Error cancelando pedido:', error);
-
-        const mensajeError = error.error || 'Error al cancelar el pedido';
-        this.mensajeCancelacion = mensajeError;
-        this.tipoMensajeCancelacion = 'error';
-
-        this.cargarPedidos();
-        this.pedidoSeleccionado = null;
-
-        setTimeout(() => {
-          this.mensajeCancelacion = '';
-        }, 5000);
-      },
-    });
-  }
-
-  cancelarConfirmacion() {
-    this.confirmandoCancelacion = false;
+          // Recargar la lista para actualizar estados
+          this.cargarPedidos();
+          this.pedidoSeleccionado = null;
+          this.mostrarMenuOpciones = false;
+        },
+      });
+    }
   }
 
   formatearPrecio(precio: number): string {
@@ -150,5 +149,21 @@ export class VerHistorialPedidos implements OnInit {
     } else {
       this.pedidosFiltrados = this.pedidos.filter((p) => p.estado === this.filtroActivo);
     }
+  }
+
+  // Métodos para modal de alerta
+  mostrarAlerta(
+    titulo: string,
+    mensaje: string,
+    tipo: 'info' | 'warning' | 'error' | 'success' = 'info'
+  ) {
+    this.tituloAlerta = titulo;
+    this.mensajeAlerta = mensaje;
+    this.tipoAlerta = tipo;
+    this.mostrarModalAlerta = true;
+  }
+
+  cerrarModalAlerta() {
+    this.mostrarModalAlerta = false;
   }
 }

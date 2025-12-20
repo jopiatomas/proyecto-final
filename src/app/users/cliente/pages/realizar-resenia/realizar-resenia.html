@@ -94,4 +94,22 @@
   </div>
 </div>
 
+<!-- Modal de alerta -->
+@if (mostrarModalAlerta) {
+<div class="modal-overlay" (click)="cerrarModalAlerta()">
+  <div class="modal-content-alerta {{ tipoAlerta }}" (click)="$event.stopPropagation()">
+    <div class="modal-header-alerta">
+      <h3>{{ tituloAlerta }}</h3>
+      <button class="close-btn-alerta" (click)="cerrarModalAlerta()">×</button>
+    </div>
+    <div class="modal-body-alerta">
+      <p>{{ mensajeAlerta }}</p>
+    </div>
+    <div class="modal-actions-alerta">
+      <button class="btn-aceptar" (click)="cerrarModalAlerta()">Aceptar</button>
+    </div>
+  </div>
+</div>
+}
+
 <app-footer-cliente></app-footer-cliente>

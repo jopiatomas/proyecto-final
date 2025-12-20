@@ -69,10 +69,6 @@
                 id="direccion"
                 formControlName="direccion"
                 placeholder="Ej: Av. Corrientes 1234"
-<<<<<<< HEAD
-=======
-                maxlength="100"
->>>>>>> Tomas
               />
               @if (formularioDireccion.get('direccion')?.invalid &&
               formularioDireccion.get('direccion')?.touched) {
@@ -88,33 +84,20 @@
                   id="ciudad"
                   formControlName="ciudad"
                   placeholder="Ej: Buenos Aires"
-<<<<<<< HEAD
-                />
-                @if (formularioDireccion.get('ciudad')?.invalid &&
-                formularioDireccion.get('ciudad')?.touched) {
-                <small class="error">Ciudad requerida (solo letras)</small>
-=======
                   maxlength="50"
                 />
                 @if (formularioDireccion.get('ciudad')?.invalid &&
                 formularioDireccion.get('ciudad')?.touched) {
-                <small class="error">
-                  @if (formularioDireccion.get('ciudad')?.hasError('required')) { Ciudad requerida }
-                  @else if (formularioDireccion.get('ciudad')?.hasError('pattern')) { La ciudad solo
-                  puede contener letras } @else { Mínimo 2 caracteres }
+                <small class="error"
+                  >@if (formularioDireccion.get('ciudad')?.hasError('required')) { Ciudad requerida
+                  } @else if (formularioDireccion.get('ciudad')?.hasError('pattern')) { La ciudad
+                  solo puede contener letras } @else { Mínimo 2 caracteres }
                 </small>
->>>>>>> Tomas
                 }
               </div>
 
               <div class="form-group">
                 <label for="pais">País *</label>
-<<<<<<< HEAD
-                <input type="text" id="pais" formControlName="pais" placeholder="Ej: Argentina" />
-                @if (formularioDireccion.get('pais')?.invalid &&
-                formularioDireccion.get('pais')?.touched) {
-                <small class="error">País requerido (solo letras)</small>
-=======
                 <select id="pais" formControlName="pais" class="form-select">
                   <option value="">Selecciona un país</option>
                   <option value="Argentina">Argentina</option>
@@ -146,7 +129,6 @@
                   @else if (formularioDireccion.get('pais')?.hasError('pattern')) { El país solo
                   puede contener letras } @else { Mínimo 2 caracteres }
                 </small>
->>>>>>> Tomas
                 }
               </div>
             </div>
@@ -158,12 +140,9 @@
                 id="codigoPostal"
                 formControlName="codigoPostal"
                 placeholder="Ej: 1425"
-<<<<<<< HEAD
-=======
                 maxlength="10"
                 pattern="[0-9]*"
                 inputmode="numeric"
->>>>>>> Tomas
               />
               @if (formularioDireccion.get('codigoPostal')?.invalid &&
               formularioDireccion.get('codigoPostal')?.touched) {
@@ -209,6 +188,24 @@
     <div class="modal-actions">
       <button class="btn-confirmar" (click)="confirmarEliminacion()">Eliminar</button>
       <button class="btn-cancelar-modal" (click)="cancelarEliminacion()">Cancelar</button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Modal de alerta -->
+@if (mostrarModalAlerta) {
+<div class="modal-overlay" (click)="cerrarModalAlerta()">
+  <div class="modal-content-alerta {{ tipoAlerta }}" (click)="$event.stopPropagation()">
+    <div class="modal-header-alerta">
+      <h3>{{ tituloAlerta }}</h3>
+      <button class="close-btn-alerta" (click)="cerrarModalAlerta()">×</button>
+    </div>
+    <div class="modal-body-alerta">
+      <p>{{ mensajeAlerta }}</p>
+    </div>
+    <div class="modal-actions-alerta">
+      <button class="btn-aceptar" (click)="cerrarModalAlerta()">Aceptar</button>
     </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth-service';
 import { CommonModule } from '@angular/common';
@@ -10,18 +10,9 @@ import { filter } from 'rxjs';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-<<<<<<< HEAD
 export class Header implements OnInit {
   esPaginaPrincipal = false;
   rutaRetorno = '/restaurante';
-=======
-export class Header {
-  private authService = inject(AuthService);
-  private router = inject(Router);
-
-  dropdownOpen = signal<boolean>(false);
-  confirmandoCerrarSesion = false;
->>>>>>> Tomas
 
   constructor(
     private router: Router,
@@ -54,24 +45,35 @@ export class Header {
     }
   }
 
-<<<<<<< HEAD
   volver() {
     this.router.navigate([this.rutaRetorno]);
   }
 
-  cerrarSesion() {
-=======
-  cerrarSesion(): void {
-    this.dropdownOpen.set(false);
-    this.confirmandoCerrarSesion = true;
+   dropdownOpen = signal<boolean>(false);
+   confirmandoCerrarSesion = false;
+
+   toggleDropdown(): void {
+    this.dropdownOpen.set(!this.dropdownOpen());
   }
 
-  confirmarCerrarSesion(): void {
->>>>>>> Tomas
-    this.authService.logout();
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.perfil-container')) {
+      this.dropdownOpen.set(false);
+    }
   }
 
-  cancelarCerrarSesion(): void {
-    this.confirmandoCerrarSesion = false;
-  }
+cerrarSesion(): void {
+  this.dropdownOpen.set(false);
+  this.confirmandoCerrarSesion = true;
+}
+
+confirmarCerrarSesion(): void {
+  this.authService.logout();
+}
+
+cancelarCerrarSesion(): void {
+  this.confirmandoCerrarSesion = false;
+}
 }

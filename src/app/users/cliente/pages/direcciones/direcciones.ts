@@ -27,6 +27,12 @@ export class Direcciones implements OnInit {
   mensajeDireccion = '';
   tipoMensajeDireccion: 'success' | 'error' | '' = '';
 
+  // Modal de alerta genérico
+  mostrarModalAlerta = false;
+  tituloAlerta = '';
+  mensajeAlerta = '';
+  tipoAlerta: 'info' | 'warning' | 'error' | 'success' = 'info';
+
   ngOnInit() {
     this.inicializarFormulario();
     this.cargarDirecciones();
@@ -66,18 +72,18 @@ export class Direcciones implements OnInit {
       },
       error: (error) => {
         this.cargando.set(false);
-        // Si el error es 400 con mensaje de "no hay direcciones", tratarlo como lista vacía
+        // Si el error es 400 o 404 con mensaje de "no hay direcciones", tratarlo como lista vacía
+        const mensajeError = error.error?.message || error.error || '';
         if (
-          error.status === 400 &&
-          error.error?.message?.toLowerCase().includes('no hay direcciones')
+          (error.status === 400 || error.status === 404) &&
+          typeof mensajeError === 'string' &&
+          mensajeError.toLowerCase().includes('no hay direcciones')
         ) {
           this.direcciones.set([]);
-        } else {
+        } else if (error.status !== 0) {
+          // Solo mostrar alert para errores reales del servidor (excepto errores de conexión)
           console.error('Error al cargar direcciones:', error);
-          if (error.status !== 404 && error.status !== 0) {
-            // Solo mostrar alert para errores reales del servidor
-            alert('Error al cargar las direcciones');
-          }
+          this.mostrarAlerta('Error', 'Error al cargar las direcciones', 'error');
         }
       },
     });
@@ -189,16 +195,24 @@ export class Direcciones implements OnInit {
             this.cargando.set(false);
 
             if (error.status === 401) {
-              alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+              this.mostrarAlerta(
+                'Sesión expirada',
+                'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+                'warning'
+              );
               localStorage.removeItem('token');
-              window.location.href = '/login';
+              setTimeout(() => {
+                window.location.href = '/login';
+              }, 2000);
               return;
             }
 
-            alert(
+            this.mostrarAlerta(
+              'Error',
               `Error al modificar la dirección: ${
                 error.error?.message || error.message || 'Error desconocido'
-              }`
+              }`,
+              'error'
             );
           },
         });
@@ -218,28 +232,60 @@ export class Direcciones implements OnInit {
             this.cargando.set(false);
 
             if (error.status === 401) {
-              alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+              this.mostrarAlerta(
+                'Sesión expirada',
+                'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+                'warning'
+              );
               localStorage.removeItem('token');
-              window.location.href = '/login';
+              setTimeout(() => {
+                window.location.href = '/login';
+              }, 2000);
               return;
             }
 
             let mensajeError = 'Error desconocido';
             if (error.error?.message) {
               mensajeError = error.error.message;
-            } else if (error.error) {
-              mensajeError =
-                typeof error.error === 'string' ? error.error : JSON.stringify(error.error);
+            } else if (typeof error.error === 'string') {
+              // Si es un string, intentar parsearlo como JSON
+              try {
+                const errorObj = JSON.parse(error.error);
+                mensajeError = errorObj.message || error.error;
+              } catch {
+                // Si no es JSON, usar el string directamente
+                mensajeError = error.error;
+              }
             } else if (error.message) {
               mensajeError = error.message;
             }
 
-            alert(`Error al crear la dirección: ${mensajeError}`);
+            this.mostrarAlerta('Error', `Error al crear la dirección: ${mensajeError}`, 'error');
           },
         });
       }
     } else {
-      alert('Por favor completa todos los campos correctamente');
+      this.mostrarAlerta(
+        'Campos incompletos',
+        'Por favor completa todos los campos correctamente',
+        'warning'
+      );
     }
+  }
+
+  // Métodos para modal de alerta
+  mostrarAlerta(
+    titulo: string,
+    mensaje: string,
+    tipo: 'info' | 'warning' | 'error' | 'success' = 'info'
+  ) {
+    this.tituloAlerta = titulo;
+    this.mensajeAlerta = mensaje;
+    this.tipoAlerta = tipo;
+    this.mostrarModalAlerta = true;
+  }
+
+  cerrarModalAlerta() {
+    this.mostrarModalAlerta = false;
   }
 }

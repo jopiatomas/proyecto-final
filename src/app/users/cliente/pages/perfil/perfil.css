@@ -415,3 +415,110 @@ p {
 .btn-cancelar-modal:hover {
   background: #e0e0e0;
 }
+
+/* Modal de Alerta Genérico */
+.modal-content-alerta {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+.modal-header-alerta {
+  padding: 25px 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.modal-icon {
+  font-size: 32px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.modal-success .modal-icon {
+  background: #d4edda;
+  color: #28a745;
+}
+
+.modal-error .modal-icon {
+  background: #f8d7da;
+  color: #dc3545;
+}
+
+.modal-warning .modal-icon {
+  background: #fff3cd;
+  color: #ffc107;
+}
+
+.modal-info .modal-icon {
+  background: #d1ecf1;
+  color: #17a2b8;
+}
+
+.modal-header-alerta h3 {
+  margin: 0;
+  flex: 1;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-body-alerta {
+  padding: 25px 30px;
+}
+
+.modal-body-alerta p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #666;
+}
+
+.modal-actions-alerta {
+  padding: 20px 30px;
+  display: flex;
+  justify-content: flex-end;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-aceptar {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--col-1);
+  color: white;
+}
+
+.btn-aceptar:hover {
+  background: rgb(74, 20, 140);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

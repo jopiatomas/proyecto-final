@@ -14,12 +14,9 @@ import {
   DireccionDTO,
   Tarjeta,
   TarjetaRequest,
-<<<<<<< HEAD
-  RestauranteResumidoDTO
-=======
+  RestauranteResumidoDTO,
   PerfilUsuario,
   ActualizarPerfilRequest,
->>>>>>> Tomas
 } from '../models/app.models';
 
 @Injectable({
@@ -197,22 +194,29 @@ export class ClienteService {
 
   // POST /clientes/agregar-listafav/{id-restaurante} - Agregar restaurante a favoritos
   agregarRestauranteFavorito(idRestaurante: number): Observable<RestauranteResumidoDTO> {
-    return this.http.post<RestauranteResumidoDTO>(`${this.baseUrl}/agregar-listafav/${idRestaurante}`, {}, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.post<RestauranteResumidoDTO>(
+      `${this.baseUrl}/agregar-listafav/${idRestaurante}`,
+      {},
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
   }
 
   // DELETE /clientes/eliminar-listafav/{id-restaurante} - Eliminar restaurante de favoritos
   eliminarRestauranteFavorito(idRestaurante: number): Observable<RestauranteResumidoDTO> {
-    return this.http.delete<RestauranteResumidoDTO>(`${this.baseUrl}/eliminar-listafav/${idRestaurante}`, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.delete<RestauranteResumidoDTO>(
+      `${this.baseUrl}/eliminar-listafav/${idRestaurante}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
   }
 
   // GET /clientes/mostrar-listafav - Obtener lista de restaurantes favoritos
   getRestaurantesFavoritos(): Observable<RestauranteResumidoDTO[]> {
     return this.http.get<RestauranteResumidoDTO[]>(`${this.baseUrl}/mostrar-listafav`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 }

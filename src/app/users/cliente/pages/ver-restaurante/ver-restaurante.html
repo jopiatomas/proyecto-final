@@ -12,48 +12,42 @@
       <p>Cargando información del restaurante...</p>
     </div>
     } @else if (restaurante) {
-<<<<<<< HEAD
     <!-- Botón de favorito fijo -->
-    <button 
-      class="btn-favorito-restaurante" 
+    <button
+      class="btn-favorito-restaurante"
       [class.active]="esFavorito"
       (click)="toggleFavorito($event)"
-      title="{{ esFavorito ? 'Eliminar de favoritos' : 'Agregar a favoritos' }}">
+      title="{{ esFavorito ? 'Eliminar de favoritos' : 'Agregar a favoritos' }}"
+    >
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        <path
+          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+        ></path>
       </svg>
     </button>
-    
-=======
-    <!-- Mensaje de éxito o error del pedido -->
-    @if (mensajePedido && tipoMensajePedido) {
-    <div
-      class="alert-message"
-      [class.alert-success]="tipoMensajePedido === 'success'"
-      [class.alert-error]="tipoMensajePedido === 'error'"
-    >
-      <span class="alert-icon">{{ tipoMensajePedido === 'success' ? '✓' : '⚠' }}</span>
-      <span class="alert-text">{{ mensajePedido }}</span>
-    </div>
-    }
 
-    <!-- Mensaje de stock -->
-    @if (mensajeStock && tipoMensajeStock) {
-    <div
-      class="alert-message"
-      [class.alert-success]="tipoMensajeStock === 'success'"
-      [class.alert-error]="tipoMensajeStock === 'error'"
-    >
-      <span class="alert-icon">{{ tipoMensajeStock === 'success' ? '✓' : '⚠' }}</span>
-      <span class="alert-text">{{ mensajeStock }}</span>
-    </div>
-    }
-
->>>>>>> Tomas
     <!-- Header del Restaurante -->
     <section class="restaurant-header">
-      <h2>{{ restaurante.nombre }}</h2>
-      @if (resenias.length > 0) {
+      <div class="header-content">
+        <h2>{{ restaurante.nombre }}</h2>
+        <div class="status-badges">
+          @if (isRestauranteAbierto()) {
+          <span class="badge badge-abierto">🟢 ABIERTO</span>
+          } @else {
+          <span class="badge badge-cerrado">🔴 CERRADO</span>
+          }
+        </div>
+      </div>
+
+      @if (restaurante.horaApertura && restaurante.horaCierre) {
+      <div class="horario-info">
+        <span class="horario-label">⏰ Horario:</span>
+        <span class="horario-text">
+          {{ formatearHorario(restaurante.horaApertura) }} -
+          {{ formatearHorario(restaurante.horaCierre) }}
+        </span>
+      </div>
+      } @if (resenias.length > 0) {
       <div class="rating-info">
         <span class="stars">
           @for (estrella of estrellas; track estrella) {
@@ -65,9 +59,12 @@
           ({{ resenias.length }} {{ resenias.length === 1 ? 'reseña' : 'reseñas' }})
         </span>
       </div>
+      } @if (!isRestauranteAbierto()) {
+      <div class="alert-cerrado">
+        <p>⚠️ El restaurante está cerrado en este momento. No es posible realizar pedidos.</p>
+      </div>
       }
     </section>
-    
 
     <!-- Menú del Restaurante -->
     <section class="menu-section">
@@ -99,8 +96,15 @@
               class="add-btn"
               type="button"
               (click)="agregarAlCarrito(producto)"
-              [disabled]="!tieneStock(producto)"
-              [class.disabled]="!tieneStock(producto)"
+              [disabled]="!tieneStock(producto) || !isRestauranteAbierto()"
+              [class.disabled]="!tieneStock(producto) || !isRestauranteAbierto()"
+              [attr.title]="
+                !isRestauranteAbierto()
+                  ? 'Restaurante cerrado'
+                  : !tieneStock(producto)
+                  ? 'Sin stock'
+                  : 'Agregar al carrito'
+              "
             >
               <span>+</span>
             </button>
@@ -124,18 +128,6 @@
             {{ mostrarFormularioResenia ? 'Cancelar' : 'Escribir Reseña' }}
           </button>
         </div>
-
-        <!-- Mensaje de éxito o error -->
-        @if (mensajeResenia && tipoMensajeResenia) {
-        <div
-          class="alert-message"
-          [class.alert-success]="tipoMensajeResenia === 'success'"
-          [class.alert-error]="tipoMensajeResenia === 'error'"
-        >
-          <span class="alert-icon">{{ tipoMensajeResenia === 'success' ? '✓' : '⚠' }}</span>
-          <span class="alert-text">{{ mensajeResenia }}</span>
-        </div>
-        }
 
         <!-- Formulario para Nueva Reseña -->
         @if (mostrarFormularioResenia) {
@@ -167,7 +159,6 @@
               formControlName="resenia"
               placeholder="Cuéntanos sobre tu experiencia..."
               rows="4"
-              maxlength="500"
             >
             </textarea>
             @if (reseniaForm.get('resenia')?.touched && reseniaForm.get('resenia')?.errors) {
@@ -228,7 +219,6 @@
     }
   </div>
 
-
   <!-- Carrito Lateral Siempre Visible -->
   <div class="cart-sidebar">
     <div class="cart-header">
@@ -282,14 +272,6 @@
         <button class="close-modal-btn" (click)="cerrarModalPedido()">×</button>
       </div>
 
-      <!-- Mensaje de error en modal -->
-      @if (mensajePedido && tipoMensajePedido === 'error') {
-      <div class="alert-message alert-error" style="margin: 1rem 1.5rem 0">
-        <span class="alert-icon">⚠</span>
-        <span class="alert-text">{{ mensajePedido }}</span>
-      </div>
-      }
-
       <div class="modal-body">
         <!-- Resumen del Pedido -->
         <div class="order-summary">
@@ -309,11 +291,11 @@
           </div>
         </div>
 
-        <!-- Selección de Dirección -->
+        <!-- Selección de Dirección del Cliente -->
         <div class="form-section">
-          <label for="direccion">Dirección de Entrega:</label>
+          <label for="direccion">Tu Dirección de Entrega:</label>
           <select id="direccion" [(ngModel)]="direccionSeleccionada" class="form-select">
-            <option value="">Selecciona una dirección</option>
+            <option value="">Selecciona tu dirección</option>
             @for (direccion of direcciones; track direccion.id) {
             <option [value]="direccion.id">
               {{ direccion.direccion }}, {{ direccion.ciudad }}
@@ -324,12 +306,16 @@
 
         <!-- Selección de Sucursal del Restaurante -->
         <div class="form-section">
-          <label for="sucursal">Sucursal del Restaurante:</label>
-          <select id="sucursal" [(ngModel)]="direccionRestauranteSeleccionada" class="form-select">
+          <label for="direccionRestaurante">Sucursal del Restaurante:</label>
+          <select
+            id="direccionRestaurante"
+            [(ngModel)]="direccionRestauranteSeleccionada"
+            class="form-select"
+          >
             <option value="">Selecciona una sucursal</option>
-            @for (sucursal of restaurante?.direcciones; track sucursal.id) {
-            <option [value]="sucursal.id">
-              {{ sucursal.direccion }}, {{ sucursal.ciudad }}, {{ sucursal.pais }}
+            @for (direccion of restaurante?.direcciones || []; track direccion.id) {
+            <option [value]="direccion.id">
+              {{ direccion.direccion }}, {{ direccion.ciudad }}, {{ direccion.pais }}
             </option>
             }
           </select>
@@ -360,66 +346,32 @@
     </div>
   </div>
   }
+
+  <!-- Modal de Alerta Genérico -->
+  @if (mostrarModalAlerta) {
+  <div class="modal-overlay" (click)="cerrarModalAlerta()">
+    <div
+      class="modal-content-alerta"
+      (click)="$event.stopPropagation()"
+      [class]="'modal-' + tipoAlerta"
+    >
+      <div class="modal-header-alerta">
+        <span class="modal-icon">
+          @if (tipoAlerta === 'success') { ✓ } @if (tipoAlerta === 'error') { ✗ } @if (tipoAlerta
+          === 'warning') { ⚠ } @if (tipoAlerta === 'info') { ℹ }
+        </span>
+        <h3>{{ tituloAlerta }}</h3>
+        <button class="close-modal-btn" (click)="cerrarModalAlerta()">×</button>
+      </div>
+      <div class="modal-body-alerta">
+        <p>{{ mensajeAlerta }}</p>
+      </div>
+      <div class="modal-actions-alerta">
+        <button class="btn-aceptar" (click)="cerrarModalAlerta()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+  }
 </main>
 
-<<<<<<< HEAD
 <app-footer-cliente></app-footer-cliente>
-=======
-<!-- Modal de confirmación de reseña -->
-@if (confirmandoResenia) {
-<div class="modal-overlay" (click)="cancelarConfirmacionResenia()">
-  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Confirmar Reseña</h3>
-      <button class="close-modal-btn" (click)="cancelarConfirmacionResenia()">×</button>
-    </div>
-    <div class="modal-body">
-      <p>¿Estás seguro de que deseas enviar esta reseña?</p>
-      <p class="modal-warning">Puntuación: {{ reseniaForm.value.puntuacion }} estrellas</p>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-confirmar" (click)="enviarResenia()" [disabled]="submittingResenia">
-        @if (submittingResenia) { Enviando... } @else { Enviar }
-      </button>
-      <button
-        class="btn-cancelar-modal"
-        (click)="cancelarConfirmacionResenia()"
-        [disabled]="submittingResenia"
-      >
-        Cancelar
-      </button>
-    </div>
-  </div>
-</div>
-}
-
-<!-- Modal de confirmación final -->
-@if (confirmandoPedido) {
-<div class="modal-overlay" (click)="cancelarConfirmacionPedido()">
-  <div class="modal-content-confirm" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Confirmar Pedido</h3>
-      <button class="close-modal-btn" (click)="cancelarConfirmacionPedido()">×</button>
-    </div>
-    <div class="modal-body">
-      <p>¿Estás seguro de que deseas realizar este pedido?</p>
-      <p class="modal-warning">Total a pagar: {{ formatearPrecio(calcularTotalCarrito()) }}</p>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-confirmar" (click)="realizarPedido()" [disabled]="enviandoPedido">
-        @if (enviandoPedido) { Procesando... } @else { Confirmar }
-      </button>
-      <button
-        class="btn-cancelar-modal"
-        (click)="cancelarConfirmacionPedido()"
-        [disabled]="enviandoPedido"
-      >
-        Cancelar
-      </button>
-    </div>
-  </div>
-</div>
-}
-
-<app-footer-cliente></app-footer-cliente>
->>>>>>> Tomas

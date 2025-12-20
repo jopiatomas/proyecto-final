@@ -1,7 +1,6 @@
 .ver-restaurante {
   min-height: 100vh;
   background: #f5f5f5;
-  font-family: 'Poppins', sans-serif;
 }
 
 .container {
@@ -87,6 +86,99 @@
   text-align: center;
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.status-badges {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.badge-abierto {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.badge-cerrado {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  animation: pulse-red 2s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.horario-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.horario-label {
+  font-weight: 600;
+  color: var(--col-1);
+}
+
+.horario-text {
+  color: #666;
+}
+
+.alert-cerrado {
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  margin: 1rem auto;
+  max-width: 600px;
+  animation: slideDown 0.3s ease-out;
+}
+
+.alert-cerrado p {
+  margin: 0;
+  color: #856404;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .restaurant-header h2 {
   background: var(--col-1);
   color: white;
@@ -97,7 +189,6 @@
   margin-bottom: 10px;
   font-size: 2.85rem;
   font-weight: 700;
-  font-family: 'Poppins', sans-serif;
 }
 
 .rating-info {
@@ -167,19 +258,17 @@
 }
 
 .menu-item {
-  background: white;
+  background: #f8f9fa;
   border-radius: 8px;
   padding: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border: 1px solid #ddd;
-  transition: all 0.3s;
 }
 
 .menu-item:hover {
-  border-color: #4a148c;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: var(--col-1);
 }
 
 .item-content {
@@ -190,12 +279,11 @@
 .item-content h3 {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #4a148c;
+  color: #333;
   margin: 0 0 0.5rem 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-family: 'Poppins', sans-serif;
 }
 
 @media (max-width: 768px) {
@@ -213,7 +301,6 @@
   font-weight: 700;
   color: var(--col-1);
   margin: 0;
-  font-family: 'Poppins', sans-serif;
 }
 
 .add-btn {
@@ -229,7 +316,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s;
 }
 
 .add-btn:hover {
@@ -275,66 +361,15 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
-  font-family: 'Poppins', sans-serif;
 }
 
 .review-btn:hover {
   background: #6a1b9a;
 }
 
-/* Alert Messages */
-.alert-message {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  border-radius: 6px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  font-weight: 500;
-  animation: slideIn 0.3s ease-out;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.alert-success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.alert-error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.alert-icon {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.alert-text {
-  flex: 1;
-}
-
 /* Review Form */
 .review-form {
-  background: white;
+  background: #f8f9fa;
   border-radius: 8px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -344,8 +379,6 @@
 .review-form h3 {
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
-  color: #4a148c;
-  font-family: 'Poppins', sans-serif;
 }
 
 .rating-input {
@@ -354,9 +387,8 @@
 
 .rating-input label {
   font-weight: 600;
-  color: #4a148c;
+  color: #333;
   margin-bottom: 0.5rem;
-  font-family: 'Poppins', sans-serif;
 }
 
 .stars-input {
@@ -371,7 +403,6 @@
   color: #ddd;
   cursor: pointer;
   padding: 0;
-  transition: color 0.2s;
 }
 
 .star-btn.selected {
@@ -385,20 +416,18 @@
 .form-group label {
   display: block;
   font-weight: 600;
-  color: #4a148c;
+  color: #333;
   margin-bottom: 0.5rem;
-  font-family: 'Poppins', sans-serif;
 }
 
 .form-group textarea {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   font-size: 1rem;
   resize: vertical;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
 }
 
 .form-group textarea:focus {
@@ -418,8 +447,6 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  transition: background 0.3s;
 }
 
 .submit-btn {
@@ -444,11 +471,10 @@
 }
 
 .review-item {
-  background: white;
+  background: #f8f9fa;
   border-radius: 8px;
   padding: 1.5rem;
-  border: 1px solid #ddd;
-  border-left: 4px solid #4a148c;
+  border-left: 4px solid var(--col-1);
 }
 
 .reviewer-info {
@@ -497,6 +523,16 @@
   text-align: center;
   padding: 3rem 2rem;
   color: #666;
+}
+
+.empty-menu p,
+.empty-reviews p {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.error-container {
+  color: #666;
   background: white;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -508,7 +544,6 @@
 .error-container h2 {
   color: var(--col-1);
   margin-bottom: 1rem;
-  font-family: 'Poppins', sans-serif;
 }
 
 /* Cart Styles */
@@ -516,18 +551,16 @@
   position: fixed;
   top: 80px;
   right: 0;
-  bottom: 0;
+  bottom: 100px;
   width: 400px;
-  max-height: calc(100vh - 80px - 150px);
   background: white;
   display: flex;
   flex-direction: column;
-  border-left: 2px solid #4a148c;
-  border-top: 2px solid #4a148c;
-  border-bottom: 2px solid #4a148c;
+  border-left: 2px solid var(--col-1);
+  border-top: 2px solid var(--col-1);
+  border-bottom: 2px solid var(--col-1);
   border-radius: 8px 0 0 8px;
   overflow: hidden;
-  margin-bottom: 150px;
 }
 
 .cart-header {
@@ -536,7 +569,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #4a148c;
+  background: var(--col-1);
 }
 
 .cart-header h3 {
@@ -544,7 +577,6 @@
   font-size: 1.3rem;
   font-weight: 600;
   color: white;
-  font-family: 'Poppins', sans-serif;
 }
 
 .cart-content {
@@ -568,7 +600,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   margin-bottom: 1rem;
-  background: white;
+  background: #f8f9fa;
 }
 
 .item-info {
@@ -577,10 +609,9 @@
 
 .item-info h4 {
   margin: 0 0 0.5rem 0;
-  color: #4a148c;
+  color: #333;
   font-size: 1rem;
   font-weight: 600;
-  font-family: 'Poppins', sans-serif;
 }
 
 .item-price {
@@ -607,13 +638,11 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  transition: all 0.3s;
 }
 
 .quantity-btn:hover {
-  background: #4a148c;
+  background: var(--col-1);
   color: white;
-  border-color: #4a148c;
 }
 
 .quantity {
@@ -624,17 +653,16 @@
 
 .item-total {
   font-weight: 700;
-  color: #4a148c;
+  color: var(--col-1);
   font-size: 1rem;
   min-width: 80px;
   text-align: right;
-  font-family: 'Poppins', sans-serif;
 }
 
 .cart-summary {
   padding: 1rem;
   border-top: 1px solid #ddd;
-  background: #f5f5f5;
+  background: #f8f9fa;
 }
 
 .total-items {
@@ -646,8 +674,7 @@
 .total-price {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #4a148c;
-  font-family: 'Poppins', sans-serif;
+  color: var(--col-1);
 }
 
 .cart-actions {
@@ -665,8 +692,6 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  transition: background 0.3s;
 }
 
 .clear-cart-btn {
@@ -679,7 +704,7 @@
 }
 
 .checkout-btn {
-  background: #4a148c;
+  background: var(--col-1);
   color: white;
 }
 
@@ -728,7 +753,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #4a148c;
+  background: var(--col-1);
   color: white;
   border-radius: 8px 8px 0 0;
 }
@@ -736,7 +761,6 @@
 .modal-header h2 {
   margin: 0;
   font-size: 1.5rem;
-  font-family: 'Poppins', sans-serif;
 }
 
 .close-modal-btn {
@@ -765,15 +789,14 @@
 .order-summary {
   margin-bottom: 2rem;
   padding: 1rem;
-  background: #f5f5f5;
+  background: #f8f9fa;
   border-radius: 8px;
   border: 1px solid #ddd;
 }
 
 .order-summary h3 {
   margin: 0 0 1rem 0;
-  color: #4a148c;
-  font-family: 'Poppins', sans-serif;
+  color: var(--col-1);
 }
 
 .summary-items {
@@ -785,7 +808,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #eee;
 }
 
 .summary-item:last-child {
@@ -794,21 +817,20 @@
 
 .item-name {
   flex: 1;
-  color: #555;
+  color: #333;
 }
 
 .item-total {
   font-weight: 600;
-  color: #4a148c;
+  color: var(--col-1);
 }
 
 .summary-total {
   padding-top: 1rem;
-  border-top: 2px solid #4a148c;
+  border-top: 2px solid var(--col-1);
   text-align: right;
   font-size: 1.2rem;
-  color: #4a148c;
-  font-family: 'Poppins', sans-serif;
+  color: var(--col-1);
 }
 
 .form-section {
@@ -819,24 +841,22 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #4a148c;
-  font-family: 'Poppins', sans-serif;
+  color: #333;
 }
 
 .form-select {
   width: 100%;
   padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   font-size: 1rem;
   background: white;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
 }
 
 .form-select:focus {
   outline: none;
-  border-color: #4a148c;
+  border-color: var(--col-1);
 }
 
 .modal-footer {
@@ -845,12 +865,12 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  background: #f5f5f5;
+  background: #f8f9fa;
   border-radius: 0 0 8px 8px;
 }
 
 .confirm-btn {
-  background: #4a148c;
+  background: var(--col-1);
   color: white;
   border: none;
   border-radius: 8px;
@@ -858,8 +878,6 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  transition: background 0.3s;
 }
 
 .confirm-btn:hover:not(:disabled) {
@@ -880,8 +898,6 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  transition: background 0.3s;
 }
 
 .cancel-btn:hover:not(:disabled) {
@@ -892,107 +908,137 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
-<<<<<<< HEAD
-=======
 
-/* Modal de confirmación final */
-.modal-content-confirm {
+.alert-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  animation: slideIn 0.3s ease-out;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.alert-success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+/* Modal de Alerta Genérico */
+.modal-content-alerta {
   background: white;
   border-radius: 12px;
   width: 90%;
   max-width: 450px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease-out;
+  animation: modalSlideIn 0.3s ease-out;
+  overflow: hidden;
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.modal-content-confirm .modal-header {
-  background: #4a148c;
-  color: white;
-  padding: 1.5rem;
-  border-radius: 12px 12px 0 0;
+.modal-header-alerta {
+  padding: 25px 30px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  position: relative;
 }
 
-.modal-content-confirm .modal-header h3 {
+.modal-icon {
+  font-size: 32px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.modal-success .modal-icon {
+  background: #d4edda;
+  color: #28a745;
+}
+
+.modal-error .modal-icon {
+  background: #f8d7da;
+  color: #dc3545;
+}
+
+.modal-warning .modal-icon {
+  background: #fff3cd;
+  color: #ffc107;
+}
+
+.modal-info .modal-icon {
+  background: #d1ecf1;
+  color: #17a2b8;
+}
+
+.modal-header-alerta h3 {
   margin: 0;
-  font-size: 1.3rem;
-}
-
-.modal-content-confirm .modal-body {
-  padding: 1.5rem;
-}
-
-.modal-content-confirm .modal-body p {
-  margin: 0 0 0.75rem 0;
-  color: #555;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.modal-warning {
-  color: #f57c00;
+  flex: 1;
+  font-size: 20px;
   font-weight: 600;
-  font-size: 1.1rem;
+  color: #333;
 }
 
-.modal-actions {
+.modal-body-alerta {
+  padding: 25px 30px;
+}
+
+.modal-body-alerta p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #666;
+}
+
+.modal-actions-alerta {
+  padding: 20px 30px;
   display: flex;
   justify-content: flex-end;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem 1.5rem;
+  background: #f8f9fa;
   border-top: 1px solid #e0e0e0;
 }
 
-.btn-confirmar {
-  background: #4a148c;
-  color: white;
+.btn-aceptar {
+  padding: 10px 30px;
   border: none;
-  padding: 0.6rem 1.5rem;
   border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
+  background: var(--col-1);
+  color: white;
 }
 
-.btn-confirmar:hover:not(:disabled) {
-  background: #6a1b9a;
+.btn-aceptar:hover {
+  background: rgb(74, 20, 140);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
 }
 
-.btn-confirmar:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
-.btn-cancelar-modal {
-  background: #f5f5f5;
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 0.6rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-
-.btn-cancelar-modal:hover:not(:disabled) {
-  background: #e0e0e0;
-}
-
-.btn-cancelar-modal:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
->>>>>>> Tomas
