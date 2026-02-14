@@ -95,6 +95,7 @@
       <select id="rol" class="form-input" formControlName="rol">
         <option value="CLIENTE">Cliente</option>
         <option value="RESTAURANTE">Restaurante</option>
+        <option value="REPARTIDOR">Repartidor</option>
       </select>
     </div>
 
@@ -135,6 +136,45 @@
             @if (registroForm.get('horaCierre')?.errors?.['required']) { El horario de cierre es
             requerido } @if (registroForm.get('horaCierre')?.errors?.['pattern']) { Formato inválido
             (HH:mm) }
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }
+
+    @if (isRepartidor) {
+    <div class="repartidor-section">
+      <h3>Información del repartidor</h3>
+      <div class="repartidor-grid">
+        <div class="form-group">
+          <label for="pais">País</label>
+          <input
+            type="text"
+            id="pais"
+            class="form-input"
+            formControlName="pais"
+            placeholder="ej. Argentina"
+          />
+          @if (registroForm.get('pais')?.invalid && registroForm.get('pais')?.touched) {
+          <div class="form-error">
+            @if (registroForm.get('pais')?.errors?.['required']) { El país es requerido }
+          </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="tipoVehiculo">Tipo de vehículo</label>
+          <select id="tipoVehiculo" class="form-input" formControlName="tipoVehiculo">
+            <option value="">Selecciona un vehículo</option>
+            <option value="BICICLETA">Bicicleta</option>
+            <option value="MOTO">Motocicleta</option>
+            <option value="AUTO">Auto</option>
+          </select>
+          @if (registroForm.get('tipoVehiculo')?.invalid && registroForm.get('tipoVehiculo')?.touched) {
+          <div class="form-error">
+            @if (registroForm.get('tipoVehiculo')?.errors?.['required']) { El tipo de vehículo es
+            requerido }
           </div>
           }
         </div>

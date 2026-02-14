@@ -176,3 +176,37 @@ form {
   padding: 8px;
   font-size: 14px;
 }
+
+.repartidor-section {
+  width: 100%;
+  margin-top: 10px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.repartidor-section h3 {
+  font-size: 16px;
+  color: var(--col-1);
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.repartidor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.repartidor-grid .form-group {
+  width: 100%;
+}
+
+.repartidor-grid input,
+.repartidor-grid select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+}

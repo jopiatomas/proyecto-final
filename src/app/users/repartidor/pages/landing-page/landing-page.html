@@ -1,0 +1,100 @@
+<app-header></app-header>
+<div class="content">
+  <div class="welcome-section">
+    <h2>¡Bienvenido Repartidor!</h2>
+    <p>Administra tus entregas y optimiza tu trabajo</p>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <p>Cargando información...</p>
+    </div>
+  } @else {
+    <div class="dashboard">
+      <!-- Card de Disponibilidad -->
+      <div class="disponibilidad-card">
+        <h3>Estado de Disponibilidad</h3>
+        @if (perfil(); as p) {
+          <div class="estado-info">
+            <p class="estado-label">Actualmente:</p>
+            <div class="estado-badge" [class.disponible]="disponible()" [class.no-disponible]="!disponible()">
+              {{ disponible() ? '✓ Disponible' : '✗ No Disponible' }}
+            </div>
+            <p class="tipo-vehiculo">Vehículo: <strong>{{ p.tipoVehiculo }}</strong></p>
+            <p class="zonas">Zonas de trabajo: <strong>{{ p.zonas.join(', ') || 'No especificadas' }}</strong></p>
+          </div>
+          <button 
+            class="btn-toggle"
+            (click)="toggleDisponibilidad()"
+            [disabled]="cambandoDisponibilidad()"
+            [class.disponible]="disponible()">
+            {{ cambandoDisponibilidad() ? 'Actualizando...' : (disponible() ? 'Marcar como No Disponible' : 'Marcar como Disponible') }}
+          </button>
+        }
+      </div>
+
+      <!-- Card de Pedido Actual -->
+      <div class="pedido-actual-card">
+        <h3>Pedido Actual</h3>
+        @if (pedidoActual(); as pedido) {
+          <div class="pedido-info">
+            <p><strong>ID Pedido:</strong> #{{ pedido.id }}</p>
+            <p><strong>Restaurante:</strong> {{ pedido.restauranteNombre }}</p>
+            <p><strong>Cliente:</strong> {{ pedido.clienteNombre }}</p>
+            <p><strong>Estado:</strong> {{ pedido.estado }}</p>
+            <p><strong>Total:</strong> ${{ pedido.total }}</p>
+            <p class="direccion"><strong>Desde:</strong> {{ pedido.direccionRestaurante }}</p>
+            <p class="direccion"><strong>Hacia:</strong> {{ pedido.direccionEntrega }}</p>
+          </div>
+          <button class="btn-primary" (click)="irAPedidoActual()">Ver Detalles</button>
+        } @else {
+          <div class="sin-pedido">
+            <p>No tienes un pedido actualmente en entrega.</p>
+            <p class="hint">Explora los pedidos disponibles para comenzar a trabajar</p>
+          </div>
+        }
+      </div>
+
+      <!-- Estadísticas -->
+      @if (perfil(); as p) {
+        <div class="estadisticas-card">
+          <h3>Mis Estadísticas</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <p class="stat-label">Total Entregas</p>
+              <p class="stat-value">{{ p.totalPedidosEntregados || 0 }}</p>
+            </div>
+            <div class="stat-item">
+              <p class="stat-label">Calificación Promedio</p>
+              <p class="stat-value">{{ p.calificacionPromedio.toFixed(1) || 'N/A' }} ⭐</p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Acciones Rápidas -->
+      <div class="acciones-section">
+        <h3>Acciones Rápidas</h3>
+        <div class="acciones-grid">
+          <button class="accion-card" (click)="irAPedidosDisponibles()" [disabled]="!disponible()">
+            <div class="accion-icon">📦</div>
+            <h4>Pedidos Disponibles</h4>
+            <p>Aceptar nuevos pedidos</p>
+          </button>
+          <button class="accion-card" (click)="irAlHistorial()">
+            <div class="accion-icon">📋</div>
+            <h4>Historial</h4>
+            <p>Ver entregas completadas</p>
+          </button>
+          <button class="accion-card" (click)="irAlPerfil()">
+            <div class="accion-icon">👤</div>
+            <h4>Mi Perfil</h4>
+            <p>Configurar mi cuenta</p>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+<app-footer-repartidor></app-footer-repartidor>

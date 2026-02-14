@@ -19,7 +19,7 @@ export interface Usuario {
   id: number;
   usuario: string;
   nombre: string;
-  rol: 'CLIENTE' | 'RESTAURANTE' | 'ADMIN';
+  rol: 'CLIENTE' | 'RESTAURANTE' | 'ADMIN' | 'REPARTIDOR';
   email: string;
   telefono?: string;
   direccion?: string;

@@ -1,0 +1,168 @@
+<app-header></app-header>
+<div class="content">
+  <div class="perfil-container">
+    <h2>Mi Perfil de Repartidor</h2>
+    @if (authService.currentUser(); as usuario) {
+      <p>Bienvenido, <strong>{{ usuario.nombre }}</strong></p>
+    }
+
+    <!-- Mensaje de éxito o error -->
+    @if (mensajePerfil && tipoMensaje) {
+    <div
+      class="alert-message"
+      [class.alert-success]="tipoMensaje === 'success'"
+      [class.alert-error]="tipoMensaje === 'error'"
+    >
+      <span class="alert-icon">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
+      <span class="alert-text">{{ mensajePerfil }}</span>
+    </div>
+    }
+
+    @if (loading()) {
+      <div class="loading-section">
+        <div class="loading-spinner"></div>
+        <p>Cargando datos del perfil...</p>
+      </div>
+    } @else {
+      <div class="perfil-content">
+        <form class="perfil-form" [formGroup]="perfilForm" (ngSubmit)="alEnviar()">
+          <h3>Información Personal</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre Completo *</label>
+              <input
+                type="text"
+                formControlName="nombre"
+                class="form-input"
+                placeholder="Ingresa tu nombre completo"
+                maxlength="50"
+              />
+              @if (perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched) {
+                <small style="color: red;">Nombre requerido (mínimo 3 caracteres)</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Usuario *</label>
+              <input
+                type="text"
+                formControlName="usuario"
+                class="form-input"
+                placeholder="Nombre de usuario"
+                maxlength="18"
+              />
+              @if (perfilForm.get('usuario')?.invalid && perfilForm.get('usuario')?.touched) {
+                <small style="color: red;">Usuario requerido (solo letras y números)</small>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input
+              type="email"
+              formControlName="email"
+              class="form-input"
+              placeholder="tu@email.com"
+              maxlength="100"
+            />
+            @if (perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched) {
+              <small style="color: red;">Email requerido y válido</small>
+            }
+          </div>
+
+          <h3>Información de Entrega</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tipo de Vehículo *</label>
+              <select formControlName="tipoVehiculo" class="form-input">
+                <option value="">Selecciona tu vehículo</option>
+                <option value="BICICLETA">Bicicleta</option>
+                <option value="MOTO">Moto</option>
+                <option value="AUTO">Auto</option>
+              </select>
+              @if (perfilForm.get('tipoVehiculo')?.invalid && perfilForm.get('tipoVehiculo')?.touched) {
+                <small style="color: red;">Tipo de vehículo requerido</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>País *</label>
+              <input
+                type="text"
+                formControlName="pais"
+                class="form-input"
+                placeholder="Tu país"
+              />
+              @if (perfilForm.get('pais')?.invalid && perfilForm.get('pais')?.touched) {
+                <small style="color: red;">País requerido</small>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Contraseña Actual *</label>
+            <input
+              type="password"
+              formControlName="contrasenia"
+              class="form-input"
+              placeholder="Ingresa tu contraseña actual para verificar identidad"
+            />
+            @if (perfilForm.get('contrasenia')?.invalid && perfilForm.get('contrasenia')?.touched) {
+              <small style="color: red;">Contraseña requerida (mínimo 6 caracteres)</small>
+            }
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="loading()"
+            >
+              @if (loading()) {
+                Guardando...
+              } @else {
+                Guardar Cambios
+              }
+            </button>
+          </div>
+        </form>
+
+        <div class="quick-links">
+          <h3>Acciones de Cuenta</h3>
+          <button class="link-card" (click)="cambiarContrasenia()">
+            <div>
+              <h4>Cambiar Contraseña</h4>
+              <p>Actualiza tu contraseña de acceso</p>
+            </div>
+            <span class="flecha">→</span>
+          </button>
+        </div>
+
+        @if (usuario(); as u) {
+          <div class="estadisticas-section">
+            <h3>Mis Estadísticas</h3>
+            <div class="stats-cards">
+              <div class="stat-card">
+                <p class="stat-label">Total Entregas</p>
+                <p class="stat-value">{{ u.totalPedidosEntregados || 0 }}</p>
+              </div>
+              <div class="stat-card">
+                <p class="stat-label">Calificación Promedio</p>
+                <p class="stat-value">{{ u.calificacionPromedio.toFixed(1) || 'N/A' }} ⭐</p>
+              </div>
+              <div class="stat-card">
+                <p class="stat-label">Estado</p>
+                <p class="stat-value" [class.activo]="u.activo">{{ u.activo ? '✓ Activo' : '✗ Inactivo' }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<app-footer-repartidor></app-footer-repartidor>

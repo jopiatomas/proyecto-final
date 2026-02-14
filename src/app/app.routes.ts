@@ -95,6 +95,42 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'repartidor',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./users/repartidor/pages/landing-page/landing-page').then((m) => m.LandingPage),
+      },
+      {
+        path: 'perfil',
+        loadComponent: () =>
+          import('./users/repartidor/pages/perfil/perfil').then((m) => m.Perfil),
+      },
+      {
+        path: 'pedidos-disponibles',
+        loadComponent: () =>
+          import('./users/repartidor/pages/pedidos-disponibles/pedidos-disponibles').then(
+            (m) => m.PedidosDisponibles
+          ),
+      },
+      {
+        path: 'ver-pedido-actual',
+        loadComponent: () =>
+          import('./users/repartidor/pages/ver-pedido-actual/ver-pedido-actual').then(
+            (m) => m.VerPedidoActual
+          ),
+      },
+      {
+        path: 'historial-entregas',
+        loadComponent: () =>
+          import('./users/repartidor/pages/historial-entregas/historial-entregas').then(
+            (m) => m.HistorialEntregas
+          ),
+      },
+    ],
+  },
+  {
     path: 'admin',
     children: [
       {

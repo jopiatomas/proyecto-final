@@ -41,12 +41,16 @@ export class RegistroForm {
       email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
       horaApertura: [''],
       horaCierre: [''],
+      pais: [''],
+      tipoVehiculo: [''],
     });
 
     // Actualizar validaciones cuando cambia el rol
     this.registroForm.get('rol')?.valueChanges.subscribe((rol) => {
       const horaAperturaControl = this.registroForm.get('horaApertura');
       const horaCierreControl = this.registroForm.get('horaCierre');
+      const paisControl = this.registroForm.get('pais');
+      const tipoVehiculoControl = this.registroForm.get('tipoVehiculo');
 
       if (rol === 'RESTAURANTE') {
         horaAperturaControl?.setValidators([
@@ -57,18 +61,33 @@ export class RegistroForm {
           Validators.required,
           Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
         ]);
+        paisControl?.clearValidators();
+        tipoVehiculoControl?.clearValidators();
+      } else if (rol === 'REPARTIDOR') {
+        horaAperturaControl?.clearValidators();
+        horaCierreControl?.clearValidators();
+        paisControl?.setValidators([Validators.required, Validators.minLength(2)]);
+        tipoVehiculoControl?.setValidators([Validators.required]);
       } else {
         horaAperturaControl?.clearValidators();
         horaCierreControl?.clearValidators();
+        paisControl?.clearValidators();
+        tipoVehiculoControl?.clearValidators();
       }
 
       horaAperturaControl?.updateValueAndValidity();
       horaCierreControl?.updateValueAndValidity();
+      paisControl?.updateValueAndValidity();
+      tipoVehiculoControl?.updateValueAndValidity();
     });
   }
 
   get isRestaurante(): boolean {
     return this.registroForm.get('rol')?.value === 'RESTAURANTE';
+  }
+
+  get isRepartidor(): boolean {
+    return this.registroForm.get('rol')?.value === 'REPARTIDOR';
   }
 
   onSubmit(): void {
@@ -95,6 +114,10 @@ export class RegistroForm {
         registerData.nombreRestaurante = nombreIngresado;
         registerData.horaApertura = this.registroForm.value.horaApertura;
         registerData.horaCierre = this.registroForm.value.horaCierre;
+      } else if (rol === 'REPARTIDOR') {
+        registerData.nombreYapellido = nombreIngresado;
+        registerData.pais = this.registroForm.value.pais;
+        registerData.tipoVehiculo = this.registroForm.value.tipoVehiculo;
       }
 
       console.log('===== DEBUG REGISTRO =====');

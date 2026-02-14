@@ -1,0 +1,127 @@
+<app-header></app-header>
+<div class="content">
+  <div class="pedido-actual-container">
+    <h2>Mi Pedido Actual</h2>
+
+    @if (loading()) {
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>Cargando tu pedido actual...</p>
+      </div>
+    } @else {
+      @if (pedido(); as p) {
+        <div class="pedido-detail">
+          <!-- Header -->
+          <div class="pedido-header">
+            <div class="pedido-titulo">
+              <h3>Pedido #{{ p.id }}</h3>
+              <span class="estado-badge">{{ p.estado }}</span>
+            </div>
+            <div class="pedido-monto">
+              <p class="label">Total</p>
+              <p class="monto">${{ p.total }}</p>
+            </div>
+          </div>
+
+          <!-- Información del Restaurante -->
+          <div class="info-section">
+            <h4>📍 Datos del Restaurante</h4>
+            <div class="info-content">
+              <div class="info-item">
+                <span class="label">Restaurante:</span>
+                <span class="valor">{{ p.restauranteNombre }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Dirección:</span>
+                <span class="valor">{{ p.direccionRestaurante }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Información del Cliente -->
+          <div class="info-section">
+            <h4>👤 Datos del Cliente</h4>
+            <div class="info-content">
+              <div class="info-item">
+                <span class="label">Cliente:</span>
+                <span class="valor">{{ p.clienteNombre }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Entregar en:</span>
+                <span class="valor">{{ p.direccionEntrega }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Información General -->
+          <div class="info-section">
+            <h4>📋 Detalles del Pedido</h4>
+            <div class="info-content">
+              <div class="info-item">
+                <span class="label">Fecha del Pedido:</span>
+                <span class="valor">{{ p.fecha }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Estado:</span>
+                <span class="valor estado-texto">{{ p.estado }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline de entrega -->
+          <div class="timeline-section">
+            <h4>📊 Estado de Entrega</h4>
+            <div class="timeline">
+              <div class="timeline-item" [class.completado]="true">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <p class="timeline-label">Pedido Aceptado</p>
+                  <p class="timeline-desc">Ya aceptaste este pedido</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <p class="timeline-label">En Entrega</p>
+                  <p class="timeline-desc">Estás en camino al cliente</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <p class="timeline-label">Entregado</p>
+                  <p class="timeline-desc">Marca como completado</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="acciones-section">
+            <button 
+              class="btn-entregar"
+              (click)="marcarComoEntregado()"
+              [disabled]="marcandoEntregado()">
+              {{ marcandoEntregado() ? '⏳ Procesando...' : '✓ Marcar como Entregado' }}
+            </button>
+            <button 
+              class="btn-volver"
+              (click)="volverAlPanel()">
+              ← Volver al Panel
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div class="sin-pedido">
+          <div class="sin-pedido-icon">📭</div>
+          <h3>No tienes un pedido actual</h3>
+          <p>Explora los pedidos disponibles para aceptar uno y comenzar a entregar.</p>
+          <button class="btn-explorar" (click)="router.navigate(['/repartidor/pedidos-disponibles'])">
+            Explorar Pedidos Disponibles
+          </button>
+        </div>
+      }
+    }
+  </div>
+</div>
+<app-footer-repartidor></app-footer-repartidor>

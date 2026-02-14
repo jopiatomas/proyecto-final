@@ -99,7 +99,7 @@ export class AuthService {
         id: payload.userId || 0,
         usuario: payload.sub,
         nombre: payload.nombre || payload.sub,
-        rol: rol as 'CLIENTE' | 'RESTAURANTE' | 'ADMIN',
+        rol: rol as 'CLIENTE' | 'RESTAURANTE' | 'ADMIN' | 'REPARTIDOR',
         email: payload.email,
         telefono: payload.telefono
       };
@@ -117,6 +117,9 @@ export class AuthService {
         break;
       case 'RESTAURANTE':
         this.router.navigate(['/restaurante']);
+        break;
+      case 'REPARTIDOR':
+        this.router.navigate(['/repartidor']);
         break;
       case 'ADMIN':
         this.router.navigate(['/admin']);

@@ -1,0 +1,95 @@
+<app-header></app-header>
+<div class="content">
+  <div class="historial-container">
+    <h2>Historial de Entregas</h2>
+    <p>Revisa todos tus pedidos entregados</p>
+
+    @if (loading()) {
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>Cargando tu historial...</p>
+      </div>
+    } @else {
+      <div class="historial-section">
+        <!-- Filtros -->
+        <div class="filtros">
+          <button 
+            class="filtro-btn"
+            [class.active]="!filtroEstado()"
+            (click)="cambiarFiltro('')">
+            Todos ({{ historial().length }})
+          </button>
+          <button 
+            class="filtro-btn"
+            [class.active]="filtroEstado() === 'entregado'"
+            (click)="cambiarFiltro('entregado')">
+            Entregados
+          </button>
+          <button 
+            class="filtro-btn"
+            [class.active]="filtroEstado() === 'cancelado'"
+            (click)="cambiarFiltro('cancelado')">
+            Cancelados
+          </button>
+        </div>
+
+        @if (historialFiltrado().length > 0) {
+          <div class="historial-tabla">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID Pedido</th>
+                  <th>Restaurante</th>
+                  <th>Cliente</th>
+                  <th>Monto</th>
+                  <th>Estado</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (entrega of historialFiltrado(); track entrega.id) {
+                  <tr class="entrega-row" [class.entregado]="entrega.estado === 'ENTREGADO'">
+                    <td class="id-pedido">#{{ entrega.id }}</td>
+                    <td>{{ entrega.restauranteNombre }}</td>
+                    <td>{{ entrega.clienteNombre }}</td>
+                    <td class="monto">${{ entrega.total }}</td>
+                    <td>
+                      <span class="estado-badge" [class.entregado]="entrega.estado === 'ENTREGADO'">
+                        {{ entrega.estado }}
+                      </span>
+                    </td>
+                    <td>{{ entrega.fecha }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Resumen -->
+          <div class="resumen-section">
+            <div class="resumen-card">
+              <p class="label">Total de Entregas</p>
+              <p class="valor">{{ historialFiltrado().length }}</p>
+            </div>
+            <div class="resumen-card">
+              <p class="label">Monto Total</p>
+              <p class="valor">${{ calcularMontoTotal().toFixed(2) }}</p>
+            </div>
+            <div class="resumen-card">
+              <p class="label">Promedio por Entrega</p>
+              <p class="valor">${{ calcularPromedioPorEntrega().toFixed(2) }}</p>
+            </div>
+          </div>
+        } @else {
+          <div class="sin-historial">
+            <div class="sin-historial-icon">📭</div>
+            <h3>No hay entregas registradas</h3>
+            <p>Aún no has completado ningún pedido. ¡Comienza a entregar!</p>
+            <button class="btn-volver" (click)="volverAlPanel()">Volver al Panel</button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+<app-footer-repartidor></app-footer-repartidor>
