@@ -6,7 +6,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  if (token) {
+  // No agregar token a las rutas de autenticación
+  const isAuthEndpoint = req.url.includes('/auth/login') || 
+                         req.url.includes('/auth/registro') ||
+                         req.url.includes('/auth/registro-admin');
+
+  if (token && !isAuthEndpoint) {
     const clonedRequest = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,

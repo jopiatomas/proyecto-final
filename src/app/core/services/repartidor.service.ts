@@ -33,7 +33,7 @@ export interface PedidoRepartidorDTO {
 })
 export class RepartidorService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/repartidores';
+  private apiUrl = 'http://localhost:8080/repartidores';
 
   obtenerPerfil(): Observable<RepartidorDetailDTO> {
     return this.http.get<RepartidorDetailDTO>(`${this.apiUrl}/perfil`);
