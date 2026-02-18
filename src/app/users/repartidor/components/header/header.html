@@ -1,13 +1,19 @@
-<header>
+<header [class.inactive]="!repartidorEstadoService.activo()">
   <div class="barra">
     <a class="logo" routerLink="/repartidor">
       <img src="/img-quickish-header.png" alt="Quickish" class="logo-img" />
     </a>
 
     <nav class="tabs">
-      <a routerLink="/repartidor/pedidos-disponibles" routerLinkActive="active">Pedidos Disponibles</a>
-      <a routerLink="/repartidor/ver-pedido-actual" routerLinkActive="active">Pedido Actual</a>
-      <a routerLink="/repartidor/historial-entregas" routerLinkActive="active">Historial</a>
+      <a [routerLink]="repartidorEstadoService.activo() ? '/repartidor/pedidos-disponibles' : null" 
+         routerLinkActive="active"
+         [class.disabled]="!repartidorEstadoService.activo()">Pedidos Disponibles</a>
+      <a [routerLink]="repartidorEstadoService.activo() ? '/repartidor/ver-pedido-actual' : null" 
+         routerLinkActive="active"
+         [class.disabled]="!repartidorEstadoService.activo()">Pedido Actual</a>
+      <a [routerLink]="repartidorEstadoService.activo() ? '/repartidor/historial-entregas' : null" 
+         routerLinkActive="active"
+         [class.disabled]="!repartidorEstadoService.activo()">Historial</a>
     </nav>
 
     <div class="derecha">

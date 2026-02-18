@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { FooterRepartidor } from '../../components/footer/footer';
 import { RepartidorService, RepartidorDetailDTO, PedidoRepartidorDTO } from '../../../../core/services/repartidor.service';
+import { RepartidorEstadoService } from '../../../../core/services/repartidor-estado.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -13,6 +14,7 @@ import { RepartidorService, RepartidorDetailDTO, PedidoRepartidorDTO } from '../
 })
 export class LandingPage implements OnInit {
   private repartidorService = inject(RepartidorService);
+  private repartidorEstadoService = inject(RepartidorEstadoService);
   private router = inject(Router);
 
   perfil = signal<RepartidorDetailDTO | null>(null);
@@ -20,6 +22,8 @@ export class LandingPage implements OnInit {
   loading = signal(false);
   disponible = signal(false);
   cambandoDisponibilidad = signal(false);
+  activando = signal(false);
+  mostrarConfirmacionActivar = signal(false);
 
   ngOnInit() {
     this.cargarDatos();
@@ -32,6 +36,7 @@ export class LandingPage implements OnInit {
       next: (perfil) => {
         this.perfil.set(perfil);
         this.disponible.set(perfil.disponible);
+        this.repartidorEstadoService.setActivo(perfil.activo);
         this.cargarPedidoActual();
       },
       error: (error) => {
@@ -85,5 +90,51 @@ export class LandingPage implements OnInit {
 
   irAlPerfil() {
     this.router.navigate(['/repartidor/perfil']);
+  }
+
+  activarCuenta() {
+    this.mostrarConfirmacionActivar.set(true);
+  }
+
+  confirmarActivacion() {
+    this.mostrarConfirmacionActivar.set(false);
+    this.activando.set(true);
+
+    this.repartidorService.activarCuenta().subscribe({
+      next: () => {
+        // Después de activar la cuenta, cambiar disponibilidad a true
+        this.repartidorService.cambiarDisponibilidad(true).subscribe({
+          next: () => {
+            // Actualizar el perfil local
+            const perfilActual = this.perfil();
+            if (perfilActual) {
+              this.perfil.set({ ...perfilActual, activo: true, trabajando: true, disponible: true });
+            }
+            this.disponible.set(true);
+            this.repartidorEstadoService.setActivo(true);
+            this.activando.set(false);
+          },
+          error: (error) => {
+            console.error('Error al cambiar disponibilidad después de activar:', error);
+            // Aunque falló cambiar disponibilidad, la cuenta está activa
+            const perfilActual = this.perfil();
+            if (perfilActual) {
+              this.perfil.set({ ...perfilActual, activo: true });
+            }
+            this.repartidorEstadoService.setActivo(true);
+            this.activando.set(false);
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error al activar cuenta:', error);
+        this.activando.set(false);
+        alert('Error al activar la cuenta. Intenta nuevamente.');
+      }
+    });
+  }
+
+  cancelarActivacion() {
+    this.mostrarConfirmacionActivar.set(false);
   }
 }

@@ -303,6 +303,50 @@ p {
   color: #4caf50;
 }
 
+/* Estado Actions */
+.estado-actions {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.btn-activar,
+.btn-desactivar {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.btn-activar {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-activar:hover:not(:disabled) {
+  background: #45a049;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.btn-desactivar {
+  background: #f44336;
+  color: white;
+}
+
+.btn-desactivar:hover:not(:disabled) {
+  background: #da190b;
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+.btn-activar:disabled,
+.btn-desactivar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .content {

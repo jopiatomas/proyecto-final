@@ -154,9 +154,31 @@
                 <p class="stat-value">{{ u.calificacionPromedio.toFixed(1) || 'N/A' }} ⭐</p>
               </div>
               <div class="stat-card">
-                <p class="stat-label">Estado</p>
-                <p class="stat-value" [class.activo]="u.activo">{{ u.activo ? '✓ Activo' : '✗ Inactivo' }}</p>
+                <p class="stat-label">Estado de Disponibilidad</p>
+                <p class="stat-value" [class.activo]="u.disponible || u.trabajando">
+                  {{ (u.disponible || u.trabajando) ? '✓ Disponible' : '✗ No Disponible' }}
+                </p>
               </div>
+            </div>
+            
+            <div class="estado-actions">
+              @if (u.disponible || u.trabajando) {
+                <button class="btn-desactivar" (click)="cambiarDisponibilidad(false)" [disabled]="cambiandoEstado()">
+                  @if (cambiandoEstado()) {
+                    Cambiando...
+                  } @else {
+                    Poner No Disponible
+                  }
+                </button>
+              } @else {
+                <button class="btn-activar" (click)="cambiarDisponibilidad(true)" [disabled]="cambiandoEstado()">
+                  @if (cambiandoEstado()) {
+                    Cambiando...
+                  } @else {
+                    Poner Disponible
+                  }
+                </button>
+              }
             </div>
           </div>
         }

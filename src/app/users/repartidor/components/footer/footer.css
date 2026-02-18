@@ -59,7 +59,14 @@ footer {
 
 .footer-seccion ul li a:hover {
   color: #ffffff;
-  transform: translateX(5px);
+}
+
+/* Estilos cuando el repartidor está inactivo */
+footer.inactive .footer-seccion ul li a.disabled {
+  color: #666 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .footer-bottom {

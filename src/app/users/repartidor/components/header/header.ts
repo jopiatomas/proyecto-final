@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/ro
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth-service';
+import { RepartidorEstadoService } from '../../../../core/services/repartidor-estado.service';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +16,11 @@ export class Header implements OnInit {
   backRoute = '/repartidor';
   confirmandoCerrarSesion = false;
 
-  constructor(private router: Router, public authService: AuthService) {}
+  constructor(
+    private router: Router, 
+    public authService: AuthService,
+    public repartidorEstadoService: RepartidorEstadoService
+  ) {}
 
   ngOnInit() {
     // Detectar cambios de ruta

@@ -6,6 +6,7 @@ import { Header } from '../../components/header/header';
 import { FooterRepartidor } from '../../components/footer/footer';
 import { AuthService } from '../../../../core/services/auth-service';
 import { RepartidorService, RepartidorDetailDTO } from '../../../../core/services/repartidor.service';
+import { RepartidorEstadoService } from '../../../../core/services/repartidor-estado.service';
 
 @Component({
   selector: 'app-perfil',
@@ -18,10 +19,12 @@ export class Perfil implements OnInit {
   private router = inject(Router);
   public authService = inject(AuthService);
   private repartidorService = inject(RepartidorService);
+  private repartidorEstadoService = inject(RepartidorEstadoService);
 
   perfilForm!: FormGroup;
   usuario = signal<RepartidorDetailDTO | null>(null);
   loading = signal(false);
+  cambiandoEstado = signal(false);
   mensajePerfil = '';
   tipoMensaje: 'success' | 'error' | '' = '';
 
@@ -162,6 +165,43 @@ export class Perfil implements OnInit {
 
   navegarA(ruta: string) {
     this.router.navigate([ruta]);
+  }
+
+  cambiarDisponibilidad(disponible: boolean) {
+    this.cambiandoEstado.set(true);
+    
+    if (disponible) {
+      // Activar disponibilidad
+      this.repartidorService.cambiarDisponibilidad(true).subscribe({
+        next: () => {
+          this.cambiandoEstado.set(false);
+          this.mostrarMensaje('Ahora estás disponible para recibir pedidos', 'success');
+          this.cargarDatosUsuario();
+        },
+        error: (error: any) => {
+          this.cambiandoEstado.set(false);
+          const mensaje = error.error?.message || 'Error al cambiar disponibilidad';
+          this.mostrarMensaje(mensaje, 'error');
+        }
+      });
+    } else {
+      // Desactivar cuenta completamente
+      this.repartidorService.desactivarCuenta().subscribe({
+        next: () => {
+          this.cambiandoEstado.set(false);
+          this.mostrarMensaje('Cuenta desactivada. Ya no recibirás pedidos', 'success');
+          // Actualizar estado compartido
+          this.repartidorEstadoService.setActivo(false);
+          // Redirigir a la landing page que mostrará el overlay de inactivo
+          this.navegarA('/repartidor/landing');
+        },
+        error: (error: any) => {
+          this.cambiandoEstado.set(false);
+          const mensaje = error.error?.message || 'Error al desactivar cuenta';
+          this.mostrarMensaje(mensaje, 'error');
+        }
+      });
+    }
   }
 
   private mostrarMensaje(mensaje: string, tipo: 'success' | 'error') {

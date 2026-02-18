@@ -1,17 +1,55 @@
 <app-header></app-header>
+
+<!-- Vista de Estado Inactivo -->
+@if (!loading() && perfil() && !perfil()!.activo) {
+  <div class="inactive-overlay">
+    <div class="inactive-modal">
+      <div class="inactive-icon">🚫</div>
+      <h2>Estado Inactivo</h2>
+      <p>Tu cuenta está inactiva. Actívala para comenzar a recibir pedidos.</p>
+      <button class="btn-activar" (click)="activarCuenta()">
+        Activar Cuenta
+      </button>
+      <button class="btn-ir-perfil" (click)="irAlPerfil()">
+        Ver Mi Perfil
+      </button>
+    </div>
+  </div>
+}
+
+<!-- Modal de confirmación para activar cuenta -->
+@if (mostrarConfirmacionActivar()) {
+  <div class="modal-overlay-activar" (click)="cancelarActivacion()">
+    <div class="modal-content-activar" (click)="$event.stopPropagation()">
+      <div class="modal-header-activar">
+        <h3>Confirmar Activación</h3>
+        <button class="close-modal-btn" (click)="cancelarActivacion()">×</button>
+      </div>
+      <div class="modal-body-activar">
+        <p>¿Estás seguro de que deseas activar tu cuenta?</p>
+        <p class="hint-activar">Al activar tu cuenta podrás empezar a recibir pedidos y trabajar como repartidor.</p>
+      </div>
+      <div class="modal-actions-activar">
+        <button class="btn-confirmar-activar" (click)="confirmarActivacion()" [disabled]="activando()">
+          {{ activando() ? 'Activando...' : 'Sí, Activar' }}
+        </button>
+        <button class="btn-cancelar-activar" (click)="cancelarActivacion()" [disabled]="activando()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Vista Normal (solo si está activo) -->
+@if (!loading() && perfil() && perfil()!.activo) {
 <div class="content">
   <div class="welcome-section">
     <h2>¡Bienvenido Repartidor!</h2>
     <p>Administra tus entregas y optimiza tu trabajo</p>
   </div>
 
-  @if (loading()) {
-    <div class="loading">
-      <div class="loading-spinner"></div>
-      <p>Cargando información...</p>
-    </div>
-  } @else {
-    <div class="dashboard">
+  <div class="dashboard">
       <!-- Card de Disponibilidad -->
       <div class="disponibilidad-card">
         <h3>Estado de Disponibilidad</h3>
@@ -22,7 +60,7 @@
               {{ disponible() ? '✓ Disponible' : '✗ No Disponible' }}
             </div>
             <p class="tipo-vehiculo">Vehículo: <strong>{{ p.tipoVehiculo }}</strong></p>
-            <p class="zonas">Zonas de trabajo: <strong>{{ p.zonas.join(', ') || 'No especificadas' }}</strong></p>
+            <p class="zonas">Zonas de trabajo: <strong>{{ (p.zonas && p.zonas.length > 0) ? p.zonas.join(', ') : 'No especificadas' }}</strong></p>
           </div>
           <button 
             class="btn-toggle"
@@ -95,6 +133,17 @@
         </div>
       </div>
     </div>
-  }
-</div>
+  </div>
+}
+
+<!-- Loading State -->
+@if (loading()) {
+  <div class="content">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <p>Cargando información...</p>
+    </div>
+  </div>
+}
+
 <app-footer-repartidor></app-footer-repartidor>

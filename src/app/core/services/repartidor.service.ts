@@ -76,4 +76,12 @@ export class RepartidorService {
   obtenerEstadisticas(): Observable<RepartidorDetailDTO> {
     return this.http.get<RepartidorDetailDTO>(`${this.apiUrl}/estadisticas`);
   }
+
+  activarCuenta(): Observable<string> {
+    return this.http.put(`${this.apiUrl}/activar`, null, { responseType: 'text' });
+  }
+
+  desactivarCuenta(): Observable<string> {
+    return this.http.put(`${this.apiUrl}/desactivar`, null, { responseType: 'text' });
+  }
 }

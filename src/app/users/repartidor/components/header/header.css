@@ -82,7 +82,7 @@ header {
 }
 
 .btn-accion:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   border-color: white;
   color: white;
 }
@@ -121,6 +121,18 @@ header {
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
+}
+
+/* Estilos cuando el repartidor está inactivo */
+header.inactive .tabs a.disabled {
+  color: #999 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+header.inactive .tabs a.disabled:hover {
+  border-bottom: 2px solid transparent !important;
 }
 
 /* Responsive */
