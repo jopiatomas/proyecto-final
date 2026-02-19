@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { FooterRepartidor } from '../../components/footer/footer';
-import { RepartidorService, PedidoRepartidorDTO } from '../../../../core/services/repartidor.service';
+import { RepartidorService } from '../../../../core/services/repartidor.service';
 
 @Component({
   selector: 'app-ver-pedido-actual',
@@ -15,7 +15,7 @@ export class VerPedidoActual implements OnInit {
   private repartidorService = inject(RepartidorService);
   router = inject(Router);
 
-  pedido = signal<PedidoRepartidorDTO | null>(null);
+  pedido = signal<any | null>(null);
   loading = signal(false);
   marcandoEntregado = signal(false);
 
@@ -35,7 +35,7 @@ export class VerPedidoActual implements OnInit {
         console.error('Error cargando pedido actual:', error);
         this.pedido.set(null);
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -48,17 +48,17 @@ export class VerPedidoActual implements OnInit {
 
     this.marcandoEntregado.set(true);
 
-    this.repartidorService.marcarComoEntregado(pedidoId).subscribe({
+    this.repartidorService.marcarEntregado(pedidoId).subscribe({
       next: () => {
         this.marcandoEntregado.set(false);
         alert('Pedido marcado como entregado. ¡Excelente trabajo!');
         this.router.navigate(['/repartidor']);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error marcando como entregado:', error);
         alert('Error al marcar el pedido como entregado.');
         this.marcandoEntregado.set(false);
-      }
+      },
     });
   }
 

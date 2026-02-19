@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { FooterRepartidor } from '../../components/footer/footer';
-import { RepartidorService, PedidoRepartidorDTO } from '../../../../core/services/repartidor.service';
+import { RepartidorService } from '../../../../core/services/repartidor.service';
 
 @Component({
   selector: 'app-historial-entregas',
@@ -15,10 +15,10 @@ export class HistorialEntregas implements OnInit {
   private repartidorService = inject(RepartidorService);
   private router = inject(Router);
 
-  historial = signal<PedidoRepartidorDTO[]>([]);
+  historial = signal<any[]>([]);
   loading = signal(false);
   filtroEstado = signal<string>('');
-  historialFiltrado = signal<PedidoRepartidorDTO[]>([]);
+  historialFiltrado = signal<any[]>([]);
 
   ngOnInit() {
     this.cargarHistorial();
@@ -36,7 +36,7 @@ export class HistorialEntregas implements OnInit {
         console.error('Error cargando historial:', error);
         this.historial.set([]);
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -44,7 +44,9 @@ export class HistorialEntregas implements OnInit {
     let resultado = this.historial();
 
     if (this.filtroEstado()) {
-      resultado = resultado.filter(p => p.estado.toLowerCase().includes(this.filtroEstado().toLowerCase()));
+      resultado = resultado.filter((p) =>
+        p.estado.toLowerCase().includes(this.filtroEstado().toLowerCase()),
+      );
     }
 
     // Ordenar por fecha descendente

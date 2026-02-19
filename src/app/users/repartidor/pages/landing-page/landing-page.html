@@ -7,12 +7,8 @@
       <div class="inactive-icon">🚫</div>
       <h2>Estado Inactivo</h2>
       <p>Tu cuenta está inactiva. Actívala para comenzar a recibir pedidos.</p>
-      <button class="btn-activar" (click)="activarCuenta()">
-        Activar Cuenta
-      </button>
-      <button class="btn-ir-perfil" (click)="irAlPerfil()">
-        Ver Mi Perfil
-      </button>
+      <button class="btn-activar" (click)="activarCuenta()">Activar Cuenta</button>
+      <button class="btn-ir-perfil" (click)="irAlPerfil()">Ver Mi Perfil</button>
     </div>
   </div>
 }
@@ -27,13 +23,23 @@
       </div>
       <div class="modal-body-activar">
         <p>¿Estás seguro de que deseas activar tu cuenta?</p>
-        <p class="hint-activar">Al activar tu cuenta podrás empezar a recibir pedidos y trabajar como repartidor.</p>
+        <p class="hint-activar">
+          Al activar tu cuenta podrás empezar a recibir pedidos y trabajar como repartidor.
+        </p>
       </div>
       <div class="modal-actions-activar">
-        <button class="btn-confirmar-activar" (click)="confirmarActivacion()" [disabled]="activando()">
+        <button
+          class="btn-confirmar-activar"
+          (click)="confirmarActivacion()"
+          [disabled]="activando()"
+        >
           {{ activando() ? 'Activando...' : 'Sí, Activar' }}
         </button>
-        <button class="btn-cancelar-activar" (click)="cancelarActivacion()" [disabled]="activando()">
+        <button
+          class="btn-cancelar-activar"
+          (click)="cancelarActivacion()"
+          [disabled]="activando()"
+        >
           Cancelar
         </button>
       </div>
@@ -43,31 +49,49 @@
 
 <!-- Vista Normal (solo si está activo) -->
 @if (!loading() && perfil() && perfil()!.activo) {
-<div class="content">
-  <div class="welcome-section">
-    <h2>¡Bienvenido Repartidor!</h2>
-    <p>Administra tus entregas y optimiza tu trabajo</p>
-  </div>
+  <div class="content">
+    <div class="welcome-section">
+      <h2>¡Bienvenido Repartidor!</h2>
+      <p>Administra tus entregas y optimiza tu trabajo</p>
+    </div>
 
-  <div class="dashboard">
+    <div class="dashboard">
       <!-- Card de Disponibilidad -->
       <div class="disponibilidad-card">
         <h3>Estado de Disponibilidad</h3>
         @if (perfil(); as p) {
           <div class="estado-info">
             <p class="estado-label">Actualmente:</p>
-            <div class="estado-badge" [class.disponible]="disponible()" [class.no-disponible]="!disponible()">
+            <div
+              class="estado-badge"
+              [class.disponible]="disponible()"
+              [class.no-disponible]="!disponible()"
+            >
               {{ disponible() ? '✓ Disponible' : '✗ No Disponible' }}
             </div>
-            <p class="tipo-vehiculo">Vehículo: <strong>{{ p.tipoVehiculo }}</strong></p>
-            <p class="zonas">Zonas de trabajo: <strong>{{ (p.zonas && p.zonas.length > 0) ? p.zonas.join(', ') : 'No especificadas' }}</strong></p>
+            <p class="tipo-vehiculo">
+              Vehículo: <strong>{{ p.tipoVehiculo }}</strong>
+            </p>
+            <p class="zonas">
+              Zonas de trabajo:
+              <strong>{{
+                p.zonas && p.zonas.length > 0 ? p.zonas.join(', ') : 'No especificadas'
+              }}</strong>
+            </p>
           </div>
-          <button 
+          <button
             class="btn-toggle"
             (click)="toggleDisponibilidad()"
-            [disabled]="cambandoDisponibilidad()"
-            [class.disponible]="disponible()">
-            {{ cambandoDisponibilidad() ? 'Actualizando...' : (disponible() ? 'Marcar como No Disponible' : 'Marcar como Disponible') }}
+            [disabled]="cambiandoDisponibilidad()"
+            [class.disponible]="disponible()"
+          >
+            {{
+              cambiandoDisponibilidad()
+                ? 'Actualizando...'
+                : disponible()
+                  ? 'Marcar como No Disponible'
+                  : 'Marcar como Disponible'
+            }}
           </button>
         }
       </div>

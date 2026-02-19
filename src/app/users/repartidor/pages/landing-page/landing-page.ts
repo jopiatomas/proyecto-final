@@ -1,140 +1,156 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { RepartidorService } from '../../../../core/services/repartidor.service';
 import { Header } from '../../components/header/header';
 import { FooterRepartidor } from '../../components/footer/footer';
-import { RepartidorService, RepartidorDetailDTO, PedidoRepartidorDTO } from '../../../../core/services/repartidor.service';
-import { RepartidorEstadoService } from '../../../../core/services/repartidor-estado.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [Header, FooterRepartidor, CommonModule],
+  standalone: true,
+  imports: [CommonModule, Header, FooterRepartidor],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
 })
-export class LandingPage implements OnInit {
+export class LandingPage implements OnInit, OnDestroy {
   private repartidorService = inject(RepartidorService);
-  private repartidorEstadoService = inject(RepartidorEstadoService);
   private router = inject(Router);
+  private destroy$ = new Subject<void>();
 
-  perfil = signal<RepartidorDetailDTO | null>(null);
-  pedidoActual = signal<PedidoRepartidorDTO | null>(null);
-  loading = signal(false);
+  perfil = signal<any>(null);
   disponible = signal(false);
-  cambandoDisponibilidad = signal(false);
-  activando = signal(false);
+  loading = signal(false);
+  cambiandoDisponibilidad = signal(false);
   mostrarConfirmacionActivar = signal(false);
+  activando = signal(false);
+  pedidoActual = signal<any>(null);
+  errorMessage = signal('');
 
   ngOnInit() {
-    this.cargarDatos();
+    this.cargarPerfil();
   }
 
-  cargarDatos() {
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  cargarPerfil() {
     this.loading.set(true);
-    
-    this.repartidorService.obtenerPerfil().subscribe({
-      next: (perfil) => {
-        this.perfil.set(perfil);
-        this.disponible.set(perfil.disponible);
-        this.repartidorEstadoService.setActivo(perfil.activo);
-        this.cargarPedidoActual();
-      },
-      error: (error) => {
-        console.error('Error cargando perfil:', error);
-        this.loading.set(false);
-      }
-    });
-  }
+    this.errorMessage.set('');
 
-  cargarPedidoActual() {
-    this.repartidorService.obtenerPedidoActual().subscribe({
-      next: (pedido) => {
-        this.pedidoActual.set(pedido);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        // No hay pedido actual
-        this.pedidoActual.set(null);
-        this.loading.set(false);
-      }
-    });
+    this.repartidorService
+      .obtenerPerfil()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (perfil) => {
+          console.log('✅ Perfil cargado:', perfil);
+          this.perfil.set(perfil);
+          this.disponible.set(perfil?.disponible || false);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('❌ Error cargando perfil:', err);
+          this.errorMessage.set('Error al cargar el perfil');
+          this.loading.set(false);
+        },
+      });
   }
 
   toggleDisponibilidad() {
-    this.cambandoDisponibilidad.set(true);
+    this.cambiandoDisponibilidad.set(true);
+    this.errorMessage.set('');
     const nuevoEstado = !this.disponible();
 
-    this.repartidorService.cambiarDisponibilidad(nuevoEstado).subscribe({
-      next: () => {
-        this.disponible.set(nuevoEstado);
-        this.cambandoDisponibilidad.set(false);
-      },
-      error: (error) => {
-        console.error('Error al cambiar disponibilidad:', error);
-        this.cambandoDisponibilidad.set(false);
-      }
-    });
+    console.log('📍 Cambiando disponibilidad a:', nuevoEstado);
+
+    this.repartidorService
+      .cambiarDisponibilidad(nuevoEstado)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Disponibilidad actualizada:', response);
+          this.disponible.set(nuevoEstado);
+          this.cambiandoDisponibilidad.set(false);
+        },
+        error: (err) => {
+          console.error('❌ Error al cambiar disponibilidad:', err);
+          this.errorMessage.set(
+            'Error: ' + (err.error?.error || 'No se pudo cambiar la disponibilidad'),
+          );
+          this.cambiandoDisponibilidad.set(false);
+        },
+      });
   }
 
-  irAPedidosDisponibles() {
-    this.router.navigate(['/repartidor/pedidos-disponibles']);
-  }
+  desactivar() {
+    this.cambiandoDisponibilidad.set(true);
+    this.errorMessage.set('');
 
-  irAPedidoActual() {
-    this.router.navigate(['/repartidor/ver-pedido-actual']);
-  }
+    console.log('📍 Desactivando disponibilidad');
 
-  irAlHistorial() {
-    this.router.navigate(['/repartidor/historial-entregas']);
-  }
-
-  irAlPerfil() {
-    this.router.navigate(['/repartidor/perfil']);
+    this.repartidorService
+      .desactivarDisponibilidad()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Disponibilidad desactivada:', response);
+          this.disponible.set(false);
+          this.cambiandoDisponibilidad.set(false);
+        },
+        error: (err) => {
+          console.error('❌ Error al desactivar:', err);
+          this.errorMessage.set('Error: ' + (err.error?.error || 'No se pudo desactivar'));
+          this.cambiandoDisponibilidad.set(false);
+        },
+      });
   }
 
   activarCuenta() {
     this.mostrarConfirmacionActivar.set(true);
   }
 
-  confirmarActivacion() {
-    this.mostrarConfirmacionActivar.set(false);
-    this.activando.set(true);
-
-    this.repartidorService.activarCuenta().subscribe({
-      next: () => {
-        // Después de activar la cuenta, cambiar disponibilidad a true
-        this.repartidorService.cambiarDisponibilidad(true).subscribe({
-          next: () => {
-            // Actualizar el perfil local
-            const perfilActual = this.perfil();
-            if (perfilActual) {
-              this.perfil.set({ ...perfilActual, activo: true, trabajando: true, disponible: true });
-            }
-            this.disponible.set(true);
-            this.repartidorEstadoService.setActivo(true);
-            this.activando.set(false);
-          },
-          error: (error) => {
-            console.error('Error al cambiar disponibilidad después de activar:', error);
-            // Aunque falló cambiar disponibilidad, la cuenta está activa
-            const perfilActual = this.perfil();
-            if (perfilActual) {
-              this.perfil.set({ ...perfilActual, activo: true });
-            }
-            this.repartidorEstadoService.setActivo(true);
-            this.activando.set(false);
-          }
-        });
-      },
-      error: (error) => {
-        console.error('Error al activar cuenta:', error);
-        this.activando.set(false);
-        alert('Error al activar la cuenta. Intenta nuevamente.');
-      }
-    });
-  }
-
   cancelarActivacion() {
     this.mostrarConfirmacionActivar.set(false);
+  }
+
+  confirmarActivacion() {
+    this.activando.set(true);
+    this.errorMessage.set('');
+
+    this.repartidorService
+      .activarCuenta()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log('✅ Cuenta activada:', response);
+          this.activando.set(false);
+          this.mostrarConfirmacionActivar.set(false);
+          this.cargarPerfil();
+        },
+        error: (err: any) => {
+          console.error('❌ Error activando cuenta:', err);
+          this.errorMessage.set('Error: ' + (err.error?.error || 'No se pudo activar la cuenta'));
+          this.activando.set(false);
+        },
+      });
+  }
+
+  irAPedidoActual() {
+    this.router.navigate(['/repartidor/ver-pedido-actual']);
+  }
+
+  irAPedidosDisponibles() {
+    this.router.navigate(['/repartidor/pedidos-disponibles']);
+  }
+
+  irAlHistorial() {
+    this.router.navigate(['/repartidor/historial']);
+  }
+
+  irAlPerfil() {
+    this.router.navigate(['/repartidor/perfil']);
   }
 }

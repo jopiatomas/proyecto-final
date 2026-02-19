@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { FooterRepartidor } from '../../components/footer/footer';
-import { RepartidorService, PedidoRepartidorDTO } from '../../../../core/services/repartidor.service';
+import { RepartidorService } from '../../../../core/services/repartidor.service';
 
 @Component({
   selector: 'app-pedidos-disponibles',
@@ -15,11 +15,11 @@ export class PedidosDisponibles implements OnInit {
   private repartidorService = inject(RepartidorService);
   private router = inject(Router);
 
-  pedidos = signal<PedidoRepartidorDTO[]>([]);
+  pedidos = signal<any[]>([]);
   loading = signal(false);
   aceptandoPedido = signal<number | null>(null);
   filtroEstado = signal<string>('');
-  pedidosFiltrados = signal<PedidoRepartidorDTO[]>([]);
+  pedidosFiltrados = signal<any[]>([]);
 
   ngOnInit() {
     this.cargarPedidos();
@@ -37,7 +37,7 @@ export class PedidosDisponibles implements OnInit {
         console.error('Error cargando pedidos:', error);
         this.pedidos.set([]);
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -45,7 +45,9 @@ export class PedidosDisponibles implements OnInit {
     let resultado = this.pedidos();
 
     if (this.filtroEstado()) {
-      resultado = resultado.filter(p => p.estado.toLowerCase().includes(this.filtroEstado().toLowerCase()));
+      resultado = resultado.filter((p) =>
+        p.estado.toLowerCase().includes(this.filtroEstado().toLowerCase()),
+      );
     }
 
     this.pedidosFiltrados.set(resultado);
@@ -68,7 +70,7 @@ export class PedidosDisponibles implements OnInit {
         console.error('Error aceptando pedido:', error);
         alert('Error al aceptar el pedido. Intenta de nuevo.');
         this.aceptandoPedido.set(null);
-      }
+      },
     });
   }
 

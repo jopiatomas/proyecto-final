@@ -2,86 +2,75 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface RepartidorDetailDTO {
-  id: number;
-  nombreYapellido: string;
-  usuario: string;
-  email: string;
-  pais: string;
-  tipoVehiculo: string;
-  disponible: boolean;
-  trabajando: boolean;
-  zonas: string[];
-  totalPedidosEntregados: number;
-  calificacionPromedio: number;
-  activo: boolean;
-}
-
-export interface PedidoRepartidorDTO {
-  id: number;
-  fecha: string;
-  estado: string;
-  total: number;
-  restauranteNombre: string;
-  clienteNombre: string;
-  direccionEntrega: string;
-  direccionRestaurante: string;
-}
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RepartidorService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/repartidores';
 
-  obtenerPerfil(): Observable<RepartidorDetailDTO> {
-    return this.http.get<RepartidorDetailDTO>(`${this.apiUrl}/perfil`);
-  }
-
-  actualizarPerfil(perfilDTO: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/perfil`, perfilDTO);
-  }
-
-  cambiarContrasenia(contraseniaDTO: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/contrasenia`, contraseniaDTO);
+  obtenerPerfil(): Observable<any> {
+    console.log('🔍 Obteniendo perfil...');
+    return this.http.get<any>(`${this.apiUrl}/perfil`);
   }
 
   cambiarDisponibilidad(disponible: boolean): Observable<any> {
-    return this.http.put(`${this.apiUrl}/disponibilidad`, null, {
-      params: { disponible: disponible.toString() }
-    });
+    console.log('📍 Enviando cambiarDisponibilidad:', disponible);
+    return this.http.put<any>(`${this.apiUrl}/disponibilidad?disponible=${disponible}`, {});
   }
 
-  obtenerPedidosDisponibles(): Observable<PedidoRepartidorDTO[]> {
-    return this.http.get<PedidoRepartidorDTO[]>(`${this.apiUrl}/pedidos-disponibles`);
+  desactivarDisponibilidad(): Observable<any> {
+    console.log('📍 Enviando desactivarDisponibilidad');
+    return this.http.put<any>(`${this.apiUrl}/desactivar`, {});
+  }
+
+  obtenerPedidosDisponibles(): Observable<any[]> {
+    console.log('🔍 Obteniendo pedidos disponibles...');
+    return this.http.get<any[]>(`${this.apiUrl}/pedidos-disponibles`);
+  }
+
+  obtenerPedidoActual(): Observable<any> {
+    console.log('🔍 Obteniendo pedido actual...');
+    return this.http.get<any>(`${this.apiUrl}/pedido-actual`);
   }
 
   aceptarPedido(pedidoId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/pedidos/${pedidoId}/tomar`, null);
+    console.log('✅ Aceptando pedido:', pedidoId);
+    return this.http.post<any>(`${this.apiUrl}/pedidos/${pedidoId}/tomar`, {});
   }
 
-  obtenerPedidoActual(): Observable<PedidoRepartidorDTO> {
-    return this.http.get<PedidoRepartidorDTO>(`${this.apiUrl}/pedido-actual`);
+  marcarEntregado(pedidoId: number): Observable<any> {
+    console.log('✅ Marcando como entregado:', pedidoId);
+    return this.http.post<any>(`${this.apiUrl}/pedidos/${pedidoId}/entregar`, {});
   }
 
-  marcarComoEntregado(pedidoId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/pedidos/${pedidoId}/entregar`, null);
+  obtenerHistorialEntregas(): Observable<any[]> {
+    console.log('📜 Obteniendo historial de entregas...');
+    return this.http.get<any[]>(`${this.apiUrl}/historial`);
   }
 
-  obtenerHistorialEntregas(): Observable<PedidoRepartidorDTO[]> {
-    return this.http.get<PedidoRepartidorDTO[]>(`${this.apiUrl}/historial`);
+  obtenerEstadisticas(): Observable<any> {
+    console.log('📊 Obteniendo estadísticas...');
+    return this.http.get<any>(`${this.apiUrl}/estadisticas`);
   }
 
-  obtenerEstadisticas(): Observable<RepartidorDetailDTO> {
-    return this.http.get<RepartidorDetailDTO>(`${this.apiUrl}/estadisticas`);
+  activarCuenta(): Observable<any> {
+    console.log('✅ Activando cuenta...');
+    return this.http.put<any>(`${this.apiUrl}/activar`, {});
   }
 
-  activarCuenta(): Observable<string> {
-    return this.http.put(`${this.apiUrl}/activar`, null, { responseType: 'text' });
+  desactivarCuenta(): Observable<any> {
+    console.log('❌ Desactivando cuenta...');
+    return this.http.put<any>(`${this.apiUrl}/desactivar`, {});
   }
 
-  desactivarCuenta(): Observable<string> {
-    return this.http.put(`${this.apiUrl}/desactivar`, null, { responseType: 'text' });
+  actualizarPerfil(datos: any): Observable<any> {
+    console.log('✏️ Actualizando perfil...');
+    return this.http.put<any>(`${this.apiUrl}/perfil`, datos);
+  }
+
+  cambiarContrasenia(datos: any): Observable<any> {
+    console.log('🔐 Cambiando contraseña...');
+    return this.http.put<any>(`${this.apiUrl}/contrasenia`, datos);
   }
 }

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { FooterRepartidor } from '../../components/footer/footer';
 import { AuthService } from '../../../../core/services/auth-service';
-import { RepartidorService, RepartidorDetailDTO } from '../../../../core/services/repartidor.service';
+import { RepartidorService } from '../../../../core/services/repartidor.service';
 import { RepartidorEstadoService } from '../../../../core/services/repartidor-estado.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class Perfil implements OnInit {
   private repartidorEstadoService = inject(RepartidorEstadoService);
 
   perfilForm!: FormGroup;
-  usuario = signal<RepartidorDetailDTO | null>(null);
+  usuario = signal<any | null>(null);
   loading = signal(false);
   cambiandoEstado = signal(false);
   mensajePerfil = '';
@@ -62,7 +62,7 @@ export class Perfil implements OnInit {
     }
 
     this.repartidorService.obtenerPerfil().subscribe({
-      next: (datosUsuario: RepartidorDetailDTO) => {
+      next: (datosUsuario: any) => {
         this.usuario.set(datosUsuario);
 
         this.perfilForm.patchValue({
@@ -79,7 +79,7 @@ export class Perfil implements OnInit {
 
         const currentUser = this.authService.currentUser();
         if (currentUser) {
-          const datosBasicos: RepartidorDetailDTO = {
+          const datosBasicos: any = {
             id: currentUser.id,
             nombreYapellido: currentUser.nombre,
             usuario: currentUser.usuario,
@@ -103,7 +103,7 @@ export class Perfil implements OnInit {
         }
 
         this.mostrarMensaje('Error al cargar el perfil', 'error');
-      }
+      },
     });
   }
 
@@ -132,7 +132,7 @@ export class Perfil implements OnInit {
         this.loading.set(false);
         const mensaje = error.error?.message || 'Error al actualizar el perfil';
         this.mostrarMensaje(mensaje, 'error');
-      }
+      },
     });
   }
 
@@ -159,7 +159,7 @@ export class Perfil implements OnInit {
       error: (error: any) => {
         const mensaje = error.error?.message || 'Error al cambiar la contraseña';
         this.mostrarMensaje(mensaje, 'error');
-      }
+      },
     });
   }
 
@@ -169,7 +169,7 @@ export class Perfil implements OnInit {
 
   cambiarDisponibilidad(disponible: boolean) {
     this.cambiandoEstado.set(true);
-    
+
     if (disponible) {
       // Activar disponibilidad
       this.repartidorService.cambiarDisponibilidad(true).subscribe({
@@ -182,7 +182,7 @@ export class Perfil implements OnInit {
           this.cambiandoEstado.set(false);
           const mensaje = error.error?.message || 'Error al cambiar disponibilidad';
           this.mostrarMensaje(mensaje, 'error');
-        }
+        },
       });
     } else {
       // Desactivar cuenta completamente
@@ -199,7 +199,7 @@ export class Perfil implements OnInit {
           this.cambiandoEstado.set(false);
           const mensaje = error.error?.message || 'Error al desactivar cuenta';
           this.mostrarMensaje(mensaje, 'error');
-        }
+        },
       });
     }
   }
