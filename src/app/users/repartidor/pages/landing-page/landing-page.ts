@@ -49,11 +49,30 @@ export class LandingPage implements OnInit, OnDestroy {
           console.log('✅ Perfil cargado:', perfil);
           this.perfil.set(perfil);
           this.disponible.set(perfil?.disponible || false);
-          this.loading.set(false);
+          // Cargar también el pedido actual
+          this.cargarPedidoActual();
         },
         error: (err) => {
           console.error('❌ Error cargando perfil:', err);
           this.errorMessage.set('Error al cargar el perfil');
+          this.loading.set(false);
+        },
+      });
+  }
+
+  cargarPedidoActual() {
+    this.repartidorService
+      .obtenerPedidoActual()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (pedido) => {
+          console.log('✅ Pedido actual cargado:', pedido);
+          this.pedidoActual.set(pedido);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('⚠️ No hay pedido actual:', err);
+          this.pedidoActual.set(null);
           this.loading.set(false);
         },
       });

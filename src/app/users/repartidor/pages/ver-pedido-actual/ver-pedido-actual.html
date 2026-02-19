@@ -68,29 +68,39 @@
             </div>
           </div>
 
-          <!-- Timeline de entrega -->
+          <!-- Timeline de entrega con botones de estado -->
           <div class="timeline-section">
             <h4>📊 Estado de Entrega</h4>
             <div class="timeline">
-              <div class="timeline-item" [class.completado]="true">
+              <div class="timeline-item" [class.completado]="p.estado === 'ACEPTADO' || p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                   <p class="timeline-label">Pedido Aceptado</p>
                   <p class="timeline-desc">Ya aceptaste este pedido</p>
                 </div>
               </div>
-              <div class="timeline-item">
+              <div class="timeline-item" [class.completado]="p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                   <p class="timeline-label">En Entrega</p>
                   <p class="timeline-desc">Estás en camino al cliente</p>
+                  @if (p.estado === 'ACEPTADO') {
+                    <button class="btn-estado" (click)="cambiarEstado('EN_ENTREGA')" [disabled]="marcandoEntregado()">
+                      Empezar Entrega
+                    </button>
+                  }
                 </div>
               </div>
-              <div class="timeline-item">
+              <div class="timeline-item" [class.completado]="p.estado === 'ENTREGADO'">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                   <p class="timeline-label">Entregado</p>
                   <p class="timeline-desc">Marca como completado</p>
+                  @if (p.estado === 'EN_ENTREGA') {
+                    <button class="btn-estado btn-completar" (click)="cambiarEstado('ENTREGADO')" [disabled]="marcandoEntregado()">
+                      {{ marcandoEntregado() ? '⏳ Completando...' : '✓ Completar Entrega' }}
+                    </button>
+                  }
                 </div>
               </div>
             </div>

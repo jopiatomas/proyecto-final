@@ -73,4 +73,9 @@ export class RepartidorService {
     console.log('🔐 Cambiando contraseña...');
     return this.http.put<any>(`${this.apiUrl}/contrasenia`, datos);
   }
+
+  cambiarEstadoPedido(pedidoId: number, estado: string): Observable<any> {
+    console.log('📍 Cambiando estado del pedido:', pedidoId, 'a:', estado);
+    return this.http.put<any>(`${this.apiUrl}/pedidos/${pedidoId}/estado`, { estado });
+  }
 }

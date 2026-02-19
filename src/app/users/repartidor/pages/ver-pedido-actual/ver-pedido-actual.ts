@@ -62,6 +62,43 @@ export class VerPedidoActual implements OnInit {
     });
   }
 
+  cambiarEstado(nuevoEstado: string) {
+    const pedidoId = this.pedido()?.id;
+    if (!pedidoId) return;
+
+    this.marcandoEntregado.set(true);
+
+    // Si el nuevo estado es ENTREGADO, usar marcarEntregado
+    if (nuevoEstado === 'ENTREGADO') {
+      this.repartidorService.marcarEntregado(pedidoId).subscribe({
+        next: () => {
+          this.marcandoEntregado.set(false);
+          alert('Pedido entregado. ¡Excelente trabajo!');
+          this.cargarPedidoActual();
+        },
+        error: (error: any) => {
+          console.error('Error al cambiar estado:', error);
+          alert('Error al cambiar el estado del pedido.');
+          this.marcandoEntregado.set(false);
+        },
+      });
+    } else {
+      // Para otros estados, actualizar el estado
+      this.repartidorService.cambiarEstadoPedido(pedidoId, nuevoEstado).subscribe({
+        next: () => {
+          this.marcandoEntregado.set(false);
+          console.log('Estado del pedido actualizado a:', nuevoEstado);
+          this.cargarPedidoActual();
+        },
+        error: (error: any) => {
+          console.error('Error al cambiar estado:', error);
+          alert('Error al cambiar el estado del pedido.');
+          this.marcandoEntregado.set(false);
+        },
+      });
+    }
+  }
+
   volverAlPanel() {
     this.router.navigate(['/repartidor']);
   }
