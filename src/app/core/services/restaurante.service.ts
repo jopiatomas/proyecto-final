@@ -122,6 +122,8 @@ export class RestauranteService {
           nombreYapellido: res.nombre,
           usuario: this.authService.currentUser()?.usuario ?? '',
           email: res.email,
+          horaApertura: res.horaApertura,
+          horaCierre: res.horaCierre,
         } as PerfilUsuario;
       })
     );

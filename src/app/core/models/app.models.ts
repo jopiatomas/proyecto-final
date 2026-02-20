@@ -32,6 +32,8 @@ export interface PerfilUsuario {
   nombreYapellido: string;
   usuario: string;
   email: string;
+  horaApertura?: string;
+  horaCierre?: string;
 }
 
 export interface ActualizarPerfilRequest {
