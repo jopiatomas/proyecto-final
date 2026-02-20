@@ -117,8 +117,8 @@ export const routes: Routes = [
       {
         path: 'ver-pedido-actual',
         loadComponent: () =>
-          import('./users/repartidor/pages/ver-pedido-actual/ver-pedido-actual').then(
-            (m) => m.VerPedidoActual
+          import('./users/repartidor/pages/pedido-actual-detalle/pedido-actual-detalle').then(
+            (m) => m.PedidoActualDetalle
           ),
       },
       {

@@ -45,16 +45,16 @@
                     <span class="valor">{{ pedido.clienteNombre }}</span>
                   </div>
                   <div class="detalle-item">
-                    <span class="label">📍 Desde:</span>
-                    <span class="valor">{{ pedido.direccionRestaurante }}</span>
+                    <span class="label">📍 Desde Restaurante:</span>
+                    <span class="valor">{{ pedido.restauranteDireccion }}</span>
                   </div>
                   <div class="detalle-item">
-                    <span class="label">🚚 Hacia:</span>
+                    <span class="label">🚚 Hacia Cliente:</span>
                     <span class="valor">{{ pedido.direccionEntrega }}</span>
                   </div>
                   <div class="detalle-item">
-                    <span class="label">📅 Fecha:</span>
-                    <span class="valor">{{ pedido.fecha }}</span>
+                    <span class="label">📅 Fecha del Pedido:</span>
+                    <span class="valor">{{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}</span>
                   </div>
                 </div>
 

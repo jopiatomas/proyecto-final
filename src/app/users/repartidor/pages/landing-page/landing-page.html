@@ -96,22 +96,27 @@
         }
       </div>
 
-      <!-- Card de Pedido Actual -->
+      <!-- Card de Pedido Actual (Mini Resumen) -->
       <div class="pedido-actual-card">
-        <h3>Pedido Actual</h3>
+        <h3>📦 Pedido Actual</h3>
         @if (pedidoActual(); as pedido) {
-          <div class="pedido-info">
-            <p><strong>ID Pedido:</strong> #{{ pedido.id }}</p>
-            <p><strong>Restaurante:</strong> {{ pedido.restauranteNombre }}</p>
-            <p><strong>Cliente:</strong> {{ pedido.clienteNombre }}</p>
-            <p><strong>Estado:</strong> {{ pedido.estado }}</p>
-            <p><strong>Total:</strong> ${{ pedido.total }}</p>
-            <p class="direccion"><strong>Desde:</strong> {{ pedido.direccionRestaurante }}</p>
-            <p class="direccion"><strong>Hacia:</strong> {{ pedido.direccionEntrega }}</p>
+          <div class="pedido-resumen">
+            <div class="pedido-id-badge">
+              <span class="label">Pedido:</span>
+              <span class="id">#{{ pedido.id }}</span>
+            </div>
+            <div class="pedido-quick-info">
+              <p><strong>Restaurante:</strong> {{ pedido.restauranteNombre }}</p>
+              <p><strong>Cliente:</strong> {{ pedido.clienteNombre }}</p>
+              <p class="estado-quick"><strong>Estado:</strong> <span [class]="'estado-' + pedido.estado.toLowerCase()">{{ pedido.estado }}</span></p>
+            </div>
           </div>
-          <button class="btn-primary" (click)="irAPedidoActual()">Ver Detalles</button>
+          <button class="btn-primary btn-ver-detalles" (click)="irAPedidoActual()">
+            Ver Detalles Completos →
+          </button>
         } @else {
           <div class="sin-pedido">
+            <div class="sin-pedido-icon">📭</div>
             <p>No tienes un pedido actualmente en entrega.</p>
             <p class="hint">Explora los pedidos disponibles para comenzar a trabajar</p>
           </div>
