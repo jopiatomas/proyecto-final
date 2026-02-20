@@ -108,7 +108,10 @@
             <div class="pedido-quick-info">
               <p><strong>Restaurante:</strong> {{ pedido.restauranteNombre }}</p>
               <p><strong>Cliente:</strong> {{ pedido.clienteNombre }}</p>
-              <p class="estado-quick"><strong>Estado:</strong> <span [class]="'estado-' + pedido.estado.toLowerCase()">{{ pedido.estado }}</span></p>
+              <p class="estado-quick">
+                <strong>Estado:</strong>
+                <span [class]="'estado-' + pedido.estado.toLowerCase()">{{ pedido.estado }}</span>
+              </p>
             </div>
           </div>
           <button class="btn-primary btn-ver-detalles" (click)="irAPedidoActual()">

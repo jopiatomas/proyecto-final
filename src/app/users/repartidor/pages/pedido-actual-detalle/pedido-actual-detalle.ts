@@ -50,6 +50,28 @@ export class PedidoActualDetalle implements OnInit {
     this.mostrarModalConfirmacion.set(true);
   }
 
+  marcarEnEntrega() {
+    const pedidoId = this.pedido()?.id;
+    if (!pedidoId) return;
+
+    this.marcandoEntregado.set(true);
+    this.repartidorService.cambiarEstadoPedido(pedidoId, 'EN_ENTREGA').subscribe({
+      next: () => {
+        console.log('Estado actualizado a: EN_ENTREGA');
+        const pedidoActual = this.pedido();
+        if (pedidoActual) {
+          pedidoActual.estado = 'EN_ENTREGA';
+          this.pedido.set({ ...pedidoActual });
+        }
+        this.marcandoEntregado.set(false);
+      },
+      error: (error) => {
+        console.error('Error al cambiar estado:', error);
+        this.marcandoEntregado.set(false);
+      },
+    });
+  }
+
   confirmarEntrega() {
     const pedidoId = this.pedido()?.id;
     if (!pedidoId) return;

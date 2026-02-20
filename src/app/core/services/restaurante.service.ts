@@ -125,7 +125,7 @@ export class RestauranteService {
           horaApertura: res.horaApertura,
           horaCierre: res.horaCierre,
         } as PerfilUsuario;
-      })
+      }),
     );
   }
 
@@ -160,7 +160,7 @@ export class RestauranteService {
 
   modificarProducto(
     idProducto: number,
-    producto: ProductoModificarDTO
+    producto: ProductoModificarDTO,
   ): Observable<ProductoDetailDTO> {
     return this.http.put<ProductoDetailDTO>(`${this.baseUrl}/productos/${idProducto}`, producto, {
       headers: this.getAuthHeaders(),
@@ -179,7 +179,7 @@ export class RestauranteService {
       `${this.baseUrl}/productos/${encodeURIComponent(nombre)}`,
       {
         headers: this.getAuthHeaders(),
-      }
+      },
     );
   }
 
@@ -245,7 +245,7 @@ export class RestauranteService {
   getRestauranteById(id: number): Observable<Restaurante> {
     return new Observable((observer) => {
       observer.error(
-        new Error('Método deprecado. Usar ClienteService para funcionalidades de cliente.')
+        new Error('Método deprecado. Usar ClienteService para funcionalidades de cliente.'),
       );
     });
   }

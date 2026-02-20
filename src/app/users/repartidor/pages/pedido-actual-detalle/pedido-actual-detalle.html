@@ -50,153 +50,106 @@
 }
 
 <div class="content">
-  <div class="pedido-detalle-container">
-    <div class="breadcrumb">
-      <button class="btn-volver" (click)="volverAlPanel()">← Volver al Panel</button>
-    </div>
+  <div class="pedido-container">
+    <button class="btn-volver" (click)="volverAlPanel()">← Volver</button>
 
     @if (loading()) {
       <div class="loading">
         <div class="loading-spinner"></div>
-        <p>Cargando detalles del pedido...</p>
+        <p>Cargando pedido...</p>
       </div>
     } @else {
       @if (pedido(); as p) {
-        <div class="pedido-detail">
-          <!-- Header Principal -->
-          <div class="pedido-header-principal">
-            <div class="pedido-titulo-seccion">
-              <h2>Pedido #{{ p.id }}</h2>
-              <span class="estado-badge" [class]="'estado-' + p.estado.toLowerCase()">{{ p.estado }}</span>
-            </div>
-            <div class="pedido-monto-seccion">
-              <p class="label">Total a Entregar</p>
-              <p class="monto">${{ p.total }}</p>
-            </div>
+        <!-- Encabezado -->
+        <div class="pedido-header">
+          <div class="header-left">
+            <h2>Pedido #{{ p.id }}</h2>
+            <span class="estado-badge" [class]="'estado-' + p.estado.toLowerCase()">
+              {{ p.estado === 'ENVIADO' ? 'ACEPTADO' : p.estado }}
+            </span>
           </div>
-
-          <!-- Sección: Restaurante -->
-          <div class="info-section restaurante-section">
-            <h3 class="section-titulo">📍 Datos del Restaurante</h3>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="label">Nombre:</span>
-                <span class="valor">{{ p.restauranteNombre }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">Dirección de Retiro:</span>
-                <span class="valor">{{ p.restauranteDireccion }}</span>
-              </div>
-            </div>
+          <div class="header-right">
+            <p class="total">${{ p.total }}</p>
           </div>
+        </div>
 
-          <!-- Sección: Cliente -->
-          <div class="info-section cliente-section">
-            <h3 class="section-titulo">👤 Datos del Cliente</h3>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="label">Nombre:</span>
-                <span class="valor">{{ p.clienteNombre }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">Dirección de Entrega:</span>
-                <span class="valor">{{ p.direccionEntrega }}</span>
-              </div>
-            </div>
+        <!-- Información Principal -->
+        <div class="info-card restaurante-card">
+          <h3>🏪 Restaurante</h3>
+          <p><strong>{{ p.restauranteNombre }}</strong></p>
+          <p class="direccion">{{ p.restauranteDireccion }}</p>
+        </div>
+
+        <div class="info-card cliente-card">
+          <h3>👤 Cliente</h3>
+          <p><strong>{{ p.clienteNombre }}</strong></p>
+          <p class="direccion">{{ p.direccionEntrega }}</p>
+        </div>
+
+        <!-- Detalles -->
+        <div class="detalles-card">
+          <div class="detalle-item">
+            <span class="label">📅 Fecha del Pedido:</span>
+            <span class="valor">{{ p.fechaPedido | date: 'dd/MM/yyyy HH:mm' }}</span>
           </div>
-
-          <!-- Sección: Detalles -->
-          <div class="info-section detalles-section">
-            <h3 class="section-titulo">📋 Detalles del Pedido</h3>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="label">Fecha del Pedido:</span>
-                <span class="valor">{{ p.fecha }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">Código Postal Entrega:</span>
-                <span class="valor">{{ p.codigoPostal || 'No especificado' }}</span>
-              </div>
-            </div>
+          <div class="detalle-item">
+            <span class="label">📮 Código Postal:</span>
+            <span class="valor">{{ p.codigoPostal || 'No especificado' }}</span>
           </div>
+        </div>
 
-          <!-- Timeline de Entrega -->
-          <div class="timeline-section">
-            <h3 class="section-titulo">📊 Estado de Entrega</h3>
-            <div class="timeline">
-              <div
-                class="timeline-item"
-                [class.completado]="
-                  p.estado === 'ACEPTADO' || p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'
-                "
-              >
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                  <p class="timeline-label">Pedido Aceptado</p>
-                  <p class="timeline-desc">Ya aceptaste este pedido</p>
-                </div>
-              </div>
-              <div
-                class="timeline-item"
-                [class.completado]="p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'"
-              >
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                  <p class="timeline-label">En Entrega</p>
-                  <p class="timeline-desc">Estás en camino al cliente</p>
-                  @if (p.estado === 'ACEPTADO') {
-                    <button
-                      class="btn-estado"
-                      (click)="cambiarEstado('EN_ENTREGA')"
-                      [disabled]="marcandoEntregado()"
-                    >
-                      Empezar Entrega
-                    </button>
-                  }
-                </div>
-              </div>
-              <div class="timeline-item" [class.completado]="p.estado === 'ENTREGADO'">
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                  <p class="timeline-label">Entregado</p>
-                  <p class="timeline-desc">Marca como completado</p>
-                  @if (p.estado === 'EN_ENTREGA') {
-                    <button
-                      class="btn-estado btn-completar"
-                      (click)="cambiarEstado('ENTREGADO')"
-                      [disabled]="marcandoEntregado()"
-                    >
-                      {{ marcandoEntregado() ? '⏳ Completando...' : '✓ Completar Entrega' }}
-                    </button>
-                  }
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Botones de Acción -->
-          <div class="acciones-section">
-            <button
-              class="btn-entregar"
-              (click)="marcarComoEntregado()"
-              [disabled]="marcandoEntregado()"
+        <!-- Timeline de Estados -->
+        <div class="timeline-container">
+          <h3>📊 Estado de Entrega</h3>
+          <div class="timeline">
+            <!-- Estado: Aceptado -->
+            <div
+              class="timeline-item"
+              [class.active]="p.estado === 'ENVIADO' || p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'"
             >
-              {{ marcandoEntregado() ? '⏳ Procesando...' : '✓ Marcar como Entregado' }}
-            </button>
-            <button class="btn-volver" (click)="volverAlPanel()">← Volver al Panel</button>
+              <div class="timeline-dot"></div>
+              <div class="timeline-text">
+                <p class="timeline-label">Pedido Aceptado</p>
+                <p class="timeline-desc">Recogiste el pedido del restaurante</p>
+              </div>
+            </div>
+
+            <!-- Estado: En Entrega -->
+            <div
+              class="timeline-item"
+              [class.active]="p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'"
+            >
+              <div class="timeline-dot"></div>
+              <div class="timeline-text">
+                <p class="timeline-label">En Entrega</p>
+                <p class="timeline-desc">Estás en camino al cliente</p>
+                @if (p.estado === 'ENVIADO') {
+                  <button class="btn-cambiar-estado" (click)="marcarEnEntrega()">
+                    Marcar como En Entrega
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Estado: Entregado -->
+            <div class="timeline-item" [class.active]="p.estado === 'ENTREGADO'">
+              <div class="timeline-dot"></div>
+              <div class="timeline-text">
+                <p class="timeline-label">Entregado</p>
+                <p class="timeline-desc">Pedido completado</p>
+                @if (p.estado === 'EN_ENTREGA') {
+                  <button class="btn-cambiar-estado btn-entregado" (click)="marcarComoEntregado()">
+                    ✓ Marcar como Entregado
+                  </button>
+                }
+              </div>
+            </div>
           </div>
         </div>
       } @else {
         <div class="sin-pedido">
-          <div class="sin-pedido-icon">📭</div>
-          <h3>No tienes un pedido actual</h3>
-          <p>Explora los pedidos disponibles para aceptar uno y comenzar a entregar.</p>
-          <button
-            class="btn-explorar"
-            (click)="router.navigate(['/repartidor/pedidos-disponibles'])"
-          >
-            Explorar Pedidos Disponibles
-          </button>
+          <p>❌ No hay un pedido actualmente en entrega</p>
+          <button class="btn-volver" (click)="volverAlPanel()">Volver al Panel</button>
         </div>
       }
     }

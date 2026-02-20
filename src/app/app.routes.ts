@@ -35,20 +35,22 @@ export const routes: Routes = [
         path: 'restaurante/:nombre',
         loadComponent: () =>
           import('./users/cliente/pages/ver-restaurante/ver-restaurante').then(
-            (m) => m.VerRestaurante
+            (m) => m.VerRestaurante,
           ),
       },
       {
         path: 'resenia',
         loadComponent: () =>
           import('./users/cliente/pages/realizar-resenia/realizar-resenia').then(
-            (m) => m.RealizarResenia
+            (m) => m.RealizarResenia,
           ),
       },
       {
         path: 'historial',
         loadComponent: () =>
-          import('./users/cliente/pages/ver-historial-pedidos/ver-historial-pedidos').then((m) => m.VerHistorialPedidos),
+          import('./users/cliente/pages/ver-historial-pedidos/ver-historial-pedidos').then(
+            (m) => m.VerHistorialPedidos,
+          ),
       },
     ],
   },
@@ -69,7 +71,7 @@ export const routes: Routes = [
         path: 'historial',
         loadComponent: () =>
           import('./users/restaurante/pages/historial-pedidos/historial-pedidos').then(
-            (m) => m.HistorialPedidos
+            (m) => m.HistorialPedidos,
           ),
       },
       {
@@ -104,28 +106,27 @@ export const routes: Routes = [
       },
       {
         path: 'perfil',
-        loadComponent: () =>
-          import('./users/repartidor/pages/perfil/perfil').then((m) => m.Perfil),
+        loadComponent: () => import('./users/repartidor/pages/perfil/perfil').then((m) => m.Perfil),
       },
       {
         path: 'pedidos-disponibles',
         loadComponent: () =>
           import('./users/repartidor/pages/pedidos-disponibles/pedidos-disponibles').then(
-            (m) => m.PedidosDisponibles
+            (m) => m.PedidosDisponibles,
           ),
       },
       {
         path: 'ver-pedido-actual',
         loadComponent: () =>
           import('./users/repartidor/pages/pedido-actual-detalle/pedido-actual-detalle').then(
-            (m) => m.PedidoActualDetalle
+            (m) => m.PedidoActualDetalle,
           ),
       },
       {
         path: 'historial-entregas',
         loadComponent: () =>
           import('./users/repartidor/pages/historial-entregas/historial-entregas').then(
-            (m) => m.HistorialEntregas
+            (m) => m.HistorialEntregas,
           ),
       },
     ],
