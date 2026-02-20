@@ -2,7 +2,7 @@
 
 ![logo-quickish](https://github.com/user-attachments/assets/0cad52c3-4de8-4c9d-b524-2bfafb5b8020)
 
-Quickish es una aplicación de pedidos de comida a domicilio en proceso de desarrollo. Permite a los Clientes explorar restaurantes y gestionar pedidos; a los Restaurantes, administrar su catálogo y procesar pedidos; y al Administrador, supervisar usuarios.
+Quickish es una aplicación de pedidos de comida a domicilio en proceso de desarrollo. Permite a los Clientes explorar restaurantes y gestionar pedidos; a los Restaurantes, administrar su catálogo y procesar pedidos; al Repartidor transportar pedidos desde el Restaurante a la dirección del Cliente y al Administrador, supervisar usuarios.
 ___
 
 ## Equipo de trabajo
