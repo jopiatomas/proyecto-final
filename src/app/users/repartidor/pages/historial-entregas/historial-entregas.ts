@@ -33,7 +33,6 @@ export class HistorialEntregas implements OnInit {
         this.loading.set(false);
       },
       error: (error) => {
-        console.error('Error cargando historial:', error);
         this.historial.set([]);
         this.loading.set(false);
       },
@@ -51,8 +50,8 @@ export class HistorialEntregas implements OnInit {
 
     // Ordenar por fecha descendente
     resultado = resultado.sort((a, b) => {
-      const fechaA = new Date(a.fecha).getTime();
-      const fechaB = new Date(b.fecha).getTime();
+      const fechaA = new Date(a.fecha || a.fechaEntrega || a.createdAt || a.fechaPedido).getTime();
+      const fechaB = new Date(b.fecha || b.fechaEntrega || b.createdAt || b.fechaPedido).getTime();
       return fechaB - fechaA;
     });
 

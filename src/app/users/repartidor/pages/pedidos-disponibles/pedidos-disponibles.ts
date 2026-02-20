@@ -29,12 +29,17 @@ export class PedidosDisponibles implements OnInit {
     this.loading.set(true);
     this.repartidorService.obtenerPedidosDisponibles().subscribe({
       next: (pedidos) => {
-        this.pedidos.set(pedidos);
+        const pedidosMapeados = pedidos.map((pedido: any) => ({
+          ...pedido,
+          direccionEntrega: pedido.direccionEntrega || pedido.clienteDireccion || pedido.direccion || 'No especificada',
+          restauranteDireccion: pedido.restauranteDireccion || pedido.direccionRestaurante || 'No especificada'
+        }));
+        
+        this.pedidos.set(pedidosMapeados);
         this.aplicarFiltros();
         this.loading.set(false);
       },
       error: (error) => {
-        console.error('Error cargando pedidos:', error);
         this.pedidos.set([]);
         this.loading.set(false);
       },
@@ -67,7 +72,6 @@ export class PedidosDisponibles implements OnInit {
         this.router.navigate(['/repartidor/ver-pedido-actual']);
       },
       error: (error) => {
-        console.error('Error aceptando pedido:', error);
         alert('Error al aceptar el pedido. Intenta de nuevo.');
         this.aceptandoPedido.set(null);
       },

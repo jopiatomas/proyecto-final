@@ -353,8 +353,7 @@
   color: white;
 }
 
-.tipo-vehiculo,
-.zonas {
+.tipo-vehiculo {
   color: #555;
   margin: 8px 0;
   font-size: 0.95rem;
@@ -369,12 +368,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: #f0f0f0;
-  color: #333;
+  background: var(--col-1);
+  color: white;
 }
 
 .btn-toggle.disponible {
-  background: #ff9800;
+  background: #757575;
   color: white;
 }
 

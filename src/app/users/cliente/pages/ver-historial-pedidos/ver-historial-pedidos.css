@@ -614,6 +614,7 @@
   opacity: 1;
   color: #ffd700;
   transform: scale(1.1);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .star:disabled {
@@ -621,7 +622,7 @@
 }
 
 .selected-rating {
-  color: #6f42c1;
+  color: #4a148c;
   font-weight: 600;
   font-size: 1rem;
   margin: 0;
@@ -648,14 +649,14 @@
 }
 
 .btn-enviar {
-  background: #6f42c1;
+  background: #4a148c;
   color: white;
 }
 
 .btn-enviar:hover:not(:disabled) {
-  background: #5a32a3;
+  background: #3a1070;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+  box-shadow: 0 4px 12px rgba(74, 20, 140, 0.3);
 }
 
 .btn-enviar:disabled {

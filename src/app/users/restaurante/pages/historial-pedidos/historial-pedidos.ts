@@ -27,7 +27,6 @@ export class HistorialPedidos implements OnInit {
         this.pedidos.set(pedidos);
       },
       error: (error: any) => {
-        console.error('Error al cargar historial:', error);
       }
     });
   }

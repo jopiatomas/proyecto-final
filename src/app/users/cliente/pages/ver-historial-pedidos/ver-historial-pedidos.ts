@@ -52,7 +52,6 @@ export class VerHistorialPedidos implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error cargando historial de pedidos:', error);
         this.error = 'Error cargando el historial de pedidos. Intenta nuevamente.';
         this.loading = false;
       },
@@ -84,14 +83,10 @@ export class VerHistorialPedidos implements OnInit {
           this.mostrarMenuOpciones = false;
         },
         error: (error) => {
-          console.error('Error cancelando pedido:', error);
-
-          // Extraer mensaje limpio del backend
           let mensajeError = 'Error al cancelar el pedido';
           if (error.error?.message) {
             mensajeError = error.error.message;
           } else if (typeof error.error === 'string') {
-            // Si es un string, intentar parsearlo como JSON
             try {
               const errorObj = JSON.parse(error.error);
               mensajeError = errorObj.message || error.error;
@@ -213,7 +208,6 @@ export class VerHistorialPedidos implements OnInit {
           // No es necesario recargar, la calificación ya está guardada
         },
         error: (error: any) => {
-          console.error('Error calificando repartidor:', error);
           let mensajeError = 'Error al calificar el repartidor';
           if (error.error?.message) {
             mensajeError = error.error.message;

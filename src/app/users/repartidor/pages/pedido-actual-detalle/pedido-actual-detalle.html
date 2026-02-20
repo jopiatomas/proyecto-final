@@ -13,7 +13,7 @@
       </div>
       <div class="modal-actions">
         <button class="btn-confirmar" (click)="confirmarEntrega()" [disabled]="marcandoEntregado()">
-          {{ marcandoEntregado() ? 'Procesando...' : 'Sí, Marcar como Entregado' }}
+          {{ marcandoEntregado() ? 'Procesando...' : 'SÍ' }}
         </button>
         <button
           class="btn-cancelar"
@@ -64,9 +64,6 @@
         <div class="pedido-header">
           <div class="header-left">
             <h2>Pedido #{{ p.id }}</h2>
-            <span class="estado-badge" [class]="'estado-' + p.estado.toLowerCase()">
-              {{ p.estado === 'ENVIADO' ? 'ACEPTADO' : p.estado }}
-            </span>
           </div>
           <div class="header-right">
             <p class="total">${{ p.total }}</p>
@@ -102,32 +99,15 @@
         <div class="timeline-container">
           <h3>📊 Estado de Entrega</h3>
           <div class="timeline">
-            <!-- Estado: Aceptado -->
+            <!-- Estado: Enviado -->
             <div
               class="timeline-item"
-              [class.active]="p.estado === 'ENVIADO' || p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'"
+              [class.active]="p.estado === 'ENVIADO' || p.estado === 'ENTREGADO'"
             >
               <div class="timeline-dot"></div>
               <div class="timeline-text">
-                <p class="timeline-label">Pedido Aceptado</p>
-                <p class="timeline-desc">Recogiste el pedido del restaurante</p>
-              </div>
-            </div>
-
-            <!-- Estado: En Entrega -->
-            <div
-              class="timeline-item"
-              [class.active]="p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'"
-            >
-              <div class="timeline-dot"></div>
-              <div class="timeline-text">
-                <p class="timeline-label">En Entrega</p>
-                <p class="timeline-desc">Estás en camino al cliente</p>
-                @if (p.estado === 'ENVIADO') {
-                  <button class="btn-cambiar-estado" (click)="marcarEnEntrega()">
-                    Marcar como En Entrega
-                  </button>
-                }
+                <p class="timeline-label">Enviado</p>
+                <p class="timeline-desc">El pedido está en camino al cliente</p>
               </div>
             </div>
 
@@ -136,8 +116,8 @@
               <div class="timeline-dot"></div>
               <div class="timeline-text">
                 <p class="timeline-label">Entregado</p>
-                <p class="timeline-desc">Pedido completado</p>
-                @if (p.estado === 'EN_ENTREGA') {
+                <p class="timeline-desc">Pedido completado exitosamente</p>
+                @if (p.estado === 'ENVIADO') {
                   <button class="btn-cambiar-estado btn-entregado" (click)="marcarComoEntregado()">
                     ✓ Marcar como Entregado
                   </button>

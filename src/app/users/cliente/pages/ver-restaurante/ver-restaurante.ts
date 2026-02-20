@@ -19,7 +19,6 @@ import { ClienteService } from '../../../../core/services/cliente.service';
 import { AuthService } from '../../../../core/services/auth-service';
 import { isRestauranteAbierto, formatearHorario } from '../../../../core/utils/horario.utils';
 
-// Interface para items del carrito
 interface CarritoItem {
   producto: ProductoResumen;
   cantidad: number;

@@ -46,14 +46,11 @@ export class LandingPage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (perfil) => {
-          console.log('✅ Perfil cargado:', perfil);
           this.perfil.set(perfil);
           this.disponible.set(perfil?.disponible || false);
-          // Cargar también el pedido actual
           this.cargarPedidoActual();
         },
         error: (err) => {
-          console.error('❌ Error cargando perfil:', err);
           this.errorMessage.set('Error al cargar el perfil');
           this.loading.set(false);
         },
@@ -66,12 +63,16 @@ export class LandingPage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (pedido) => {
-          console.log('✅ Pedido actual cargado:', pedido);
-          this.pedidoActual.set(pedido);
+          const pedidoMapeado = {
+            ...pedido,
+            direccionEntrega: pedido.direccionEntrega || pedido.clienteDireccion || pedido.direccion || 'No especificada',
+            restauranteDireccion: pedido.restauranteDireccion || pedido.direccionRestaurante || 'No especificada'
+          };
+          
+          this.pedidoActual.set(pedidoMapeado);
           this.loading.set(false);
         },
         error: (err) => {
-          console.error('⚠️ No hay pedido actual:', err);
           this.pedidoActual.set(null);
           this.loading.set(false);
         },
@@ -83,19 +84,15 @@ export class LandingPage implements OnInit, OnDestroy {
     this.errorMessage.set('');
     const nuevoEstado = !this.disponible();
 
-    console.log('📍 Cambiando disponibilidad a:', nuevoEstado);
-
     this.repartidorService
       .cambiarDisponibilidad(nuevoEstado)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          console.log('✅ Disponibilidad actualizada:', response);
           this.disponible.set(nuevoEstado);
           this.cambiandoDisponibilidad.set(false);
         },
         error: (err) => {
-          console.error('❌ Error al cambiar disponibilidad:', err);
           this.errorMessage.set(
             'Error: ' + (err.error?.error || 'No se pudo cambiar la disponibilidad'),
           );
@@ -108,19 +105,15 @@ export class LandingPage implements OnInit, OnDestroy {
     this.cambiandoDisponibilidad.set(true);
     this.errorMessage.set('');
 
-    console.log('📍 Desactivando disponibilidad');
-
     this.repartidorService
       .desactivarDisponibilidad()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          console.log('✅ Disponibilidad desactivada:', response);
           this.disponible.set(false);
           this.cambiandoDisponibilidad.set(false);
         },
         error: (err) => {
-          console.error('❌ Error al desactivar:', err);
           this.errorMessage.set('Error: ' + (err.error?.error || 'No se pudo desactivar'));
           this.cambiandoDisponibilidad.set(false);
         },
@@ -144,13 +137,11 @@ export class LandingPage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log('✅ Cuenta activada:', response);
           this.activando.set(false);
           this.mostrarConfirmacionActivar.set(false);
           this.cargarPerfil();
         },
         error: (err: any) => {
-          console.error('❌ Error activando cuenta:', err);
           this.errorMessage.set('Error: ' + (err.error?.error || 'No se pudo activar la cuenta'));
           this.activando.set(false);
         },

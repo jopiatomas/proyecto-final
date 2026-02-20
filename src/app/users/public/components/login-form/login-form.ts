@@ -33,11 +33,9 @@ export class LoginForm {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           this.loading.set(false);
-          console.log('Login exitoso');
         },
         error: (error) => {
           this.loading.set(false);
-          console.error('Error en login:', error);
           
           if (error.status === 401) {
             this.errorMessage.set('Usuario o contraseña incorrectos');

@@ -81,8 +81,6 @@ export class Direcciones implements OnInit {
         ) {
           this.direcciones.set([]);
         } else if (error.status !== 0) {
-          // Solo mostrar alert para errores reales del servidor (excepto errores de conexión)
-          console.error('Error al cargar direcciones:', error);
           this.mostrarAlerta('Error', 'Error al cargar las direcciones', 'error');
         }
       },
@@ -142,9 +140,6 @@ export class Direcciones implements OnInit {
         }, 5000);
       },
       error: (error) => {
-        console.error('Error completo al eliminar dirección:', error);
-        console.error('Status:', error.status);
-        console.error('Mensaje:', error.error);
         this.cargando.set(false);
 
         if (error.status === 401) {
@@ -191,7 +186,6 @@ export class Direcciones implements OnInit {
             this.cerrarPanel();
           },
           error: (error) => {
-            console.error('Error al modificar dirección:', error);
             this.cargando.set(false);
 
             if (error.status === 401) {

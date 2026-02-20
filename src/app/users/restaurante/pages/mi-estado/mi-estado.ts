@@ -45,7 +45,6 @@ export class MiEstado implements OnInit {
       error: (err: any) => {
         this.error.set('Error al cargar el estado del restaurante');
         this.loading.set(false);
-        console.error('Error:', err);
       },
     });
   }

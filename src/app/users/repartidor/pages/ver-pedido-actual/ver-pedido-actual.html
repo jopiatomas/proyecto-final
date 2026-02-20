@@ -13,7 +13,7 @@
       </div>
       <div class="modal-actions">
         <button class="btn-confirmar" (click)="confirmarEntrega()" [disabled]="marcandoEntregado()">
-          {{ marcandoEntregado() ? 'Procesando...' : 'Sí, Marcar como Entregado' }}
+          {{ marcandoEntregado() ? 'Procesando...' : 'SÍ' }}
         </button>
         <button
           class="btn-cancelar"
@@ -65,7 +65,6 @@
           <div class="pedido-header">
             <div class="pedido-titulo">
               <h3>Pedido #{{ p.id }}</h3>
-              <span class="estado-badge">{{ p.estado }}</span>
             </div>
             <div class="pedido-monto">
               <p class="label">Total</p>
@@ -124,47 +123,26 @@
             <div class="timeline">
               <div
                 class="timeline-item"
-                [class.completado]="
-                  p.estado === 'ACEPTADO' || p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'
-                "
+                [class.completado]="p.estado === 'ENVIADO' || p.estado === 'ENTREGADO'"
               >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                  <p class="timeline-label">Pedido Aceptado</p>
-                  <p class="timeline-desc">Ya aceptaste este pedido</p>
-                </div>
-              </div>
-              <div
-                class="timeline-item"
-                [class.completado]="p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'"
-              >
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                  <p class="timeline-label">En Entrega</p>
-                  <p class="timeline-desc">Estás en camino al cliente</p>
-                  @if (p.estado === 'ACEPTADO') {
-                    <button
-                      class="btn-estado"
-                      (click)="cambiarEstado('EN_ENTREGA')"
-                      [disabled]="marcandoEntregado()"
-                    >
-                      Empezar Entrega
-                    </button>
-                  }
+                  <p class="timeline-label">Enviado</p>
+                  <p class="timeline-desc">El pedido está en camino al cliente</p>
                 </div>
               </div>
               <div class="timeline-item" [class.completado]="p.estado === 'ENTREGADO'">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                   <p class="timeline-label">Entregado</p>
-                  <p class="timeline-desc">Marca como completado</p>
-                  @if (p.estado === 'EN_ENTREGA') {
+                  <p class="timeline-desc">Pedido completado exitosamente</p>
+                  @if (p.estado === 'ENVIADO') {
                     <button
                       class="btn-estado btn-completar"
-                      (click)="cambiarEstado('ENTREGADO')"
+                      (click)="marcarComoEntregado()"
                       [disabled]="marcandoEntregado()"
                     >
-                      {{ marcandoEntregado() ? '⏳ Completando...' : '✓ Completar Entrega' }}
+                      {{ marcandoEntregado() ? '⏳ Procesando...' : '✓ Marcar como Entregado' }}
                     </button>
                   }
                 </div>
@@ -174,13 +152,15 @@
 
           <!-- Acciones -->
           <div class="acciones-section">
-            <button
-              class="btn-entregar"
-              (click)="marcarComoEntregado()"
-              [disabled]="marcandoEntregado()"
-            >
-              {{ marcandoEntregado() ? '⏳ Procesando...' : '✓ Marcar como Entregado' }}
-            </button>
+            @if (p.estado === 'ENVIADO') {
+              <button
+                class="btn-entregar"
+                (click)="marcarComoEntregado()"
+                [disabled]="marcandoEntregado()"
+              >
+                {{ marcandoEntregado() ? '⏳ Procesando...' : '✓ Marcar como Entregado' }}
+              </button>
+            }
             <button class="btn-volver" (click)="volverAlPanel()">← Volver al Panel</button>
           </div>
         </div>

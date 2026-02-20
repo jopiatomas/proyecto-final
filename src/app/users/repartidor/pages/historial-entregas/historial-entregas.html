@@ -53,7 +53,7 @@
                     </td>
                     <td class="col-restaurante">{{ entrega.restauranteNombre }}</td>
                     <td class="col-cliente">{{ entrega.clienteNombre }}</td>
-                    <td class="col-fecha">{{ entrega.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="col-fecha">{{ (entrega.fecha || entrega.fechaEntrega || entrega.createdAt || entrega.fechaPedido) | date: 'dd/MM/yyyy HH:mm' }}</td>
                     <td class="col-monto">${{ entrega.total }}</td>
                     <td class="col-estado">
                       <span class="estado-badge" [class.entregado]="entrega.estado === 'ENTREGADO'">

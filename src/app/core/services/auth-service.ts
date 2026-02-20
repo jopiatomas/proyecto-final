@@ -104,7 +104,6 @@ export class AuthService {
         telefono: payload.telefono
       };
     } catch (error) {
-      console.error('Error decodificando token:', error);
       return null;
     }
   }

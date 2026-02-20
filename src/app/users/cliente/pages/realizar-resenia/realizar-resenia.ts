@@ -51,7 +51,6 @@ export class RealizarResenia implements OnInit {
         this.cargando.set(false);
       },
       error: (error) => {
-        console.error('Error al cargar restaurantes:', error);
         this.cargando.set(false);
         this.mostrarAlerta('Error', 'Error al cargar los restaurantes', 'error');
       },
@@ -89,19 +88,13 @@ export class RealizarResenia implements OnInit {
           resenia: this.reseniaForm.value.resenia,
         };
 
-        console.log('📤 Datos a enviar:', reseniaData);
-        console.log('📋 Valores del formulario:', this.reseniaForm.value);
-
         this.clienteService.crearResenia(reseniaData).subscribe({
           next: (resenia) => {
-            console.log('Reseña creada:', resenia);
             this.mostrarAlerta('¡Éxito!', '¡Reseña enviada con éxito!', 'success');
             this.resetFormulario();
             this.cargando.set(false);
           },
           error: (error) => {
-            console.error('Error al crear reseña:', error);
-            console.error('Error completo:', JSON.stringify(error));
             this.cargando.set(false);
             let mensaje = 'Error al enviar la reseña.';
             if (error.error?.resenia) {
@@ -119,19 +112,6 @@ export class RealizarResenia implements OnInit {
         });
       }
     } else {
-      console.log('❌ Formulario inválido:', this.reseniaForm.errors);
-      console.log('📋 Estado de los campos:');
-      Object.keys(this.reseniaForm.controls).forEach((key) => {
-        const control = this.reseniaForm.get(key);
-        console.log(
-          `  ${key}:`,
-          control?.value,
-          'válido:',
-          control?.valid,
-          'errores:',
-          control?.errors
-        );
-      });
       this.mostrarAlerta(
         'Campos incompletos',
         'Por favor, completa todos los campos: restaurante, calificación y reseña (mínimo 10 caracteres)',

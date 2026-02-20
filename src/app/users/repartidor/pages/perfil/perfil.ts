@@ -88,7 +88,6 @@ export class Perfil implements OnInit {
             tipoVehiculo: '',
             disponible: false,
             trabajando: false,
-            zonas: [],
             totalPedidosEntregados: 0,
             calificacionPromedio: 0,
             activo: true,

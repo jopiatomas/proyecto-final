@@ -32,7 +32,6 @@ export class LandingPage implements OnInit {
         this.pedidos.set(pedidos);
       },
       error: (error: any) => {
-        console.error('Error al cargar pedidos:', error);
       },
     });
   }
@@ -97,7 +96,6 @@ export class LandingPage implements OnInit {
           this.confirmandoCambioEstado = false;
           this.mensajeCambioEstado = 'Error al cambiar estado del pedido';
           this.tipoMensajeCambioEstado = 'error';
-          console.error('Error al cambiar estado:', error);
 
           setTimeout(() => {
             this.mensajeCambioEstado = '';

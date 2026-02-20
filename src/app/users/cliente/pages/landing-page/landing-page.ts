@@ -62,7 +62,6 @@ export class LandingPage implements OnInit {
         this.aplicarFiltros();
       },
       error: (error) => {
-        console.error('Error cargando restaurantes:', error);
         this.loading = false;
       }
     });

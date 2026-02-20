@@ -63,7 +63,6 @@ export class GestionMenu implements OnInit {
     this.cargando = false;
   },
   error: (err) => {
-    console.error('Error al cargar productos:', err);
     if (err.status !== 404 && err.status !== 400) {
       this.error = 'Error al cargar los productos';
     }
@@ -140,12 +139,10 @@ export class GestionMenu implements OnInit {
 
       this.restauranteService.crearProducto(nuevoProducto).subscribe({
         next: (producto) => {
-          console.log('Producto creado:', producto);
           this.cargarProductos();
           this.cerrarFormulario();
         },
         error: (err) => {
-          console.error('Error al crear producto:', err);
           const mensajeBackend = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message);
           this.error = mensajeBackend || 'Error al crear el producto';
         }
@@ -160,29 +157,25 @@ export class GestionMenu implements OnInit {
 
       this.restauranteService.modificarProducto(this.productoSeleccionado.id, productoModificado).subscribe({
         next: (producto) => {
-          console.log('Producto actualizado:', producto);
           this.cargarProductos();
           this.cerrarFormulario();
         },
         error: (err) => {
-          console.error('Error al actualizar producto:', err);
           const mensajeBackend = typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message);
           this.error = mensajeBackend || 'Error al actualizar el producto';
         }
       });
     }
   }
-// hola que tal
+
   eliminarProducto() {
     if (this.productoSeleccionado && confirm(`¿Estás seguro de eliminar "${this.productoSeleccionado.nombre}"?`)) {
       this.restauranteService.eliminarProducto(this.productoSeleccionado.id).subscribe({
         next: (mensaje) => {
-          console.log(mensaje);
           this.cargarProductos();
           this.cerrarFormulario();
         },
         error: (err) => {
-          console.error('Error al eliminar producto:', err);
           this.error = 'No se puede eliminar el producto porque está asociado a pedidos del restaurante.';
         }
       });

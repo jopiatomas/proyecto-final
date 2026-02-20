@@ -26,7 +26,6 @@ export function estaAbierto(horaApertura?: string, horaCierre?: string): boolean
 
     return horaActual >= minutosApertura && horaActual <= minutosCierre;
   } catch (error) {
-    console.error('Error al verificar horario:', error);
     return false;
   }
 }
@@ -56,7 +55,6 @@ export function formatearHorario(hora?: string): string {
 
     return `${hora12}:${minutos.toString().padStart(2, '0')} ${periodo}`;
   } catch (error) {
-    console.error('Error al formatear horario:', error);
     return hora;
   }
 }

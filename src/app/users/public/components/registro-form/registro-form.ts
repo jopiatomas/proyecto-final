@@ -120,46 +120,32 @@ export class RegistroForm {
         registerData.tipoVehiculo = this.registroForm.value.tipoVehiculo;
       }
 
-      console.log('===== DEBUG REGISTRO =====');
-      console.log('Rol seleccionado:', rol);
-      console.log('JSON que se enviará:', JSON.stringify(registerData));
-      console.log('==========================');
-
-      // Llamar al servicio de autenticación
       this.authService.register(registerData).subscribe({
         next: (response: any) => {
           this.loading.set(false);
           this.successMessage.set('¡Registro exitoso! Redirigiendo al login...');
-          console.log('Registro exitoso:', response);
 
-          // Redirigir al login después de 1.5 segundos
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 1500);
         },
         error: (error: any) => {
           this.loading.set(false);
-          console.error('Error en registro:', error);
 
-          // Manejar diferentes tipos de errores
           if (error.status === 0) {
             this.errorMessage.set(
               'No se pudo conectar con el servidor. Verifica que el backend esté corriendo.'
             );
           } else if (error.status === 400) {
-            // Mostrar mensaje específico del backend si está disponible
             let mensajeBackend = 'Datos inválidos. Verifica los campos.';
 
-            // Extraer el mensaje limpio del backend
             if (error.error?.message) {
               mensajeBackend = error.error.message;
             } else if (typeof error.error === 'string') {
-              // Si es un string, intentar parsearlo como JSON
               try {
                 const errorObj = JSON.parse(error.error);
                 mensajeBackend = errorObj.message || error.error;
               } catch {
-                // Si no es JSON, usar el string directamente
                 mensajeBackend = error.error;
               }
             } else if (error.error?.error) {

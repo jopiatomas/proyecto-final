@@ -419,7 +419,7 @@ h2 {
 }
 
 .modal-content.success {
-  border-color: #28a745;
+  border-color: var(--col-1);
 }
 
 .modal-header {
@@ -434,8 +434,8 @@ h2 {
 }
 
 .modal-content.success .modal-header {
-  background: linear-gradient(135deg, #28a745 0%, rgba(40, 167, 69, 0.95) 100%);
-  border-bottom-color: #28a745;
+  background: var(--col-1);
+  border-bottom-color: var(--col-1);
 }
 
 .modal-header h3 {
@@ -482,8 +482,8 @@ h2 {
 }
 
 .modal-content.success .modal-icon {
-  background: rgba(40, 167, 69, 0.1);
-  color: #28a745;
+  background: rgba(74, 20, 140, 0.1);
+  color: var(--col-1);
 }
 
 .modal-body p {
@@ -539,10 +539,11 @@ h2 {
 }
 
 .modal-content.success .btn-ok {
-  background: #28a745;
+  background: var(--col-1);
 }
 
 .btn-ok:hover:not(:disabled) {
+  background: rgb(94, 40, 160);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(74, 20, 140, 0.3);
 }

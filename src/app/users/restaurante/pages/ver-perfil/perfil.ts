@@ -135,10 +135,6 @@ export class Perfil implements OnInit {
       contraseniaActual: this.perfilForm.value.contrasenia,
     };
 
-    console.log('Datos a enviar:', datosActualizados);
-    console.log('Hora apertura:', this.perfilForm.value.horaApertura);
-    console.log('Hora cierre:', this.perfilForm.value.horaCierre);
-
     this.restauranteService
       .actualizarPerfil(datosActualizados as ActualizarPerfilRestauranteRequest)
       .subscribe({
