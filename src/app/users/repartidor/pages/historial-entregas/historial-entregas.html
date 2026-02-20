@@ -13,52 +13,53 @@
       <div class="historial-section">
         <!-- Filtros -->
         <div class="filtros">
-          <button 
-            class="filtro-btn"
-            [class.active]="!filtroEstado()"
-            (click)="cambiarFiltro('')">
+          <button class="filtro-btn" [class.active]="!filtroEstado()" (click)="cambiarFiltro('')">
             Todos ({{ historial().length }})
           </button>
-          <button 
+          <button
             class="filtro-btn"
             [class.active]="filtroEstado() === 'entregado'"
-            (click)="cambiarFiltro('entregado')">
+            (click)="cambiarFiltro('entregado')"
+          >
             Entregados
           </button>
-          <button 
+          <button
             class="filtro-btn"
             [class.active]="filtroEstado() === 'cancelado'"
-            (click)="cambiarFiltro('cancelado')">
+            (click)="cambiarFiltro('cancelado')"
+          >
             Cancelados
           </button>
         </div>
 
         @if (historialFiltrado().length > 0) {
-          <div class="historial-tabla">
-            <table>
+          <div class="tabla-container">
+            <table class="historial-tabla">
               <thead>
                 <tr>
-                  <th>ID Pedido</th>
-                  <th>Restaurante</th>
-                  <th>Cliente</th>
-                  <th>Monto</th>
-                  <th>Estado</th>
-                  <th>Fecha</th>
+                  <th class="col-id">ID Pedido</th>
+                  <th class="col-restaurante">Restaurante</th>
+                  <th class="col-cliente">Cliente</th>
+                  <th class="col-fecha">Fecha</th>
+                  <th class="col-monto">Monto</th>
+                  <th class="col-estado">Estado</th>
                 </tr>
               </thead>
               <tbody>
                 @for (entrega of historialFiltrado(); track entrega.id) {
-                  <tr class="entrega-row" [class.entregado]="entrega.estado === 'ENTREGADO'">
-                    <td class="id-pedido">#{{ entrega.id }}</td>
-                    <td>{{ entrega.restauranteNombre }}</td>
-                    <td>{{ entrega.clienteNombre }}</td>
-                    <td class="monto">${{ entrega.total }}</td>
-                    <td>
+                  <tr class="tabla-fila" [class.entregado]="entrega.estado === 'ENTREGADO'">
+                    <td class="col-id">
+                      <span class="pedido-badge">#{{ entrega.id }}</span>
+                    </td>
+                    <td class="col-restaurante">{{ entrega.restauranteNombre }}</td>
+                    <td class="col-cliente">{{ entrega.clienteNombre }}</td>
+                    <td class="col-fecha">{{ entrega.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="col-monto">${{ entrega.total }}</td>
+                    <td class="col-estado">
                       <span class="estado-badge" [class.entregado]="entrega.estado === 'ENTREGADO'">
                         {{ entrega.estado }}
                       </span>
                     </td>
-                    <td>{{ entrega.fecha }}</td>
                   </tr>
                 }
               </tbody>

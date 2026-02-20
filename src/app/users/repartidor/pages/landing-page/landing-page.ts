@@ -166,7 +166,7 @@ export class LandingPage implements OnInit, OnDestroy {
   }
 
   irAlHistorial() {
-    this.router.navigate(['/repartidor/historial']);
+    this.router.navigate(['/repartidor/historial-entregas']);
   }
 
   irAlPerfil() {

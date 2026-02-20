@@ -13,17 +13,8 @@
       <div class="pedidos-section">
         <!-- Filtros -->
         <div class="filtros">
-          <button 
-            class="filtro-btn"
-            [class.active]="!filtroEstado()"
-            (click)="cambiarFiltro('')">
+          <button class="filtro-btn" [class.active]="!filtroEstado()" (click)="cambiarFiltro('')">
             Todos ({{ pedidos().length }})
-          </button>
-          <button 
-            class="filtro-btn"
-            [class.active]="filtroEstado() === 'pendiente'"
-            (click)="cambiarFiltro('pendiente')">
-            Pendientes
           </button>
         </div>
 
@@ -67,10 +58,11 @@
                   </div>
                 </div>
 
-                <button 
+                <button
                   class="btn-aceptar"
                   (click)="aceptarPedido(pedido.id)"
-                  [disabled]="aceptandoPedido() === pedido.id">
+                  [disabled]="aceptandoPedido() === pedido.id"
+                >
                   {{ aceptandoPedido() === pedido.id ? '⏳ Aceptando...' : '✓ Aceptar Pedido' }}
                 </button>
               </div>

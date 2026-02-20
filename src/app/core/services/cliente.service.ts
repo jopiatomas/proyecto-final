@@ -49,7 +49,7 @@ export class ClienteService {
       `${this.baseUrl}/ver-menu/${encodeURIComponent(nombre)}`,
       {
         headers: this.getAuthHeaders(),
-      }
+      },
     );
   }
 
@@ -66,7 +66,7 @@ export class ClienteService {
       `${this.baseUrl}/restaurante/${encodeURIComponent(usuario)}`,
       {
         headers: this.getAuthHeaders(),
-      }
+      },
     );
   }
 
@@ -153,7 +153,7 @@ export class ClienteService {
       {
         headers: this.getAuthHeaders(),
         responseType: 'text',
-      }
+      },
     );
   }
 
@@ -180,7 +180,7 @@ export class ClienteService {
           const email = response.match(/"email":"([^"]+)"/)?.[1] || '';
 
           return { id, usuario, nombreYapellido, email };
-        })
+        }),
       );
   }
 
@@ -199,7 +199,7 @@ export class ClienteService {
       {},
       {
         headers: this.getAuthHeaders(),
-      }
+      },
     );
   }
 
@@ -209,7 +209,7 @@ export class ClienteService {
       `${this.baseUrl}/eliminar-listafav/${idRestaurante}`,
       {
         headers: this.getAuthHeaders(),
-      }
+      },
     );
   }
 
@@ -218,5 +218,19 @@ export class ClienteService {
     return this.http.get<RestauranteResumidoDTO[]>(`${this.baseUrl}/mostrar-listafav`, {
       headers: this.getAuthHeaders(),
     });
+  }
+
+  // POST /clientes/calificar-repartidor - Calificar repartidor
+  calificarRepartidor(pedidoId: number, calificacion: number): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUrl}/calificar-repartidor`,
+      {
+        pedidoId: pedidoId,
+        calificacion: calificacion,
+      },
+      {
+        headers: this.getAuthHeaders(),
+      },
+    );
   }
 }

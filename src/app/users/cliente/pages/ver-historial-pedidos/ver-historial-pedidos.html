@@ -60,130 +60,140 @@
       </div>
 
       @if (loading) {
-      <div class="loading-state">
-        <div class="loading-spinner"></div>
-        <p>Cargando historial de pedidos...</p>
-      </div>
-      } @if (error && !loading) {
-      <div class="error-state">
-        <p>{{ error }}</p>
-        <button class="btn-retry" (click)="cargarPedidos()">Reintentar</button>
-      </div>
-      } @if (!loading && !error && pedidosFiltrados.length === 0) {
-      <div class="empty-state">
-        <h3>No hay pedidos con este filtro</h3>
-        <p>Prueba seleccionando otro estado.</p>
-      </div>
-      } @if (!loading && !error && pedidosFiltrados.length > 0) {
-      <div class="pedidos-grid">
-        @for (pedido of pedidosFiltrados; track pedido.id) {
-        <div
-          class="pedido-card"
-          [class.selected]="pedidoSeleccionado?.id === pedido.id"
-          (click)="seleccionarPedido(pedido.id)"
-        >
-          <div class="pedido-header">
-            <span class="pedido-id">Pedido #{{ pedido.id }}</span>
-            <span class="estado-badge" [style.background-color]="getEstadoColor(pedido.estado)">
-              {{ formatearEstado(pedido.estado) }}
-            </span>
-          </div>
-          <div class="pedido-info">
-            <p class="fecha">{{ pedido.fecha | date : 'dd/MM/yyyy HH:mm' }}</p>
-            <p class="total">{{ formatearPrecio(pedido.total) }}</p>
-          </div>
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Cargando historial de pedidos...</p>
         </div>
-        }
-      </div>
+      }
+      @if (error && !loading) {
+        <div class="error-state">
+          <p>{{ error }}</p>
+          <button class="btn-retry" (click)="cargarPedidos()">Reintentar</button>
+        </div>
+      }
+      @if (!loading && !error && pedidosFiltrados.length === 0) {
+        <div class="empty-state">
+          <h3>No hay pedidos con este filtro</h3>
+          <p>Prueba seleccionando otro estado.</p>
+        </div>
+      }
+      @if (!loading && !error && pedidosFiltrados.length > 0) {
+        <div class="pedidos-grid">
+          @for (pedido of pedidosFiltrados; track pedido.id) {
+            <div
+              class="pedido-card"
+              [class.selected]="pedidoSeleccionado?.id === pedido.id"
+              (click)="seleccionarPedido(pedido.id)"
+            >
+              <div class="pedido-header">
+                <span class="pedido-id">Pedido #{{ pedido.id }}</span>
+                <span class="estado-badge" [style.background-color]="getEstadoColor(pedido.estado)">
+                  {{ formatearEstado(pedido.estado) }}
+                </span>
+              </div>
+              <div class="pedido-info">
+                <p class="fecha">{{ pedido.fecha | date: 'dd/MM/yyyy HH:mm' }}</p>
+                <p class="total">{{ formatearPrecio(pedido.total) }}</p>
+              </div>
+            </div>
+          }
+        </div>
       }
     </div>
 
     <!-- Panel de detalle -->
     <div class="pedido-detalle">
       @if (!pedidoSeleccionado) {
-      <div class="detalle-placeholder">
-        <div class="placeholder-icon">📋</div>
-        <h3>Selecciona un pedido</h3>
-        <p>Haz clic en cualquier pedido de la lista para ver sus detalles.</p>
-      </div>
-      } @if (pedidoSeleccionado) {
-      <div class="detalle-content">
-        <div class="detalle-header">
-          <div class="pedido-info-main">
-            <h2>Pedido #{{ pedidoSeleccionado.id }}</h2>
-            <div class="pedido-meta">
-              <span
-                class="estado-badge large"
-                [style.background-color]="getEstadoColor(pedidoSeleccionado.estado)"
-              >
-                {{ formatearEstado(pedidoSeleccionado.estado) }}
-              </span>
+        <div class="detalle-placeholder">
+          <div class="placeholder-icon">📋</div>
+          <h3>Selecciona un pedido</h3>
+          <p>Haz clic en cualquier pedido de la lista para ver sus detalles.</p>
+        </div>
+      }
+      @if (pedidoSeleccionado) {
+        <div class="detalle-content">
+          <div class="detalle-header">
+            <div class="pedido-info-main">
+              <h2>Pedido #{{ pedidoSeleccionado.id }}</h2>
+              <div class="pedido-meta">
+                <span
+                  class="estado-badge large"
+                  [style.background-color]="getEstadoColor(pedidoSeleccionado.estado)"
+                >
+                  {{ formatearEstado(pedidoSeleccionado.estado) }}
+                </span>
+              </div>
             </div>
-          </div>
 
-          @if (puedeSerCancelado(pedidoSeleccionado.estado)) {
-          <div class="acciones-pedido">
-            <button
-              class="btn-menu-opciones"
-              (click)="toggleMenuOpciones()"
-              [class.active]="mostrarMenuOpciones"
-            >
-              ⋮
-            </button>
-            @if (mostrarMenuOpciones) {
-            <div class="menu-opciones">
-              <button class="opcion-cancelar" (click)="cancelarPedido()">❌ Cancelar Pedido</button>
-            </div>
+            @if (puedeSerCancelado(pedidoSeleccionado.estado)) {
+              <div class="acciones-pedido">
+                <button
+                  class="btn-menu-opciones"
+                  (click)="toggleMenuOpciones()"
+                  [class.active]="mostrarMenuOpciones"
+                >
+                  ⋮
+                </button>
+                @if (mostrarMenuOpciones) {
+                  <div class="menu-opciones">
+                    <button class="opcion-cancelar" (click)="cancelarPedido()">
+                      ❌ Cancelar Pedido
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else if (pedidoSeleccionado.estado === 'ENTREGADO') {
+              <button class="btn-calificar" (click)="abrirModalRating(pedidoSeleccionado)">
+                ⭐ Calificar Repartidor
+              </button>
             }
           </div>
-          }
-        </div>
 
-        <div class="detalle-body">
-          <div class="info-section">
-            <h3>Información del Pedido</h3>
-            <div class="info-grid">
-              <div class="info-item">
-                <label>Restaurante:</label>
-                <span>{{ pedidoSeleccionado.nombreRestaurante }}</span>
+          <div class="detalle-body">
+            <div class="info-section">
+              <h3>Información del Pedido</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>Restaurante:</label>
+                  <span>{{ pedidoSeleccionado.nombreRestaurante }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Fecha:</label>
+                  <span>{{ pedidoSeleccionado.fecha | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Estado:</label>
+                  <span>{{ formatearEstado(pedidoSeleccionado.estado) }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Total:</label>
+                  <span class="total-amount">{{ formatearPrecio(pedidoSeleccionado.total) }}</span>
+                </div>
               </div>
-              <div class="info-item">
-                <label>Fecha:</label>
-                <span>{{ pedidoSeleccionado.fecha | date : 'dd/MM/yyyy HH:mm' }}</span>
-              </div>
-              <div class="info-item">
-                <label>Estado:</label>
-                <span>{{ formatearEstado(pedidoSeleccionado.estado) }}</span>
-              </div>
-              <div class="info-item">
-                <label>Total:</label>
-                <span class="total-amount">{{ formatearPrecio(pedidoSeleccionado.total) }}</span>
+            </div>
+
+            <div class="items-section">
+              <h3>Productos Pedidos</h3>
+              <div class="items-list">
+                @for (detalle of pedidoSeleccionado.detalles; track detalle.productoId) {
+                  <div class="item-card">
+                    <div class="item-info">
+                      <h4>{{ detalle.nombreProducto }}</h4>
+                      <p class="item-cantidad">Cantidad: {{ detalle.cantidad }}</p>
+                    </div>
+                    <div class="item-precio">
+                      {{
+                        detalle.precioUnitario
+                          ? formatearPrecio(detalle.precioUnitario * detalle.cantidad)
+                          : 'Precio no disponible'
+                      }}
+                    </div>
+                  </div>
+                }
               </div>
             </div>
           </div>
-
-          <div class="items-section">
-            <h3>Productos Pedidos</h3>
-            <div class="items-list">
-              @for (detalle of pedidoSeleccionado.detalles; track detalle.productoId) {
-              <div class="item-card">
-                <div class="item-info">
-                  <h4>{{ detalle.nombreProducto }}</h4>
-                  <p class="item-cantidad">Cantidad: {{ detalle.cantidad }}</p>
-                </div>
-                <div class="item-precio">
-                  {{
-                    detalle.precioUnitario
-                      ? formatearPrecio(detalle.precioUnitario * detalle.cantidad)
-                      : 'Precio no disponible'
-                  }}
-                </div>
-              </div>
-              }
-            </div>
-          </div>
         </div>
-      </div>
       }
     </div>
   </div>
@@ -191,20 +201,69 @@
 
 <!-- Modal de alerta -->
 @if (mostrarModalAlerta) {
-<div class="modal-overlay" (click)="cerrarModalAlerta()">
-  <div class="modal-content-alerta {{ tipoAlerta }}" (click)="$event.stopPropagation()">
-    <div class="modal-header-alerta">
-      <h3>{{ tituloAlerta }}</h3>
-      <button class="close-btn-alerta" (click)="cerrarModalAlerta()">×</button>
-    </div>
-    <div class="modal-body-alerta">
-      <p>{{ mensajeAlerta }}</p>
-    </div>
-    <div class="modal-actions-alerta">
-      <button class="btn-aceptar" (click)="cerrarModalAlerta()">Aceptar</button>
+  <div class="modal-overlay" (click)="cerrarModalAlerta()">
+    <div class="modal-content-alerta {{ tipoAlerta }}" (click)="$event.stopPropagation()">
+      <div class="modal-header-alerta">
+        <h3>{{ tituloAlerta }}</h3>
+        <button class="close-btn-alerta" (click)="cerrarModalAlerta()">×</button>
+      </div>
+      <div class="modal-body-alerta">
+        <p>{{ mensajeAlerta }}</p>
+      </div>
+      <div class="modal-actions-alerta">
+        <button class="btn-aceptar" (click)="cerrarModalAlerta()">Aceptar</button>
+      </div>
     </div>
   </div>
-</div>
+}
+
+<!-- Modal de rating para repartidor -->
+@if (mostrarModalRating && pedidoACalificar) {
+  <div class="modal-overlay" (click)="cerrarModalRating()">
+    <div class="modal-content-rating" (click)="$event.stopPropagation()">
+      <div class="modal-header-rating">
+        <h3>Calificar Repartidor</h3>
+        <button class="close-btn-rating" (click)="cerrarModalRating()">×</button>
+      </div>
+      <div class="modal-body-rating">
+        <p class="pedido-info">
+          Pedido #{{ pedidoACalificar.id }} - {{ pedidoACalificar.nombreRestaurante }}
+        </p>
+
+        <div class="rating-section">
+          <label>Tu calificación:</label>
+          <div class="stars-container">
+            @for (i of [1, 2, 3, 4, 5]; track i) {
+              <button
+                class="star"
+                [class.active]="i <= calificacionRepartidor"
+                (click)="calificacionRepartidor = i"
+                [disabled]="enviandoRating"
+                [attr.aria-label]="'Calificación ' + i + ' estrellas'"
+              >
+                ⭐
+              </button>
+            }
+          </div>
+          @if (calificacionRepartidor > 0) {
+            <p class="selected-rating">Calificación: {{ calificacionRepartidor }}/5</p>
+          }
+        </div>
+      </div>
+      <div class="modal-actions-rating">
+        <button
+          class="btn-enviar"
+          (click)="enviarCalificacion()"
+          [disabled]="calificacionRepartidor === 0 || enviandoRating"
+        >
+          {{ enviandoRating ? 'Enviando...' : 'Enviar Calificación' }}
+        </button>
+        <button class="btn-cancelar" (click)="cerrarModalRating()" [disabled]="enviandoRating">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
 }
 
 <app-footer-cliente></app-footer-cliente>

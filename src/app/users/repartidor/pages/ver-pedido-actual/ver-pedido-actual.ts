@@ -18,6 +18,10 @@ export class VerPedidoActual implements OnInit {
   pedido = signal<any | null>(null);
   loading = signal(false);
   marcandoEntregado = signal(false);
+  mostrarModalConfirmacion = signal(false);
+  mostrarModalExito = signal(false);
+  modalMensaje = signal('');
+  modalTitulo = signal('');
 
   ngOnInit() {
     this.cargarPedidoActual();
@@ -40,26 +44,44 @@ export class VerPedidoActual implements OnInit {
   }
 
   marcarComoEntregado() {
+    this.modalTitulo.set('Confirmar Entrega');
+    this.modalMensaje.set('¿Deseas marcar este pedido como entregado?');
+    this.mostrarModalConfirmacion.set(true);
+  }
+
+  confirmarEntrega() {
     const pedidoId = this.pedido()?.id;
     if (!pedidoId) return;
 
-    const confirmacion = confirm('¿Deseas marcar este pedido como entregado?');
-    if (!confirmacion) return;
-
     this.marcandoEntregado.set(true);
+    this.mostrarModalConfirmacion.set(false);
 
     this.repartidorService.marcarEntregado(pedidoId).subscribe({
       next: () => {
         this.marcandoEntregado.set(false);
-        alert('Pedido marcado como entregado. ¡Excelente trabajo!');
-        this.router.navigate(['/repartidor']);
+        this.modalTitulo.set('¡Buen Trabajo!');
+        this.modalMensaje.set('Pedido marcado como entregado exitosamente. ¡Excelente desempeño!');
+        this.mostrarModalExito.set(true);
       },
       error: (error: any) => {
         console.error('Error marcando como entregado:', error);
-        alert('Error al marcar el pedido como entregado.');
+        this.modalTitulo.set('Error');
+        this.modalMensaje.set('No se pudo marcar el pedido como entregado. Intenta de nuevo.');
+        this.mostrarModalExito.set(true);
         this.marcandoEntregado.set(false);
       },
     });
+  }
+
+  cerrarModalConfirmacion() {
+    this.mostrarModalConfirmacion.set(false);
+  }
+
+  cerrarModalExito() {
+    this.mostrarModalExito.set(false);
+    if (this.modalTitulo() === '¡Buen Trabajo!') {
+      this.router.navigate(['/repartidor']);
+    }
   }
 
   cambiarEstado(nuevoEstado: string) {
@@ -68,20 +90,12 @@ export class VerPedidoActual implements OnInit {
 
     this.marcandoEntregado.set(true);
 
-    // Si el nuevo estado es ENTREGADO, usar marcarEntregado
+    // Si el nuevo estado es ENTREGADO, usar marcarEntregado con modal
     if (nuevoEstado === 'ENTREGADO') {
-      this.repartidorService.marcarEntregado(pedidoId).subscribe({
-        next: () => {
-          this.marcandoEntregado.set(false);
-          alert('Pedido entregado. ¡Excelente trabajo!');
-          this.cargarPedidoActual();
-        },
-        error: (error: any) => {
-          console.error('Error al cambiar estado:', error);
-          alert('Error al cambiar el estado del pedido.');
-          this.marcandoEntregado.set(false);
-        },
-      });
+      this.modalTitulo.set('Confirmar Entrega');
+      this.modalMensaje.set('¿Estás seguro de que deseas marcar este pedido como entregado?');
+      this.mostrarModalConfirmacion.set(true);
+      this.marcandoEntregado.set(false);
     } else {
       // Para otros estados, actualizar el estado
       this.repartidorService.cambiarEstadoPedido(pedidoId, nuevoEstado).subscribe({
@@ -92,7 +106,9 @@ export class VerPedidoActual implements OnInit {
         },
         error: (error: any) => {
           console.error('Error al cambiar estado:', error);
-          alert('Error al cambiar el estado del pedido.');
+          this.modalTitulo.set('Error');
+          this.modalMensaje.set('No se pudo actualizar el estado del pedido.');
+          this.mostrarModalExito.set(true);
           this.marcandoEntregado.set(false);
         },
       });

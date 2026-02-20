@@ -1,4 +1,54 @@
 <app-header></app-header>
+
+<!-- Modal de Confirmación -->
+@if (mostrarModalConfirmacion()) {
+  <div class="modal-overlay" (click)="cerrarModalConfirmacion()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ modalTitulo() }}</h3>
+        <button class="close-btn" (click)="cerrarModalConfirmacion()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>{{ modalMensaje() }}</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-confirmar" (click)="confirmarEntrega()" [disabled]="marcandoEntregado()">
+          {{ marcandoEntregado() ? 'Procesando...' : 'Sí, Marcar como Entregado' }}
+        </button>
+        <button
+          class="btn-cancelar"
+          (click)="cerrarModalConfirmacion()"
+          [disabled]="marcandoEntregado()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal de Éxito/Error -->
+@if (mostrarModalExito()) {
+  <div class="modal-overlay" (click)="cerrarModalExito()">
+    <div class="modal-content" [class.success]="modalTitulo() === '¡Buen Trabajo!'">
+      <div class="modal-header">
+        <h3>{{ modalTitulo() }}</h3>
+      </div>
+      <div class="modal-body">
+        <div class="modal-icon">
+          {{ modalTitulo() === '¡Buen Trabajo!' ? '✓' : '⚠' }}
+        </div>
+        <p>{{ modalMensaje() }}</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ok" (click)="cerrarModalExito()">
+          {{ modalTitulo() === '¡Buen Trabajo!' ? 'Volver al Panel' : 'Aceptar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
 <div class="content">
   <div class="pedido-actual-container">
     <h2>Mi Pedido Actual</h2>
@@ -33,7 +83,7 @@
               </div>
               <div class="info-item">
                 <span class="label">Dirección:</span>
-                <span class="valor">{{ p.direccionRestaurante }}</span>
+                <span class="valor">{{ p.restauranteDireccion }}</span>
               </div>
             </div>
           </div>
@@ -72,20 +122,32 @@
           <div class="timeline-section">
             <h4>📊 Estado de Entrega</h4>
             <div class="timeline">
-              <div class="timeline-item" [class.completado]="p.estado === 'ACEPTADO' || p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'">
+              <div
+                class="timeline-item"
+                [class.completado]="
+                  p.estado === 'ACEPTADO' || p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'
+                "
+              >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                   <p class="timeline-label">Pedido Aceptado</p>
                   <p class="timeline-desc">Ya aceptaste este pedido</p>
                 </div>
               </div>
-              <div class="timeline-item" [class.completado]="p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'">
+              <div
+                class="timeline-item"
+                [class.completado]="p.estado === 'EN_ENTREGA' || p.estado === 'ENTREGADO'"
+              >
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                   <p class="timeline-label">En Entrega</p>
                   <p class="timeline-desc">Estás en camino al cliente</p>
                   @if (p.estado === 'ACEPTADO') {
-                    <button class="btn-estado" (click)="cambiarEstado('EN_ENTREGA')" [disabled]="marcandoEntregado()">
+                    <button
+                      class="btn-estado"
+                      (click)="cambiarEstado('EN_ENTREGA')"
+                      [disabled]="marcandoEntregado()"
+                    >
                       Empezar Entrega
                     </button>
                   }
@@ -97,7 +159,11 @@
                   <p class="timeline-label">Entregado</p>
                   <p class="timeline-desc">Marca como completado</p>
                   @if (p.estado === 'EN_ENTREGA') {
-                    <button class="btn-estado btn-completar" (click)="cambiarEstado('ENTREGADO')" [disabled]="marcandoEntregado()">
+                    <button
+                      class="btn-estado btn-completar"
+                      (click)="cambiarEstado('ENTREGADO')"
+                      [disabled]="marcandoEntregado()"
+                    >
                       {{ marcandoEntregado() ? '⏳ Completando...' : '✓ Completar Entrega' }}
                     </button>
                   }
@@ -108,17 +174,14 @@
 
           <!-- Acciones -->
           <div class="acciones-section">
-            <button 
+            <button
               class="btn-entregar"
               (click)="marcarComoEntregado()"
-              [disabled]="marcandoEntregado()">
+              [disabled]="marcandoEntregado()"
+            >
               {{ marcandoEntregado() ? '⏳ Procesando...' : '✓ Marcar como Entregado' }}
             </button>
-            <button 
-              class="btn-volver"
-              (click)="volverAlPanel()">
-              ← Volver al Panel
-            </button>
+            <button class="btn-volver" (click)="volverAlPanel()">← Volver al Panel</button>
           </div>
         </div>
       } @else {
@@ -126,7 +189,10 @@
           <div class="sin-pedido-icon">📭</div>
           <h3>No tienes un pedido actual</h3>
           <p>Explora los pedidos disponibles para aceptar uno y comenzar a entregar.</p>
-          <button class="btn-explorar" (click)="router.navigate(['/repartidor/pedidos-disponibles'])">
+          <button
+            class="btn-explorar"
+            (click)="router.navigate(['/repartidor/pedidos-disponibles'])"
+          >
             Explorar Pedidos Disponibles
           </button>
         </div>

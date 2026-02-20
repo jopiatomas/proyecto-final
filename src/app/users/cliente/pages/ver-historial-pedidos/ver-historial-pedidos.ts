@@ -28,6 +28,12 @@ export class VerHistorialPedidos implements OnInit {
   mensajeAlerta = '';
   tipoAlerta: 'info' | 'warning' | 'error' | 'success' = 'info';
 
+  // Propiedades para modal de rating
+  mostrarModalRating = false;
+  pedidoACalificar: PedidoDetailDTO | null = null;
+  calificacionRepartidor = 0;
+  enviandoRating = false;
+
   ngOnInit() {
     this.cargarPedidos();
   }
@@ -40,7 +46,7 @@ export class VerHistorialPedidos implements OnInit {
       next: (pedidos) => {
         // Ordenar pedidos con más nuevos arriba
         this.pedidos = pedidos.sort(
-          (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+          (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
         );
         this.aplicarFiltro();
         this.loading = false;
@@ -71,7 +77,7 @@ export class VerHistorialPedidos implements OnInit {
           this.mostrarAlerta(
             'Pedido cancelado',
             mensaje || 'Pedido cancelado exitosamente',
-            'success'
+            'success',
           );
           this.cargarPedidos(); // Recargar la lista
           this.pedidoSeleccionado = null; // Limpiar selección
@@ -155,7 +161,7 @@ export class VerHistorialPedidos implements OnInit {
   mostrarAlerta(
     titulo: string,
     mensaje: string,
-    tipo: 'info' | 'warning' | 'error' | 'success' = 'info'
+    tipo: 'info' | 'warning' | 'error' | 'success' = 'info',
   ) {
     this.tituloAlerta = titulo;
     this.mensajeAlerta = mensaje;
@@ -165,5 +171,63 @@ export class VerHistorialPedidos implements OnInit {
 
   cerrarModalAlerta() {
     this.mostrarModalAlerta = false;
+  }
+
+  abrirModalRating(pedido: PedidoDetailDTO) {
+    // Solo permitir rating para pedidos entregados
+    if (pedido.estado !== 'ENTREGADO') {
+      this.mostrarAlerta(
+        'No disponible',
+        'Solo puedes calificar repartidores de pedidos entregados',
+        'info',
+      );
+      return;
+    }
+
+    this.pedidoACalificar = pedido;
+    this.calificacionRepartidor = 0;
+    this.mostrarModalRating = true;
+  }
+
+  cerrarModalRating() {
+    this.mostrarModalRating = false;
+    this.pedidoACalificar = null;
+    this.calificacionRepartidor = 0;
+  }
+
+  enviarCalificacion() {
+    if (!this.pedidoACalificar || this.calificacionRepartidor === 0) {
+      this.mostrarAlerta('Error', 'Por favor selecciona una calificación', 'error');
+      return;
+    }
+
+    this.enviandoRating = true;
+
+    this.clienteService
+      .calificarRepartidor(this.pedidoACalificar.id, this.calificacionRepartidor)
+      .subscribe({
+        next: () => {
+          this.mostrarAlerta('Éxito', 'Repartidor calificado exitosamente', 'success');
+          this.enviandoRating = false;
+          this.cerrarModalRating();
+          // No es necesario recargar, la calificación ya está guardada
+        },
+        error: (error: any) => {
+          console.error('Error calificando repartidor:', error);
+          let mensajeError = 'Error al calificar el repartidor';
+          if (error.error?.message) {
+            mensajeError = error.error.message;
+          } else if (typeof error.error === 'string') {
+            try {
+              const errorObj = JSON.parse(error.error);
+              mensajeError = errorObj.message || error.error;
+            } catch {
+              mensajeError = error.error;
+            }
+          }
+          this.mostrarAlerta('Error', mensajeError, 'error');
+          this.enviandoRating = false;
+        },
+      });
   }
 }

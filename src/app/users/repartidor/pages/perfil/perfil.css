@@ -269,10 +269,114 @@ p {
   font-weight: 600;
 }
 
-.stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
+.stats-table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(74, 20, 140, 0.15);
+  border: 2px solid var(--col-1);
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.stats-table thead {
+  background: linear-gradient(135deg, var(--col-1) 0%, rgba(74, 20, 140, 0.9) 100%);
+  color: white;
+}
+
+.stats-table thead th {
+  padding: 18px 24px;
+  text-align: left;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.stats-table thead th.text-right {
+  text-align: right;
+}
+
+.stats-table tbody tr {
+  border-bottom: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.stats-table tbody tr:hover {
+  background: linear-gradient(90deg, rgba(74, 20, 140, 0.05) 0%, transparent 100%);
+  transform: scale(1.01);
+}
+
+.stats-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.stat-row.highlighted {
+  background: linear-gradient(90deg, rgba(74, 20, 140, 0.08) 0%, transparent 100%);
+}
+
+.stat-row.highlighted:hover {
+  background: linear-gradient(90deg, rgba(74, 20, 140, 0.15) 0%, transparent 100%);
+}
+
+.stats-table td {
+  padding: 20px 24px;
+  color: #333;
+  font-size: 1rem;
+}
+
+.metric-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.metric-icon {
+  font-size: 1.3rem;
+  width: 30px;
+  text-align: center;
+}
+
+.metric-value {
+  text-align: right;
+  font-weight: 700;
+  color: var(--col-1);
+  font-size: 1.4rem;
+}
+
+.metric-value.rating {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.rating-number {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--col-1);
+}
+
+.rating-star {
+  font-size: 1.2rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
 }
 
 .stat-card {

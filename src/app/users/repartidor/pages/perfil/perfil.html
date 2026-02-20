@@ -3,19 +3,21 @@
   <div class="perfil-container">
     <h2>Mi Perfil de Repartidor</h2>
     @if (authService.currentUser(); as usuario) {
-      <p>Bienvenido, <strong>{{ usuario.nombre }}</strong></p>
+      <p>
+        Bienvenido, <strong>{{ usuario.nombre }}</strong>
+      </p>
     }
 
     <!-- Mensaje de éxito o error -->
     @if (mensajePerfil && tipoMensaje) {
-    <div
-      class="alert-message"
-      [class.alert-success]="tipoMensaje === 'success'"
-      [class.alert-error]="tipoMensaje === 'error'"
-    >
-      <span class="alert-icon">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
-      <span class="alert-text">{{ mensajePerfil }}</span>
-    </div>
+      <div
+        class="alert-message"
+        [class.alert-success]="tipoMensaje === 'success'"
+        [class.alert-error]="tipoMensaje === 'error'"
+      >
+        <span class="alert-icon">{{ tipoMensaje === 'success' ? '✓' : '⚠' }}</span>
+        <span class="alert-text">{{ mensajePerfil }}</span>
+      </div>
     }
 
     @if (loading()) {
@@ -39,7 +41,7 @@
                 maxlength="50"
               />
               @if (perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched) {
-                <small style="color: red;">Nombre requerido (mínimo 3 caracteres)</small>
+                <small style="color: red">Nombre requerido (mínimo 3 caracteres)</small>
               }
             </div>
 
@@ -53,7 +55,7 @@
                 maxlength="18"
               />
               @if (perfilForm.get('usuario')?.invalid && perfilForm.get('usuario')?.touched) {
-                <small style="color: red;">Usuario requerido (solo letras y números)</small>
+                <small style="color: red">Usuario requerido (solo letras y números)</small>
               }
             </div>
           </div>
@@ -68,7 +70,7 @@
               maxlength="100"
             />
             @if (perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched) {
-              <small style="color: red;">Email requerido y válido</small>
+              <small style="color: red">Email requerido y válido</small>
             }
           </div>
 
@@ -83,21 +85,18 @@
                 <option value="MOTO">Moto</option>
                 <option value="AUTO">Auto</option>
               </select>
-              @if (perfilForm.get('tipoVehiculo')?.invalid && perfilForm.get('tipoVehiculo')?.touched) {
-                <small style="color: red;">Tipo de vehículo requerido</small>
+              @if (
+                perfilForm.get('tipoVehiculo')?.invalid && perfilForm.get('tipoVehiculo')?.touched
+              ) {
+                <small style="color: red">Tipo de vehículo requerido</small>
               }
             </div>
 
             <div class="form-group">
               <label>País *</label>
-              <input
-                type="text"
-                formControlName="pais"
-                class="form-input"
-                placeholder="Tu país"
-              />
+              <input type="text" formControlName="pais" class="form-input" placeholder="Tu país" />
               @if (perfilForm.get('pais')?.invalid && perfilForm.get('pais')?.touched) {
-                <small style="color: red;">País requerido</small>
+                <small style="color: red">País requerido</small>
               }
             </div>
           </div>
@@ -111,16 +110,12 @@
               placeholder="Ingresa tu contraseña actual para verificar identidad"
             />
             @if (perfilForm.get('contrasenia')?.invalid && perfilForm.get('contrasenia')?.touched) {
-              <small style="color: red;">Contraseña requerida (mínimo 6 caracteres)</small>
+              <small style="color: red">Contraseña requerida (mínimo 6 caracteres)</small>
             }
           </div>
 
           <div class="form-actions">
-            <button
-              type="submit"
-              class="btn-primary"
-              [disabled]="loading()"
-            >
+            <button type="submit" class="btn-primary" [disabled]="loading()">
               @if (loading()) {
                 Guardando...
               } @else {
@@ -144,15 +139,36 @@
         @if (usuario(); as u) {
           <div class="estadisticas-section">
             <h3>Mis Estadísticas</h3>
-            <div class="stats-cards">
-              <div class="stat-card">
-                <p class="stat-label">Total Entregas</p>
-                <p class="stat-value">{{ u.totalPedidosEntregados || 0 }}</p>
-              </div>
-              <div class="stat-card">
-                <p class="stat-label">Calificación Promedio</p>
-                <p class="stat-value">{{ u.calificacionPromedio.toFixed(1) || 'N/A' }} ⭐</p>
-              </div>
+            <div class="stats-table-container">
+              <table class="stats-table">
+                <thead>
+                  <tr>
+                    <th>Métrica</th>
+                    <th class="text-right">Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="stat-row">
+                    <td class="metric-name">
+                      <span class="metric-icon">📦</span>
+                      Total de Entregas
+                    </td>
+                    <td class="metric-value">{{ u.totalPedidosEntregados || 0 }}</td>
+                  </tr>
+                  <tr class="stat-row highlighted">
+                    <td class="metric-name">
+                      <span class="metric-icon">⭐</span>
+                      Calificación Promedio
+                    </td>
+                    <td class="metric-value rating">
+                      <span class="rating-number">{{
+                        u.calificacionPromedio.toFixed(1) || 'N/A'
+                      }}</span>
+                      <span class="rating-star">⭐</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         }
