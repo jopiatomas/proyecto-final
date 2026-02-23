@@ -16,6 +16,7 @@ export class LandingPage implements OnInit {
   pedidoSeleccionado = signal<Pedido | null>(null);
   estadoNuevo = signal<string | null>(null);
   confirmandoCambioEstado = false;
+  mostrarConfirmacionEntregado = signal(false);
   cambiandoEstado = false;
   mensajeCambioEstado = '';
   tipoMensajeCambioEstado: 'success' | 'error' = 'success';
@@ -56,7 +57,13 @@ export class LandingPage implements OnInit {
       return;
     }
 
-    // Ejecutar el cambio directamente
+    // Si el estado es ENTREGADO, mostrar confirmación
+    if (this.estadoNuevo() === 'ENTREGADO') {
+      this.mostrarConfirmacionEntregado.set(true);
+      return;
+    }
+
+    // Ejecutar el cambio directamente para otros estados
     this.ejecutarCambioEstado();
   }
 
@@ -107,5 +114,15 @@ export class LandingPage implements OnInit {
 
   cancelarCambioEstado() {
     this.confirmandoCambioEstado = false;
+  }
+
+  confirmarEntregado() {
+    this.mostrarConfirmacionEntregado.set(false);
+    this.ejecutarCambioEstado();
+  }
+
+  cancelarEntregado() {
+    this.mostrarConfirmacionEntregado.set(false);
+    this.estadoNuevo.set(null);
   }
 }

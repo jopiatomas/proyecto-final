@@ -38,14 +38,45 @@
       </div>
       
       <div class="detalles-contenido">
-        <div class="info-grupo">
-            <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
-          <p><strong>Estado actual:</strong> 
-            <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
-              {{ pedidoSeleccionado()!.estado }}
-            </span>
-          </p>
+        <div class="info-seccion">
+          <h3>Información del Pedido</h3>
+          <div class="info-grid-detalle">
+            <div class="info-row">
+              <strong>Fecha:</strong>
+              <span>{{ pedidoSeleccionado()!.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <div class="info-row">
+              <strong>Estado:</strong>
+              <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
+                {{ pedidoSeleccionado()!.estado }}
+              </span>
+            </div>
+            <div class="info-row">
+              <strong>Total:</strong>
+              <span class="total-valor">${{ pedidoSeleccionado()!.total }}</span>
+            </div>
+          </div>
         </div>
+
+        @if (pedidoSeleccionado()!.repartidor) {
+          <div class="info-seccion repartidor-seccion">
+            <h3>🚴 Información del Repartidor</h3>
+            <div class="info-grid-detalle">
+              <div class="info-row">
+                <strong>Nombre:</strong>
+                <span>{{ pedidoSeleccionado()!.repartidor!.nombreYapellido }}</span>
+              </div>
+              <div class="info-row">
+                <strong>Email:</strong>
+                <span>{{ pedidoSeleccionado()!.repartidor!.email }}</span>
+              </div>
+              <div class="info-row">
+                <strong>Vehículo:</strong>
+                <span>{{ pedidoSeleccionado()!.repartidor!.tipoVehiculo }}</span>
+              </div>
+            </div>
+          </div>
+        }
 
         <div class="productos-lista">
           <h3>Productos:</h3>
@@ -56,21 +87,14 @@
           </ul>
         </div>
 
-        <div class="total">
-          <h3>Total: ${{ pedidoSeleccionado()!.total }}</h3>
-        </div>
-
         <div class="acciones">
           <h3>Cambiar estado:</h3>
           <button (click)="seleccionarEstado('PREPARACION')" 
                   [class.seleccionado-estado]="estadoNuevo() === 'PREPARACION'"
-                  [disabled]="pedidoSeleccionado()!.estado === 'PREPARACION'">
+                  [disabled]="pedidoSeleccionado()!.estado === 'PREPARACION' || 
+                              pedidoSeleccionado()!.estado === 'ENVIADO' || 
+                              pedidoSeleccionado()!.estado === 'ENTREGADO'">
             En preparación
-          </button>
-          <button (click)="seleccionarEstado('ENVIADO')"
-                  [class.seleccionado-estado]="estadoNuevo() === 'ENVIADO'"
-                  [disabled]="pedidoSeleccionado()!.estado === 'ENVIADO'">
-            Enviado
           </button>
           <button (click)="seleccionarEstado('ENTREGADO')"
                   [class.seleccionado-estado]="estadoNuevo() === 'ENTREGADO'"
@@ -95,5 +119,20 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de confirmación para marcar como entregado -->
+@if (mostrarConfirmacionEntregado()) {
+  <div class="modal-overlay-entregado">
+    <div class="modal-content-entregado">
+      <h2>⚠️ Confirmar Entrega</h2>
+      <p>¿Estás seguro de que deseas marcar este pedido como <strong>ENTREGADO</strong>?</p>
+      <p class="advertencia">Esta acción quitará el pedido de la lista de pedidos activos.</p>
+      <div class="modal-acciones">
+        <button class="btn-cancelar" (click)="cancelarEntregado()">Cancelar</button>
+        <button class="btn-confirmar-modal" (click)="confirmarEntregado()">Sí, Marcar como Entregado</button>
+      </div>
+    </div>
+  </div>
+}
 
 <app-footer-restaurante></app-footer-restaurante>

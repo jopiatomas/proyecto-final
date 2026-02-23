@@ -353,6 +353,11 @@
   font-size: 1.1rem;
 }
 
+/* Sección del repartidor - mismo estilo que info del pedido */
+.repartidor-section {
+  /* Sin estilos adicionales, usa los mismos que .info-section */
+}
+
 .items-list {
   display: flex;
   flex-direction: column;

@@ -32,15 +32,64 @@
         </div>
 
         <div class="detalles-contenido">
-          <div class="info-grupo">
-            <p><strong>Fecha:</strong> {{ pedidoSeleccionado()!.fecha }}</p>
-            <p>
-              <strong>Estado:</strong>
-              <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
-                {{ pedidoSeleccionado()!.estado }}
-              </span>
-            </p>
+          <div class="info-seccion">
+            <h3>Información del Pedido</h3>
+            <div class="info-grid-detalle">
+              <div class="info-row">
+                <strong>Fecha:</strong>
+                <span>{{ pedidoSeleccionado()!.fecha }}</span>
+              </div>
+              <div class="info-row">
+                <strong>Estado:</strong>
+                <span class="estado" [class]="pedidoSeleccionado()!.estado.toLowerCase()">
+                  {{ pedidoSeleccionado()!.estado }}
+                </span>
+              </div>
+              <div class="info-row">
+                <strong>Total:</strong>
+                <span class="total-valor">${{ pedidoSeleccionado()!.total }}</span>
+              </div>
+            </div>
           </div>
+
+          @if (pedidoSeleccionado()!.repartidor) {
+            <div class="info-seccion repartidor-seccion">
+              <h3>🚴 Información del Repartidor</h3>
+              <div class="info-grid-detalle">
+                <div class="info-row">
+                  <strong>Nombre:</strong>
+                  <span>{{ pedidoSeleccionado()!.repartidor!.nombreYapellido }}</span>
+                </div>
+                <div class="info-row">
+                  <strong>Email:</strong>
+                  <span>{{ pedidoSeleccionado()!.repartidor!.email }}</span>
+                </div>
+                <div class="info-row">
+                  <strong>Vehículo:</strong>
+                  <span>{{ pedidoSeleccionado()!.repartidor!.tipoVehiculo }}</span>
+                </div>
+              </div>
+            </div>
+          }
+          @if (pedidoSeleccionado()!.repartidor) {
+            <div class="info-seccion repartidor-seccion">
+              <h3>🚴 Información del Repartidor</h3>
+              <div class="info-grid-detalle">
+                <div class="info-row">
+                  <strong>Nombre:</strong>
+                  <span>{{ pedidoSeleccionado()!.repartidor!.nombreYapellido }}</span>
+                </div>
+                <div class="info-row">
+                  <strong>Email:</strong>
+                  <span>{{ pedidoSeleccionado()!.repartidor!.email }}</span>
+                </div>
+                <div class="info-row">
+                  <strong>Vehículo:</strong>
+                  <span>{{ pedidoSeleccionado()!.repartidor!.tipoVehiculo }}</span>
+                </div>
+              </div>
+            </div>
+          }
 
           <div class="productos-lista">
             <h3>Productos:</h3>
@@ -49,10 +98,6 @@
                 {{ detalle.cantidad }}x {{ detalle.nombreProducto }} - ${{ detalle.precioUnitario }}
               </li>
             </ul>
-          </div>
-
-          <div class="total">
-            <h3>Total: ${{ pedidoSeleccionado()!.total }}</h3>
           </div>
         </div>
       </div>

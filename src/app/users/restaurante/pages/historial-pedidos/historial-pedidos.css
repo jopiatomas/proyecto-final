@@ -174,3 +174,56 @@ h1 {
   color: #4a148c;
   font-size: 24px;
 }
+
+/* Secciones de información */
+.info-seccion {
+  margin-bottom: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.info-seccion h3 {
+  color: #4a148c;
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f3e5f5;
+}
+
+.info-grid-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.info-row strong {
+  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.info-row span {
+  color: #333;
+  font-size: 13px;
+}
+
+.total-valor {
+  color: #4a148c;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Sección del repartidor - mismo estilo que info del pedido */
+.repartidor-seccion {
+  /* Sin estilos adicionales, usa los mismos que .info-seccion */
+}

@@ -172,6 +172,26 @@
               </div>
             </div>
 
+            @if (pedidoSeleccionado.repartidor) {
+              <div class="info-section repartidor-section">
+                <h3>🚴 Información del Repartidor</h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <label>Nombre:</label>
+                    <span>{{ pedidoSeleccionado.repartidor.nombreYapellido }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Email:</label>
+                    <span>{{ pedidoSeleccionado.repartidor.email }}</span>
+                  </div>
+                  <div class="info-item">
+                    <label>Vehículo:</label>
+                    <span>{{ pedidoSeleccionado.repartidor.tipoVehiculo }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+
             <div class="items-section">
               <h3>Productos Pedidos</h3>
               <div class="items-list">

@@ -146,6 +146,14 @@ export interface PedidoResumenDTO {
   total: number;
 }
 
+export interface RepartidorResumenDTO {
+  id: number;
+  nombreYapellido: string;
+  email: string;
+  pais: string;
+  tipoVehiculo: string;
+}
+
 export interface PedidoDetailDTO {
   id: number;
   fecha: string;
@@ -154,6 +162,7 @@ export interface PedidoDetailDTO {
   nombreRestaurante: string;
   idCliente: number;
   detalles: DetallePedidoDTO[];
+  repartidor?: RepartidorResumenDTO; // Objeto anidado con info del repartidor
 }
 
 // Interfaces para direcciones

@@ -55,22 +55,12 @@ export interface DetallePedidoDTO {
   cantidad: number;
 }
 
-export interface Pedido {
+export interface RepartidorResumenDTO {
   id: number;
-  fecha: string;
-  estado: string;
-  total: number;
-  nombreRestaurante?: string;
-  idCliente?: number;
-  detalles: DetallePedidoDTO[];
-}
-
-// Interfaces para Pedidos
-export interface DetallePedidoDTO {
-  productoId: number;
-  nombreProducto: string;
-  precioUnitario: number;
-  cantidad: number;
+  nombreYapellido: string;
+  email: string;
+  pais: string;
+  tipoVehiculo: string;
 }
 
 export interface Pedido {
@@ -81,6 +71,7 @@ export interface Pedido {
   nombreRestaurante?: string;
   idCliente?: number;
   detalles: DetallePedidoDTO[];
+  repartidor?: RepartidorResumenDTO; // Objeto anidado con info del repartidor
 }
 
 export interface Restaurante {
