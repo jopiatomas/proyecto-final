@@ -19,7 +19,7 @@
             </span>
           </div>
           <div class="pedido-info">
-            <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+            <p><strong>Fecha:</strong> {{ pedido.fecha | date: 'dd/MM/yyyy HH:mm' }}</p>
             <p><strong>Total:</strong> ${{ pedido.total }}</p>
           </div>
         </div>
@@ -37,7 +37,7 @@
             <div class="info-grid-detalle">
               <div class="info-row">
                 <strong>Fecha:</strong>
-                <span>{{ pedidoSeleccionado()!.fecha }}</span>
+                <span>{{ pedidoSeleccionado()!.fecha | date: 'dd/MM/yyyy HH:mm' }}</span>
               </div>
               <div class="info-row">
                 <strong>Estado:</strong>
@@ -52,25 +52,6 @@
             </div>
           </div>
 
-          @if (pedidoSeleccionado()!.repartidor) {
-            <div class="info-seccion repartidor-seccion">
-              <h3>🚴 Información del Repartidor</h3>
-              <div class="info-grid-detalle">
-                <div class="info-row">
-                  <strong>Nombre:</strong>
-                  <span>{{ pedidoSeleccionado()!.repartidor!.nombreYapellido }}</span>
-                </div>
-                <div class="info-row">
-                  <strong>Email:</strong>
-                  <span>{{ pedidoSeleccionado()!.repartidor!.email }}</span>
-                </div>
-                <div class="info-row">
-                  <strong>Vehículo:</strong>
-                  <span>{{ pedidoSeleccionado()!.repartidor!.tipoVehiculo }}</span>
-                </div>
-              </div>
-            </div>
-          }
           @if (pedidoSeleccionado()!.repartidor) {
             <div class="info-seccion repartidor-seccion">
               <h3>🚴 Información del Repartidor</h3>

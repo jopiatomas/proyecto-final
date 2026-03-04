@@ -108,6 +108,14 @@ h1 {
   color: #555;
 }
 
+.pedido-info .repartidor-asignado {
+  color: #555;
+  font-size: 0.95em;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+}
+
 .detalles-pedido {
   background-color: white;
   border: 2px solid #4a148c;

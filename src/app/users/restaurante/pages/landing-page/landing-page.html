@@ -23,8 +23,13 @@
             </span>
           </div>
           <div class="pedido-info">
-            <p><strong>Fecha:</strong> {{ pedido.fecha | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+            <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
             <p><strong>Total:</strong> ${{ pedido.total }}</p>
+            @if (pedido.repartidor) {
+              <p class="repartidor-asignado">
+                <strong>Repartidor:</strong> {{ pedido.repartidor.nombreYapellido }}
+              </p>
+            }
           </div>
           </div>
         }
