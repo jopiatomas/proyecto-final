@@ -80,9 +80,16 @@ export class LandingPage implements OnInit, OnDestroy {
   }
 
   toggleDisponibilidad() {
+    const nuevoEstado = !this.disponible();
+    
+    // Validar que no se pueda cambiar a No Disponible si hay un pedido actual
+    if (!nuevoEstado && this.pedidoActual()) {
+      this.errorMessage.set('No puedes cambiar a No Disponible mientras tienes un pedido asignado');
+      return;
+    }
+
     this.cambiandoDisponibilidad.set(true);
     this.errorMessage.set('');
-    const nuevoEstado = !this.disponible();
 
     this.repartidorService
       .cambiarDisponibilidad(nuevoEstado)

@@ -20,6 +20,9 @@ export class PedidosDisponibles implements OnInit {
   aceptandoPedido = signal<number | null>(null);
   filtroEstado = signal<string>('');
   pedidosFiltrados = signal<any[]>([]);
+  mostrarModalError = signal(false);
+  tituloError = signal('');
+  mensajeError = signal('');
 
   ngOnInit() {
     this.cargarPedidos();
@@ -72,10 +75,22 @@ export class PedidosDisponibles implements OnInit {
         this.router.navigate(['/repartidor/ver-pedido-actual']);
       },
       error: (error) => {
-        alert('Error al aceptar el pedido. Intenta de nuevo.');
         this.aceptandoPedido.set(null);
+        
+        console.log('Error al aceptar pedido:', error);
+        console.log('Status code:', error.status);
+        console.log('Error message:', error.error);
+        
+        // Siempre mostrar el mensaje de disponibilidad
+        this.tituloError.set('Estado No Disponible');
+        this.mensajeError.set('No puedes aceptar pedidos porque tu estado actual es "No Disponible". Debes activar tu disponibilidad desde el panel principal para poder aceptar pedidos.');
+        this.mostrarModalError.set(true);
       },
     });
+  }
+
+  cerrarModalError() {
+    this.mostrarModalError.set(false);
   }
 
   volverAlPanel() {

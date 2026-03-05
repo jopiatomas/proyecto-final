@@ -23,6 +23,7 @@ export class Perfil implements OnInit {
 
   perfilForm!: FormGroup;
   usuario = signal<any | null>(null);
+  pedidoActual = signal<any | null>(null);
   loading = signal(false);
   cambiandoEstado = signal(false);
   mensajePerfil = '';
@@ -31,6 +32,7 @@ export class Perfil implements OnInit {
   ngOnInit() {
     this.initForm();
     this.cargarDatosUsuario();
+    this.cargarPedidoActual();
   }
 
   initForm() {
@@ -106,6 +108,17 @@ export class Perfil implements OnInit {
     });
   }
 
+  cargarPedidoActual() {
+    this.repartidorService.obtenerPedidoActual().subscribe({
+      next: (pedido) => {
+        this.pedidoActual.set(pedido);
+      },
+      error: () => {
+        this.pedidoActual.set(null);
+      },
+    });
+  }
+
   alEnviar() {
     if (this.perfilForm.invalid) {
       this.mostrarMensaje('Por favor completa todos los campos requeridos', 'error');
@@ -167,6 +180,12 @@ export class Perfil implements OnInit {
   }
 
   cambiarDisponibilidad(disponible: boolean) {
+    // Validar que no se pueda desactivar si hay un pedido actual
+    if (!disponible && this.pedidoActual()) {
+      this.mostrarMensaje('No puedes desactivar tu cuenta mientras tienes un pedido asignado', 'error');
+      return;
+    }
+
     this.cambiandoEstado.set(true);
 
     if (disponible) {
