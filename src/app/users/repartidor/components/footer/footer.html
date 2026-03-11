@@ -24,7 +24,7 @@
 
     <div class="footer-seccion">
       <h4>Contacto</h4>
-      <p>📧 quickishfood@gmail.com</p>
+      <p>📧 quickishfood&#64;gmail.com</p>
       <p>📞 +54 9 (223) 545-1212</p>
     </div>
   </div>
@@ -33,3 +33,54 @@
     <p>© 2025 Quickish. Todos los derechos reservados.</p>
   </div>
 </footer>
+
+<!-- Bottom navigation bar (solo mobile) -->
+<nav class="bottom-nav" [class.inactive]="!repartidorEstadoService.activo()">
+  <a
+    routerLink="/repartidor"
+    routerLinkActive="active"
+    class="bottom-nav-item"
+    aria-label="Inicio"
+  >
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Inicio</span>
+  </a>
+  <a
+    [routerLink]="repartidorEstadoService.activo() ? '/repartidor/pedidos-disponibles' : null"
+    routerLinkActive="active"
+    class="bottom-nav-item"
+    [class.disabled]="!repartidorEstadoService.activo()"
+    aria-label="Pedidos"
+  >
+    <span class="nav-icon">📦</span>
+    <span class="nav-label">Pedidos</span>
+  </a>
+  <a
+    [routerLink]="repartidorEstadoService.activo() ? '/repartidor/ver-pedido-actual' : null"
+    routerLinkActive="active"
+    class="bottom-nav-item"
+    [class.disabled]="!repartidorEstadoService.activo()"
+    aria-label="En Curso"
+  >
+    <span class="nav-icon">🚚</span>
+    <span class="nav-label">En Curso</span>
+  </a>
+  <a
+    routerLink="/repartidor/historial-entregas"
+    routerLinkActive="active"
+    class="bottom-nav-item"
+    aria-label="Historial"
+  >
+    <span class="nav-icon">📋</span>
+    <span class="nav-label">Historial</span>
+  </a>
+  <a
+    routerLink="/repartidor/perfil"
+    routerLinkActive="active"
+    class="bottom-nav-item"
+    aria-label="Perfil"
+  >
+    <span class="nav-icon">👤</span>
+    <span class="nav-label">Perfil</span>
+  </a>
+</nav>

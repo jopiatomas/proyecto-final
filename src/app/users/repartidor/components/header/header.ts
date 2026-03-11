@@ -15,6 +15,7 @@ export class Header implements OnInit {
   isLandingPage = false;
   backRoute = '/repartidor';
   confirmandoCerrarSesion = false;
+  menuAbierto = false;
 
   constructor(
     private router: Router, 
@@ -57,6 +58,15 @@ export class Header implements OnInit {
 
   logout() {
     this.confirmandoCerrarSesion = true;
+    this.menuAbierto = false;
+  }
+
+  toggleMenu() {
+    this.menuAbierto = !this.menuAbierto;
+  }
+
+  cerrarMenu() {
+    this.menuAbierto = false;
   }
 
   confirmarCerrarSesion() {

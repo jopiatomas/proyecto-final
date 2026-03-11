@@ -630,28 +630,36 @@
 /* Responsive */
 @media (max-width: 768px) {
   .welcome-section {
-    padding: 50px 20px;
-    margin-bottom: 40px;
+    padding: 40px 16px;
+    margin-bottom: 0;
   }
 
   .welcome-section h2 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 
   .welcome-section p {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .dashboard {
-    padding: 20px 16px;
-    gap: 20px;
+    padding: 16px 12px 80px; /* padding-bottom para la bottom nav */
+    gap: 16px;
   }
 
   .disponibilidad-card,
   .pedido-actual-card,
   .estadisticas-card,
   .acciones-section {
-    padding: 20px;
+    padding: 18px 16px;
+    border-radius: 10px;
+  }
+
+  .disponibilidad-card h3,
+  .pedido-actual-card h3,
+  .estadisticas-card h3,
+  .acciones-section h3 {
+    font-size: 1.1rem;
   }
 
   .stats-grid {
@@ -659,27 +667,81 @@
   }
 
   .acciones-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .accion-card {
+    padding: 16px 12px;
+  }
+
+  .accion-icon {
+    font-size: 2rem;
+  }
+
+  .accion-card h4 {
+    font-size: 0.9rem;
+  }
+
+  .accion-card p {
+    font-size: 0.78rem;
+  }
+
+  .btn-toggle {
+    padding: 14px;
+    font-size: 0.95rem;
+  }
+
+  .inactive-overlay {
+    top: 70px;
+    padding: 16px;
+  }
+
+  .inactive-modal {
+    padding: 32px 24px;
+  }
+
+  .inactive-icon {
+    font-size: 60px;
+    margin-bottom: 16px;
+  }
+
+  .inactive-modal h2 {
+    font-size: 1.5rem;
+  }
+
+  .inactive-modal p {
+    font-size: 0.95rem;
   }
 }
 
 @media (max-width: 480px) {
   .welcome-section h2 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
 
   .dashboard {
-    padding: 15px 12px;
+    padding: 12px 10px 80px;
+    gap: 12px;
   }
 
   .disponibilidad-card,
   .pedido-actual-card,
   .estadisticas-card,
   .acciones-section {
-    padding: 15px;
+    padding: 14px 12px;
   }
 
   .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+  }
+
+  .acciones-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .estado-badge {
+    font-size: 0.9rem;
+    padding: 8px 16px;
   }
 }

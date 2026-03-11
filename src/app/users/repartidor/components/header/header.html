@@ -36,8 +36,60 @@
         <img src="/image.png" alt="Perfil del usuario" />
       </a>
     </div>
+
+    <!-- Botón hamburguesa (solo mobile) -->
+    <button class="hamburger" (click)="toggleMenu()" [class.open]="menuAbierto" aria-label="Menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 </header>
+
+<!-- Menú mobile desplegable -->
+@if (menuAbierto) {
+  <div class="mobile-menu-overlay" (click)="cerrarMenu()"></div>
+  <nav class="mobile-menu" [class.inactive]="!repartidorEstadoService.activo()">
+    @if (authService.currentUser(); as usuario) {
+      <div class="mobile-user-info">
+        <img src="/image.png" alt="Perfil" class="mobile-avatar" />
+        <span class="mobile-user-name">{{ usuario.nombre }}</span>
+      </div>
+    }
+    <a
+      routerLink="/repartidor"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: true}"
+      (click)="cerrarMenu()"
+      >🏠 Inicio</a
+    >
+    <a
+      [routerLink]="repartidorEstadoService.activo() ? '/repartidor/pedidos-disponibles' : null"
+      routerLinkActive="active"
+      [class.disabled]="!repartidorEstadoService.activo()"
+      (click)="cerrarMenu()"
+      >📦 Pedidos Disponibles</a
+    >
+    <a
+      [routerLink]="repartidorEstadoService.activo() ? '/repartidor/ver-pedido-actual' : null"
+      routerLinkActive="active"
+      [class.disabled]="!repartidorEstadoService.activo()"
+      (click)="cerrarMenu()"
+      >🚚 Pedido Actual</a
+    >
+    <a
+      routerLink="/repartidor/historial-entregas"
+      routerLinkActive="active"
+      (click)="cerrarMenu()"
+      >📋 Historial de Entregas</a
+    >
+    <a routerLink="/repartidor/perfil" routerLinkActive="active" (click)="cerrarMenu()"
+      >👤 Mi Perfil</a
+    >
+    <div class="mobile-menu-divider"></div>
+    <button class="mobile-logout-btn" (click)="logout()">🚪 Cerrar Sesión</button>
+  </nav>
+}
 
 <!-- Modal de confirmación para cerrar sesión -->
 @if (confirmandoCerrarSesion) {

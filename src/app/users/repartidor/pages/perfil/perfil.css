@@ -454,41 +454,29 @@ p {
 /* Responsive */
 @media (max-width: 768px) {
   .content {
-    padding: 20px;
+    padding: 16px 12px 80px; /* padding-bottom para la bottom nav */
   }
 
   .perfil-container {
-    padding: 20px;
+    padding: 16px;
+    border-radius: 10px;
   }
 
   h2 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .form-row {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .perfil-content {
-    gap: 1.5rem;
+    gap: 1.2rem;
   }
 
-  .stats-cards {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .content {
-    padding: 15px;
-  }
-
-  .perfil-container {
-    padding: 15px;
-  }
-
-  h2 {
-    font-size: 1.3rem;
+  .perfil-form {
+    padding: 16px;
   }
 
   .perfil-form h3,
@@ -497,13 +485,68 @@ p {
     font-size: 1.1rem;
   }
 
+  .btn-primary {
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .link-card {
+    padding: 14px 16px;
+  }
+
+  .estadisticas-section {
+    padding: 16px;
+  }
+
+  .stats-table td,
+  .stats-table thead th {
+    padding: 14px 16px;
+  }
+
+  .metric-value {
+    font-size: 1.2rem;
+  }
+
+  .rating-number {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 12px 10px 80px;
+  }
+
+  .perfil-container {
+    padding: 12px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .perfil-form h3,
+  .quick-links h3,
+  .estadisticas-section h3 {
+    font-size: 1rem;
+  }
+
   .link-card {
     flex-direction: column;
     align-items: flex-start;
+    gap: 6px;
   }
 
   .flecha {
     margin-left: 0;
-    margin-top: 8px;
+  }
+
+  .stats-table {
+    font-size: 0.9rem;
+  }
+
+  .stats-table td,
+  .stats-table thead th {
+    padding: 12px;
   }
 }
