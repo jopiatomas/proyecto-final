@@ -5,6 +5,8 @@
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   width: 100%;
   max-width: 450px;
+  min-height: 430px;
+  font-family: 'Poppins', sans-serif;
 }
 
 h2 {
@@ -13,6 +15,7 @@ h2 {
   margin-bottom: 35px;
   font-size: 28px;
   font-weight: 700;
+  font-family: 'Poppins', sans-serif;
 }
 
 .alert-error {
@@ -37,6 +40,7 @@ h2 {
   margin-bottom: 8px;
   color: #444;
   font-size: 14px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .form-input {
@@ -47,6 +51,7 @@ h2 {
   font-size: 15px;
   transition: all 0.3s ease;
   box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 .form-input:focus {

@@ -1,23 +1,26 @@
 .registro-box {
   background: white;
-  padding: 40px 50px;
+  padding: 30px 40px;
   border-radius: 12px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
   width: 100%;
-  max-width: 500px;
+  max-width: 620px;
+  min-height: 430px;
+  font-family: 'Poppins', sans-serif;
 }
 
 h2 {
   text-align: center;
   color: #333;
-  margin-bottom: 35px;
+  margin-bottom: 20px;
   font-size: 28px;
   font-weight: 700;
+  font-family: 'Poppins', sans-serif;
 }
 
 .form-group {
   width: 100%;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
 .form-group label {
@@ -26,6 +29,7 @@ h2 {
   margin-bottom: 8px;
   color: #444;
   font-size: 14px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .form-input {
@@ -36,6 +40,7 @@ h2 {
   font-size: 15px;
   transition: all 0.3s ease;
   box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 .form-input:focus {
@@ -45,14 +50,84 @@ h2 {
 }
 
 form {
+  display: grid;
+  gap: 12px;
+}
+
+.form-row {
   display: flex;
-  flex-direction: column;
-  gap: 0;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 240px;
+}
+
+.form-row.single-row {
+  justify-content: flex-start;
+}
+
+form > .form-group,
+form > .form-row,
+form > .horarios-section,
+form > .repartidor-section,
+form > .btn {
+  width: 100%;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .form-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 980px) {
+  form {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  form {
+    grid-template-columns: 1fr;
+  }
+}
+.horarios-section h3,
+.repartidor-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.horarios-grid, .repartidor-grid {
+  display: flex;
+  gap: 15px;
+}
+
+.horarios-grid .form-group, .repartidor-grid .form-group {
+  flex: 1;
+  margin-bottom: 18px;
 }
 
 .btn {
   width: 100%;
-  padding: 14px 20px;
+  padding: 12px 18px;
   background-color: var(--col-1);
   color: white;
   border: none;
@@ -96,7 +171,7 @@ form {
 }
 .signup-link {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 12px;
   font-size: 14px;
   color: #666;
 }
@@ -112,12 +187,6 @@ form {
   cursor: pointer;
 }
 
-.form-input {
-  padding: 4px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
 
 .alert-error {
   background-color: #fee;

@@ -1,8 +1,22 @@
 header {
-    background-color: var(--col-1);
+    background: linear-gradient(135deg, var(--col-1) 0%, rgb(50, 10, 100) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 header img {
-    width: 18%;
+    width: 20%;
     height: auto;
-    margin: 10px 0 10px 25px;
+    transition: transform 0.4s ease, filter 0.4s ease;
+    filter: brightness(1);
+}
+
+header img:hover {
+    transform: scale(1.1);
+    filter: brightness(1.1);
 }
