@@ -185,4 +185,18 @@ export class GestionMenu implements OnInit {
   alCambiarBusqueda() {
     this.aplicarFiltros();
   }
+
+  onFocusPrecio(event: FocusEvent) {
+    const input = event.target as HTMLInputElement;
+    if (input.value === '0') {
+      input.select();
+    }
+  }
+
+  onFocusStock(event: FocusEvent) {
+    const input = event.target as HTMLInputElement;
+    if (input.value === '0') {
+      input.select();
+    }
+  }
 }

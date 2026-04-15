@@ -1,12 +1,13 @@
 :root {
-  --col-1: rgb(74, 20, 140);
-  --col-2: rgb(235, 231, 231);
-  --col-3: rgb(15, 15, 15);
+  --col-1: rgb(123, 44, 191);
+  --col-2: rgb(243, 229, 245);
+  --col-3: rgb(255, 255, 255);
 }
 
 header {
   background: var(--col-1);
   height: 70px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .barra {
@@ -119,6 +120,7 @@ header {
   color: var(--col-2);
   font-size: 14px;
   font-weight: 500;
+  font-family: inherit;
   white-space: nowrap;
 }
 
