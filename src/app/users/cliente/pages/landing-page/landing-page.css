@@ -4,15 +4,16 @@
   margin: 0;
   padding: 40px;
   font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
 }
 
 .welcome-section {
   background: var(--col-1);
   padding: 80px 20px;
-  margin-bottom: 60px;
-  width: 100%;
+  margin: -40px -40px 60px;
+  width: calc(100% + 80px);
   text-align: center;
-  margin: 0 auto 60px auto;
+  box-sizing: border-box;
 }
 
 .welcome-section h2 {

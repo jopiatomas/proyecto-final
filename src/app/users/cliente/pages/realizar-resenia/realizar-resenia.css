@@ -240,6 +240,7 @@ textarea:focus {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: slideDown 0.3s ease-out;
   overflow: hidden;
+  font-family: 'Poppins', sans-serif;
 }
 
 .modal-content-alerta.success {

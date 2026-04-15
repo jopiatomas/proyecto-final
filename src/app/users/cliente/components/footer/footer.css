@@ -1,42 +1,44 @@
 footer {
-  background: #272727;
-  color: #ffffff;
-  padding: 30px 20px 15px;
-  margin-top: auto;
+  background-color: rgb(36, 6, 77);
+  color: white;
+  padding: 20px 20px;
   font-family: 'Poppins', sans-serif;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer-contenido {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
   max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 25px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 0 auto 20px auto;
+  flex-wrap: wrap;
+}
+
+.footer-seccion {
+  flex: 1;
+  min-width: 200px;
+  margin: 10px;
+  text-align: center;
 }
 
 .footer-seccion h3 {
-  font-size: 20px;
+  font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 8px;
-  color: #ffffff;
+  margin-bottom: 10px;
 }
 
 .footer-seccion h4 {
-  font-size: 14px;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 12px;
-  color: #ffffff;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  margin-bottom: 10px;
 }
 
 .footer-seccion p {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
   line-height: 1.5;
-  margin: 6px 0;
+  margin: 0;
+  font-weight: 400;
 }
 
 .footer-seccion ul {
@@ -45,43 +47,29 @@ footer {
   margin: 0;
 }
 
-.footer-seccion ul li {
-  margin-bottom: 8px;
+.footer-seccion li {
+  margin-bottom: 5px;
 }
 
-.footer-seccion ul li a {
+.footer-seccion a {
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  font-size: 13px;
-  transition: all 0.3s ease;
-  display: inline-block;
-}
-
-.footer-seccion ul li a:hover {
-  color: #ffffff;
-  transform: translateX(5px);
+  transition: color 0.3s ease;
+  font-size: 0.9rem;
 }
 
 .footer-bottom {
-  max-width: 1200px;
-  margin: 0 auto;
   text-align: center;
-  padding-top: 15px;
-}
-
-.footer-bottom p {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 10px;
 }
 
 @media (max-width: 768px) {
   .footer-contenido {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     text-align: center;
-  }
-
-  .footer-seccion ul li a:hover {
-    transform: translateX(0);
   }
 }

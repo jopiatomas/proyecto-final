@@ -405,6 +405,7 @@ h2 {
   width: 90%;
   animation: slideUp 0.3s ease-out;
   border: 2px solid var(--col-1);
+  font-family: 'Poppins', sans-serif;
 }
 
 @keyframes slideUp {

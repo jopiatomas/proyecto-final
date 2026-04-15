@@ -745,6 +745,7 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  font-family: 'Poppins', sans-serif;
 }
 
 .modal-header {
@@ -923,6 +924,7 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  font-family: 'Poppins', sans-serif;
 }
 
 .alert-success {
@@ -945,6 +947,7 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease-out;
   overflow: hidden;
+  font-family: 'Poppins', sans-serif;
 }
 
 .modal-header-alerta {
