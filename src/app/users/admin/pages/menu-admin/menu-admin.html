@@ -9,21 +9,29 @@
 	}
 
 	@if (activeView() === 'welcome') {
-		<div class="welcome">
-			<h1>Panel de Administración</h1>
-			<p>Selecciona una opción en el menú superior para comenzar</p>
-			<div class="welcome-icons">
-				<div class="icon-card">
-					<h3>👥 Clientes</h3>
-					<p>Gestiona usuarios clientes</p>
-				</div>
-				<div class="icon-card">
-					<h3>🍽️ Restaurantes</h3>
-					<p>Gestiona restaurantes y reseñas</p>
-				</div>
-			</div>
-		</div>
-	}
+  <div class="welcome">
+    <div class="welcome-hero">
+      <h1>Panel de Administración</h1>
+      <p>Seleccioná una sección para comenzar</p>
+    </div>
+ 
+    <div class="welcome-cards-area">
+      <h2>¿Qué querés gestionar?</h2>
+      <div class="welcome-cards">
+        <div class="icon-card" (click)="onTabSelected('clientes')">
+          <span class="icon-card-emoji">👥</span>
+          <h3>Clientes</h3>
+          <p>Gestiona usuarios clientes</p>
+        </div>
+        <div class="icon-card" (click)="onTabSelected('restaurantes')">
+          <span class="icon-card-emoji">🍽️</span>
+          <h3>Restaurantes</h3>
+          <p>Gestiona restaurantes y reseñas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+}
 
 	@if (activeView() === 'clientes') {
 		<div class="content-layout">
